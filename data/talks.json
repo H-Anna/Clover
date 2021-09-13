@@ -1,0 +1,8 @@
+{
+	"talks":
+	[
+		"This is a test.",
+		"This contains a newline tag.<n>This is a new line.",
+		"<s[0]>This is my default pose.<s[shy]>This is a pose with an alias."
+	]
+}

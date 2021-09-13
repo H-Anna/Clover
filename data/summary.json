@@ -1,0 +1,34 @@
+{
+	"surfaces":
+	[
+		{
+			"id": 0,
+			"image": "surface0.png",
+			"alias": "neutral"
+		},
+		{
+			"id": 1,
+			"image": "surface1501.png",
+			"alias": "shy"
+		},
+		{
+			"id": 2,
+			"image": "surface1502.png",
+			"alias": "shocked"
+		},
+		{
+			"id": 3,
+			"image": "surface1503.png"
+		},
+		{
+			"id": 4,
+			"image": "surface1504.png",
+			"alias": "sad"
+		},
+		{
+			"id": 5,
+			"image": "surface1505.png",
+			"alias": "happy"
+		}
+	]
+}
