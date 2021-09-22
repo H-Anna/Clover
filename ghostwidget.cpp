@@ -17,7 +17,7 @@ GhostWidget::GhostWidget(QWidget *parent)
 //    setToolTip(tr("Right click to open context menu."));
 //    setWindowTitle(tr("Ghost Test"));
 
-    emit changeSurfaceSignal(QString(R"(D:\D_Programs\GitHub\GhostTest\data\surface1501.png)"));
+    emit changeSurfaceSignal(QString(R"(Z:\GhostTest/data/surface1501.png)"));
 
     std::cout << "The ghost has appeared." << std::endl;
 }

@@ -9,7 +9,7 @@
 #include <QDir>
 
 
-#define IMAGEPATH R"(D:\D_Programs\GitHub\GhostTest\data)"
+#define IMAGEPATH R"(Z:\GhostTest/data)"
 
 QFile* summaryFile;
 QFile* talksFile;
