@@ -44,8 +44,6 @@ else()
     balloonwidget.h
 surface.cpp
 surface.h
-mytextbrowser.cpp
-mytextbrowser.h
   )
 endif()
 
