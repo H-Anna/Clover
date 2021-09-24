@@ -3,6 +3,7 @@
 BalloonWidget::BalloonWidget(QWidget *parent)
     : QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint)
 {
+    setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
 
     connect(this, SIGNAL(changeBalloonSignal(const QString&)), this, SLOT(changeBalloon(const QString&)));
@@ -20,7 +21,8 @@ BalloonWidget::BalloonWidget(QWidget *parent)
 
 BalloonWidget::~BalloonWidget()
 {
-
+    delete textTimer;
+    delete textBrowser;
 }
 
 void BalloonWidget::printText()

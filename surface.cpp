@@ -5,3 +5,8 @@ Surface::Surface(unsigned int _id, const QString &_image, const QString &_alias)
 {
 
 }
+
+QString Surface::PrintData()
+{
+    return QString(QString::number(id) + "\t" + image + "\t" + alias);
+}

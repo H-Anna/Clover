@@ -6,8 +6,9 @@
 class Surface
 {
 public:
-    Surface(unsigned int _id, const QString& _image, const QString& _alias = "");;
-//private:
+    Surface(unsigned int _id, const QString& _image, const QString& _alias = "");
+    QString PrintData();
+private:
     unsigned int id;
     QString image;
     QString alias;

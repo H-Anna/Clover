@@ -1,8 +1,9 @@
 #include "ghostwidget.h"
 
 GhostWidget::GhostWidget(QWidget *parent)
-    : QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint)
+    : QWidget(parent, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint)
 {
+    setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
 
     connect(this, SIGNAL(changeSurfaceSignal(const QString&)), this, SLOT(changeSurface(const QString&)));
@@ -14,8 +15,6 @@ GhostWidget::GhostWidget(QWidget *parent)
     addAction(quitAction);
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
-//    setToolTip(tr("Right click to open context menu."));
-//    setWindowTitle(tr("Ghost Test"));
 
     emit changeSurfaceSignal(QString(R"(D:\D_Programs\GitHub\GhostTest\data\surface1501.png)"));
 

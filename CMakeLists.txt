@@ -44,6 +44,14 @@ else()
     balloonwidget.h
 surface.cpp
 surface.h
+mainprocess.h
+mainprocess.cpp
+talkmanager.h
+talkmanager.cpp
+surfacemanager.h
+surfacemanager.cpp
+filereader.h
+filereader.cpp
   )
 endif()
 
