@@ -8,10 +8,9 @@ TalkParser::TalkParser()
 QStringList TalkParser::Parse(const QString& talk)
 {
     QStringList parsed;
-    QString workStr = talk;
     int cursorPos = 0;
 
-    QRegularExpression regex(R"(<![\s\w\[\]^\\]+>)");
+    QRegularExpression regex(R"(<![\s\w\[\]]+>)");
     auto iter = regex.globalMatch(talk);
 
     ///Separate tags and pieces of text into tokens
@@ -23,7 +22,7 @@ QStringList TalkParser::Parse(const QString& talk)
         QString leadText, tag;
 
         ///separate text leading up to tag, and captured tag
-        leadText = workStr.mid(cursorPos, match.capturedStart() - cursorPos);
+        leadText = talk.mid(cursorPos, match.capturedStart() - cursorPos);
         tag = matchStr;
 
         ///Append to list
