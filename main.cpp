@@ -2,6 +2,7 @@
 #include <filereader.h>
 #include <talkmanager.h>
 #include <surfacemanager.h>
+#include <talkparser.h>
 
 #include <QApplication>
 
@@ -35,6 +36,8 @@ int main(int argc, char *argv[])
 
     tm->PrintTalksList();
     sm->PrintSurfaceList();
+
+    auto tokens = TalkParser::Parse(tm->GetTalk(1000));
 
     MainProcess* mainproc = new MainProcess();
 

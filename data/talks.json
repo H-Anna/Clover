@@ -4,6 +4,7 @@
 	[
 		"This is a test.",
 		"This contains a newline tag.<n>This is a new line.",
-		"<s[0]>This is my default pose.<s[shy]>This is a pose with an alias."
+		"<s[0]>This is my default pose.<s[shy]>This is a pose with an alias.",
+		"<!s[0]><!s[1]><b>This is my default pose.<\b><!s[shy]>This is a pose with an alias.<!n>This is an escaped character: 3 <4.10> 6. <!hello>"
 	]
 }

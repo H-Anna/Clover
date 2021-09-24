@@ -14,6 +14,7 @@ public:
 
     bool LoadTalks(QJsonObject* json);
     void PrintTalksList();
+    QString GetTalk(int idx);
 
 private:
     QStringList talksList;

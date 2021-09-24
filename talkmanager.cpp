@@ -41,3 +41,17 @@ void TalkManager::PrintTalksList()
 
 }
 
+QString TalkManager::GetTalk(int idx)
+{
+    if (talksList.length() == 0) {
+        std::cout << "WARNING - TalkManager - Empty talks list, empty string returned." << std::endl;
+        return "";
+    }
+
+    if (idx < talksList.length())
+        return talksList.at(idx);
+
+    std::cout << "WARNING - TalkManager - No talk at index " << idx << ", last in list returned." << std::endl;
+    return talksList.at(talksList.length()-1);
+}
+
