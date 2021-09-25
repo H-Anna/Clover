@@ -19,7 +19,9 @@ int main(int argc, char *argv[])
 
     ///Make Manager classes parse the loaded files
 
-    TalkManager* tm = new TalkManager();
+    QString r = R"(<! ?(\w+(?:-\w+)*)(?: ?\[(\w+(?:-\w+)*(?:, ?-?\w+(?:-\w+)*)*)\])* ?>)";
+
+    TalkManager* tm = new TalkManager(r);
     SurfaceManager* sm = new SurfaceManager();
 
     for (auto &json: jsonObjects) {
@@ -36,10 +38,12 @@ int main(int argc, char *argv[])
     tm->PrintTalksList();
     sm->PrintSurfaceList();
 
-    auto tokens = TalkManager::Parse(tm->GetTalk(1000));
-    qDebug() << tokens.count() << "token items received from TalkManager::Parse";
+    tm->Parse(tm->GetTalk(1000));
+    qDebug() << tm->GetCurrentTokensList().count() << "token items received from TalkManager::Parse";
 
-    MainProcess* mainproc = new MainProcess();
+    MainProcess* mainproc = new MainProcess(*tm);
+
+    tm->GetNextToken();
 
     return a.exec();
 }

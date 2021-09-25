@@ -1,8 +1,11 @@
 #include "talkmanager.h"
 
-TalkManager::TalkManager()
+TalkManager::TalkManager(QString regexStr)
 {
+    currentTokensList = QStringList();
+    tokenCursor = 0;
 
+    tagRegex.setPattern(regexStr);
 }
 
 TalkManager::~TalkManager()
@@ -55,14 +58,13 @@ QString TalkManager::GetTalk(int idx)
     return talksList.at(talksList.length()-1);
 }
 
-QStringList TalkManager::Parse(const QString &talk)
+void TalkManager::Parse(const QString &talk)
 {
     QStringList parsed;
     int cursorPos = 0;
 
     ///TODO: create a regex that has more characters available but doesn't capture HTML doctype and comment
-    QRegularExpression regex(R"(<![\s\w\[\]]+>)");
-    auto iter = regex.globalMatch(talk);
+    auto iter = tagRegex.globalMatch(talk);
 
     ///Separate tags and pieces of text into tokens
     while (iter.hasNext()) {
@@ -84,8 +86,26 @@ QStringList TalkManager::Parse(const QString &talk)
         cursorPos = match.capturedEnd();
     }
 
+    currentTokensList = parsed;
+    tokenCursor = 0;
+}
 
+void TalkManager::GetNextToken()
+{
+    if (tokenCursor < currentTokensList.length()) {
 
-    return parsed;
+        emit TokenReadySignal(currentTokensList.at(tokenCursor));
+        tokenCursor++;
+    }
+}
+
+QStringList TalkManager::GetCurrentTokensList()
+{
+    return currentTokensList;
+}
+
+QRegularExpression TalkManager::GetTagRegex()
+{
+    return tagRegex;
 }
 

@@ -19,6 +19,12 @@ public:
 
 signals:
     void changeSurfaceSignal(const QString& path);
+
+public slots:
+    //void changeSurface();
+    void changeSurfaceSlot(int id);
+    void changeSurfaceSlot(const QString& alias);
+
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;

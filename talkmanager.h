@@ -4,18 +4,29 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-class TalkManager
+class TalkManager: public QObject
 {
+    Q_OBJECT
 public:
-    TalkManager();
+    TalkManager(QString regexStr);
     ~TalkManager();
 
     bool LoadTalks(QJsonObject* json);
     void PrintTalksList();
     QString GetTalk(int idx);
-    static QStringList Parse(const QString& talk);
+
+    void Parse(const QString& talk);
+    void GetNextToken();
+    QStringList GetCurrentTokensList();
+    QRegularExpression GetTagRegex();
+
+signals:
+    void TokenReadySignal(const QString& token);
 
 private:
     QStringList talksList;
+    QStringList currentTokensList;
+    int tokenCursor;
+    QRegularExpression tagRegex;
 };
 #endif // TALKMANAGER_H

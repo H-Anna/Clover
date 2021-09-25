@@ -25,22 +25,6 @@ BalloonWidget::~BalloonWidget()
     delete textBrowser;
 }
 
-void BalloonWidget::printText()
-{
-    textBrowser->insertPlainText(printingText.at(textIdx));
-    textIdx++;
-
-    if (textIdx >= printingText.length()) {
-        textIdx = 0;
-        textTimer->stop();
-    }
-}
-
-void BalloonWidget::changeBalloon(const QString &path)
-{
-    displayedImage = QPixmap(path);
-}
-
 void BalloonWidget::mouseMoveEvent(QMouseEvent *event)
 {
     if (event->buttons() & Qt::LeftButton) {
@@ -96,4 +80,20 @@ void BalloonWidget::prepareText(const QString &text)
 {
     printingText = text;
     textTimer->start();
+}
+
+void BalloonWidget::printText()
+{
+    textBrowser->insertPlainText(printingText.at(textIdx));
+    textIdx++;
+
+    if (textIdx >= printingText.length()) {
+        textIdx = 0;
+        textTimer->stop();
+    }
+}
+
+void BalloonWidget::changeBalloon(const QString &path)
+{
+    displayedImage = QPixmap(path);
 }

@@ -32,8 +32,6 @@ private:
     QString printingText;
 
     void setupTextBrowser();
-    void printByChar(const QString& text);
-
 
 private slots:
     void prepareText(const QString& text);

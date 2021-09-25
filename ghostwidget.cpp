@@ -18,11 +18,21 @@ GhostWidget::GhostWidget(QWidget *parent)
 
     emit changeSurfaceSignal(QString(R"(D:\D_Programs\GitHub\GhostTest\data\surface1501.png)"));
 
-    qDebug() << "INFO - GhostWidget - The ghost has appeared.";
+    qDebug() << "INFO - GhostWidget - The ghost has loaded.";
 }
 
 GhostWidget::~GhostWidget()
 {
+}
+
+void GhostWidget::changeSurfaceSlot(int id)
+{
+    qDebug() << "INFO - GhostWidget - Received id" << id << "from MainProcess";
+}
+
+void GhostWidget::changeSurfaceSlot(const QString &alias)
+{
+    qDebug() << "INFO - GhostWidget - Received alias" << alias << "from MainProcess";
 }
 
 void GhostWidget::mouseMoveEvent(QMouseEvent *event)
