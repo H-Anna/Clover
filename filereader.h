@@ -3,8 +3,6 @@
 
 #define DATAPATH R"(D:\D_Programs\GitHub\GhostTest\data)"
 
-#include <iostream>
-
 #include <QDir>
 #include <QJsonObject>
 #include <QJsonDocument>

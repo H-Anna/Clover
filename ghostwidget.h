@@ -1,14 +1,13 @@
 #ifndef GHOSTWIDGET_H
 #define GHOSTWIDGET_H
 
-#include <iostream>
-
 #include <QCoreApplication>
 #include <QWidget>
 #include <QAction>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPixmap>
+#include <QDebug>
 
 class GhostWidget : public QWidget
 {

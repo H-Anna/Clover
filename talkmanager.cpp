@@ -14,7 +14,7 @@ bool TalkManager::LoadTalks(QJsonObject *json)
     QJsonArray talksArray = json->value("talks").toArray();
 
     if (talksArray.empty()) {
-        std::cout << "ERROR - TalkManager - Talks couldn't be loaded!" << std::endl;
+        qDebug() << "ERROR - TalkManager - Talks couldn't be loaded!";
         return false;
     }
 
@@ -27,16 +27,16 @@ bool TalkManager::LoadTalks(QJsonObject *json)
 
 void TalkManager::PrintTalksList()
 {
-    std::cout << "INFO - TalkManager" << std::endl;
+    qDebug() << "INFO - TalkManager";
 
     if (talksList.count() > 0) {
-        std::cout << "Talks loaded: " << talksList.count() << std::endl;
+        qDebug() << "Talks loaded:" << talksList.count();
 
         for (auto &it: talksList) {
-            std::cout << it.toStdString() << std::endl;
+            qDebug().noquote() << it;
         }
     } else {
-        std::cout << "No talks loaded." << std::endl;
+        qDebug() << "No talks loaded.";
     }
 
 }
@@ -44,14 +44,48 @@ void TalkManager::PrintTalksList()
 QString TalkManager::GetTalk(int idx)
 {
     if (talksList.length() == 0) {
-        std::cout << "WARNING - TalkManager - Empty talks list, empty string returned." << std::endl;
+        qDebug() << "WARNING - TalkManager - Empty talks list, empty string returned.";
         return "";
     }
 
     if (idx < talksList.length())
         return talksList.at(idx);
 
-    std::cout << "WARNING - TalkManager - No talk at index " << idx << ", last in list returned." << std::endl;
+    qDebug().nospace() << "WARNING - TalkManager - No talk at index " << idx << ", last in list returned.";
     return talksList.at(talksList.length()-1);
+}
+
+QStringList TalkManager::Parse(const QString &talk)
+{
+    QStringList parsed;
+    int cursorPos = 0;
+
+    ///TODO: create a regex that has more characters available but doesn't capture HTML doctype and comment
+    QRegularExpression regex(R"(<![\s\w\[\]]+>)");
+    auto iter = regex.globalMatch(talk);
+
+    ///Separate tags and pieces of text into tokens
+    while (iter.hasNext()) {
+
+        ///Setup variables, get next match
+        auto match = iter.next();
+        auto matchStr = match.captured();
+        QString leadText, tag;
+
+        ///separate text leading up to tag, and captured tag
+        leadText = talk.mid(cursorPos, match.capturedStart() - cursorPos);
+        tag = matchStr;
+
+        ///Append to list
+        if (!leadText.isEmpty())
+            parsed.append(leadText);
+
+        parsed.append(tag);
+        cursorPos = match.capturedEnd();
+    }
+
+
+
+    return parsed;
 }
 

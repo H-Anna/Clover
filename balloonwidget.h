@@ -1,10 +1,7 @@
 #ifndef BALLOONWIDGET_H
 #define BALLOONWIDGET_H
 
-#include <iostream>
-#include <QObject>
 #include <QWidget>
-#include <QAction>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPixmap>

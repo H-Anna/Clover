@@ -52,8 +52,6 @@ else()
     surfacemanager.cpp
     filereader.h
     filereader.cpp
-    talkparser.h
-    talkparser.cpp
   )
 endif()
 

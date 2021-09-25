@@ -7,7 +7,7 @@ bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, const QString &abso
     auto filesInfoList = QDir(absolutePath).entryInfoList(QDir::Files);
 
     if (filesInfoList.empty()) {
-        std::cout << "ERROR - FileReader - No files in directory!" << std::endl;
+        qDebug() << "ERROR - FileReader - No files in directory!";
         return false;
     }
 
@@ -34,7 +34,7 @@ bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, const QString &abso
         validCount++;
     }
 
-    std::cout << "INFO - FileReader - Read " << validCount << " files as valid JSONs." << std::endl;
+    qDebug().nospace() << "INFO - FileReader - Read " << validCount << " files as valid JSONs.";
 
     return true;
 }

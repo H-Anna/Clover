@@ -2,7 +2,6 @@
 #include <filereader.h>
 #include <talkmanager.h>
 #include <surfacemanager.h>
-#include <talkparser.h>
 
 #include <QApplication>
 
@@ -15,7 +14,7 @@ int main(int argc, char *argv[])
     QList<QJsonObject> jsonObjects;
 
     if (!FileReader::ReadFiles(&jsonObjects)) {
-        std::cout << "ERROR - FileReader: Something happened during file reading." << std::endl;
+       qDebug() << "ERROR - FileReader: Something happened during file reading.";
     }
 
     ///Make Manager classes parse the loaded files
@@ -37,7 +36,8 @@ int main(int argc, char *argv[])
     tm->PrintTalksList();
     sm->PrintSurfaceList();
 
-    auto tokens = TalkParser::Parse(tm->GetTalk(1000));
+    auto tokens = TalkManager::Parse(tm->GetTalk(1000));
+    qDebug() << tokens.count() << "token items received from TalkManager::Parse";
 
     MainProcess* mainproc = new MainProcess();
 

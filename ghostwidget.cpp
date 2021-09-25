@@ -18,7 +18,7 @@ GhostWidget::GhostWidget(QWidget *parent)
 
     emit changeSurfaceSignal(QString(R"(D:\D_Programs\GitHub\GhostTest\data\surface1501.png)"));
 
-    std::cout << "The ghost has appeared." << std::endl;
+    qDebug() << "INFO - GhostWidget - The ghost has appeared.";
 }
 
 GhostWidget::~GhostWidget()
