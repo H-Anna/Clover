@@ -21,7 +21,6 @@ signals:
     void changeSurfaceSignal(const QString& path);
 
 public slots:
-    //void changeSurface();
     void changeSurfaceSlot(int id);
     void changeSurfaceSlot(const QString& alias);
 

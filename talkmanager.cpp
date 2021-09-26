@@ -63,28 +63,34 @@ void TalkManager::Parse(const QString &talk)
     QStringList parsed;
     int cursorPos = 0;
 
-    ///TODO: create a regex that has more characters available but doesn't capture HTML doctype and comment
     auto iter = tagRegex.globalMatch(talk);
 
-    ///Separate tags and pieces of text into tokens
+    /// Separate tags and pieces of text into tokens
+
     while (iter.hasNext()) {
 
-        ///Setup variables, get next match
+        /// Setup variables, get next match
+
         auto match = iter.next();
         auto matchStr = match.captured();
         QString leadText, tag;
 
-        ///separate text leading up to tag, and captured tag
+        /// Separate text leading up to tag, and captured tag
+
         leadText = talk.mid(cursorPos, match.capturedStart() - cursorPos);
         tag = matchStr;
 
-        ///Append to list
+        /// Append to list
+
         if (!leadText.isEmpty())
             parsed.append(leadText);
 
         parsed.append(tag);
         cursorPos = match.capturedEnd();
     }
+
+    if (cursorPos < talk.length())
+        parsed.append(talk.mid(cursorPos, talk.length() - cursorPos));
 
     currentTokensList = parsed;
     tokenCursor = 0;
@@ -93,9 +99,9 @@ void TalkManager::Parse(const QString &talk)
 void TalkManager::GetNextToken()
 {
     if (tokenCursor < currentTokensList.length()) {
-
-        emit TokenReadySignal(currentTokensList.at(tokenCursor));
-        tokenCursor++;
+        emit TokenReadySignal(currentTokensList.at(tokenCursor++));
+    } else {
+        qDebug() << "INFO - TalkManager - All tokens have been passed.";
     }
 }
 

@@ -14,14 +14,15 @@ public:
     bool LoadTalks(QJsonObject* json);
     void PrintTalksList();
     QString GetTalk(int idx);
-
     void Parse(const QString& talk);
-    void GetNextToken();
+
     QStringList GetCurrentTokensList();
     QRegularExpression GetTagRegex();
 
 signals:
     void TokenReadySignal(const QString& token);
+public slots:
+    void GetNextToken();
 
 private:
     QStringList talksList;

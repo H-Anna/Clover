@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    ///Load files with FileReader as JSON objects
+    /// Load files with FileReader as JSON objects
 
     QList<QJsonObject> jsonObjects;
 
@@ -17,11 +17,9 @@ int main(int argc, char *argv[])
        qDebug() << "ERROR - FileReader: Something happened during file reading.";
     }
 
-    ///Make Manager classes parse the loaded files
+    /// Make Manager classes parse the loaded files
 
-    QString r = R"(<! ?(\w+(?:-\w+)*)(?: ?\[(\w+(?:-\w+)*(?:, ?-?\w+(?:-\w+)*)*)\])* ?>)";
-
-    TalkManager* tm = new TalkManager(r);
+    TalkManager* tm = new TalkManager(R"(<! ?(\w+(?:-\w+)*)(?: ?\[(\w+(?:-\w+)*(?:, ?-?\w+(?:-\w+)*)*)\])* ?>)");
     SurfaceManager* sm = new SurfaceManager();
 
     for (auto &json: jsonObjects) {

@@ -16,13 +16,19 @@ BalloonWidget::BalloonWidget(QWidget *parent)
 
     textTimer = new QTimer(this);
     connect(textTimer, &QTimer::timeout, this, &BalloonWidget::printText);
-    textTimer->setInterval(10);
+    textTimer->setInterval(50);
 }
 
 BalloonWidget::~BalloonWidget()
 {
     delete textTimer;
     delete textBrowser;
+}
+
+void BalloonWidget::clearBalloonText()
+{
+    if (textBrowser != nullptr)
+        textBrowser->clear();
 }
 
 void BalloonWidget::mouseMoveEvent(QMouseEvent *event)
@@ -72,7 +78,7 @@ void BalloonWidget::setupTextBrowser()
     textBrowser->setPalette(p);
 
     textBrowser->show();
-    emit prepareTextSignal("Hello \nLorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas lacinia eros in elit tristique porttitor. Nam a consectetur augue. Mauris maximus, tellus sit amet vulputate volutpat, tellus lectus elementum urna, non malesuada justo tellus sed magna. Integer a ultricies felis. Proin nec efficitur nisi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.");
+    //emit prepareTextSignal("Hello \nLorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas lacinia eros in elit tristique porttitor. Nam a consectetur augue. Mauris maximus, tellus sit amet vulputate volutpat, tellus lectus elementum urna, non malesuada justo tellus sed magna. Integer a ultricies felis. Proin nec efficitur nisi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.");
 
 }
 
@@ -90,6 +96,7 @@ void BalloonWidget::printText()
     if (textIdx >= printingText.length()) {
         textIdx = 0;
         textTimer->stop();
+        emit finishedTextPrintSignal();
     }
 }
 

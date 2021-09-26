@@ -7,8 +7,11 @@
 
 #include <QRegularExpression>
 
+
 class MainProcess: public QObject
 {
+    typedef void (*tagLambdaPtr)(MainProcess&, const QStringList&);
+
     Q_OBJECT
 public:
     MainProcess(TalkManager& tm);
@@ -16,30 +19,39 @@ public:
 
 public slots:
     void EvaluateToken(const QString& token);
-    void Test();
+
 
 signals:
 
 private:
     void BuildTagLambdaMap();
+    void ConnectTagSignals(const GhostWidget& w);
+    void ConnectTagSignals(const BalloonWidget& w);
+    void DisconnectTagSignals(const GhostWidget& w);
+    void DisconnectTagSignals(const BalloonWidget& w);
+
+    void printUndefinedTag(const QString& tag, const QStringList& params);
 
     QList<GhostWidget*> ghostWidgets;
     QList<BalloonWidget*> balloonWidgets;
 
     QString currentToken;
-    //QMap<QString, void(*)(const QStringList &)> tagLambdaMap;
     QRegularExpression tagRegex;
 
     GhostWidget* ghostInScope;
     BalloonWidget* balloonInScope;
 
+    QMap<QString, tagLambdaPtr> tagLambdaMap;
+
+
+
 signals:
-    void testSignal();
     bool changeSurfaceSignal(int id);
     bool changeSurfaceSignal(const QString& alias);
-    bool balloonClearSignal();
+    bool printTextSignal(const QString& text);
 
-//    void tokenEvaluatedSignal();
+
+    void finishedTokenEvaluationSignal();
 
 };
 

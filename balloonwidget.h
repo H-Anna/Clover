@@ -14,9 +14,12 @@ class BalloonWidget: public QWidget
 public:
     BalloonWidget(QWidget *parent = nullptr);
     ~BalloonWidget();
+
+    void clearBalloonText();
 signals:
     void prepareTextSignal(const QString& text);
     void changeBalloonSignal(const QString& path);
+    void finishedTextPrintSignal();
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;

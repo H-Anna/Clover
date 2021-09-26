@@ -12,7 +12,7 @@ SurfaceManager::~SurfaceManager()
 
 bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &imgPath)
 {
-    ///Read json object and load contents into surfaceList
+    /// Read JSON object and load contents into surfaceList
 
     QJsonArray surfaceArray = json->value("surfaces").toArray();
 

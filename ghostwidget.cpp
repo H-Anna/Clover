@@ -27,12 +27,16 @@ GhostWidget::~GhostWidget()
 
 void GhostWidget::changeSurfaceSlot(int id)
 {
-    qDebug() << "INFO - GhostWidget - Received id" << id << "from MainProcess";
+    //TODO
+
+    qDebug() << "INFO - GhostWidget - Change to surface" << id;
 }
 
 void GhostWidget::changeSurfaceSlot(const QString &alias)
 {
-    qDebug() << "INFO - GhostWidget - Received alias" << alias << "from MainProcess";
+    //TODO
+
+    qDebug() << "INFO - GhostWidget - Change to surface with alias" << alias;
 }
 
 void GhostWidget::mouseMoveEvent(QMouseEvent *event)
@@ -62,7 +66,9 @@ void GhostWidget::paintEvent(QPaintEvent *)
 
 void GhostWidget::changeSurface(const QString &path)
 {
+    show();
     displayedImage = QPixmap(path);
 }
+
 
 

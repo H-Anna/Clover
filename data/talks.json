@@ -5,6 +5,6 @@
 		"This is a test.",
 		"This contains a newline tag.<n>This is a new line.",
 		"<s[0]>This is my default pose.<s[shy]>This is a pose with an alias.",
-		"<!s[1]><b>This is my default pose.<\b><!s[shy]>This is a pose with an alias.<!s[-1]>I am going to hide until this text is finished printing.<!s[0]> I've returned."
+		"<!s[1]><b>This is my default pose.<\b><!s[shy]> This is a pose with an alias.<!hide> I am going to hide until this text is finished printing.<!show> I've returned. I'm now going to waste space in this balloon....................<!clr>I've cleared the balloon so there's some more space to write. I will now wait for 5 seconds.<!wait[5000]> The wait is over. I will give you an undefined tag.<!hello[debug]> Done."
 	]
 }
