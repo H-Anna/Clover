@@ -19,7 +19,8 @@ int main(int argc, char *argv[])
 
     /// Make Manager classes parse the loaded files
 
-    TalkManager* tm = new TalkManager(R"(<! ?(\w+(?:-\w+)*)(?: ?\[(\w+(?:-\w+)*(?:, ?-?\w+(?:-\w+)*)*)\])* ?>)");
+    TalkManager* tm = new TalkManager(R"(<! ?(\w+(?:-\w+)*)(?: ?\[(\w+(?:-\w+)*(?:, ?-?\w+(?:-\w+)*)*)\])* ?>)",
+                                      R"(<[^!].*?>)");
     SurfaceManager* sm = new SurfaceManager();
 
     for (auto &json: jsonObjects) {
@@ -36,12 +37,16 @@ int main(int argc, char *argv[])
     tm->PrintTalksList();
     sm->PrintSurfaceList();
 
-    tm->Parse(tm->GetTalk(1000));
-    qDebug() << tm->GetCurrentTokensList().count() << "token items received from TalkManager::Parse";
+
 
     MainProcess* mainproc = new MainProcess(*tm);
 
-    tm->GetNextToken();
+    //tm->Parse(tm->GetTalk(1000));
+    //qDebug() << tm->GetCurrentTokensList().count() << "token items received from TalkManager::Parse";
+
+    auto tc = tm->MakeTokens(tm->GetTalk(1000));
+    mainproc->SaveTokenCollection(tc);
+    mainproc->EvaluateTokens();
 
     return a.exec();
 }

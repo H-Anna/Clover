@@ -5,8 +5,6 @@
 #include <balloonwidget.h>
 #include <talkmanager.h>
 
-#include <QRegularExpression>
-
 
 class MainProcess: public QObject
 {
@@ -16,10 +14,10 @@ class MainProcess: public QObject
 public:
     MainProcess(TalkManager& tm);
     ~MainProcess();
+    void SaveTokenCollection(TokenCollection &tc);
 
 public slots:
-    void EvaluateToken(const QString& token);
-
+    void EvaluateTokens();
 
 signals:
 
@@ -29,27 +27,27 @@ private:
     void ConnectTagSignals(const BalloonWidget& w);
     void DisconnectTagSignals(const GhostWidget& w);
     void DisconnectTagSignals(const BalloonWidget& w);
+    void ExecuteCommand(const Token& token);
 
     void printUndefinedTag(const QString& tag, const QStringList& params);
 
     QList<GhostWidget*> ghostWidgets;
     QList<BalloonWidget*> balloonWidgets;
 
-    QString currentToken;
-    QRegularExpression tagRegex;
-
     GhostWidget* ghostInScope;
     BalloonWidget* balloonInScope;
 
     QMap<QString, tagLambdaPtr> tagLambdaMap;
 
+    TokenCollection* currentTC;
+    int tokenCursor;
 
+    bool insertedDoctype;
 
 signals:
     bool changeSurfaceSignal(int id);
     bool changeSurfaceSignal(const QString& alias);
     bool printTextSignal(const QString& text);
-
 
     void finishedTokenEvaluationSignal();
 

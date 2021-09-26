@@ -1,11 +1,12 @@
 #include "talkmanager.h"
 
-TalkManager::TalkManager(QString regexStr)
+TalkManager::TalkManager(const QString &regexStr, const QString &htmlRegexStr)
+    :
+    currentTokensList(QStringList()),
+    tokenCursor(0)
 {
-    currentTokensList = QStringList();
-    tokenCursor = 0;
-
     tagRegex.setPattern(regexStr);
+    htmlRegex.setPattern(htmlRegexStr);
 }
 
 TalkManager::~TalkManager()
@@ -58,6 +59,14 @@ QString TalkManager::GetTalk(int idx)
     return talksList.at(talksList.length()-1);
 }
 
+TokenCollection TalkManager::MakeTokens(const QString &talk)
+{
+    auto tokens = new TokenCollection();
+    Parse(*tokens, talk, tagRegex);
+    return *tokens;
+
+}
+
 void TalkManager::Parse(const QString &talk)
 {
     QStringList parsed;
@@ -91,6 +100,97 @@ void TalkManager::Parse(const QString &talk)
 
     if (cursorPos < talk.length())
         parsed.append(talk.mid(cursorPos, talk.length() - cursorPos));
+
+    currentTokensList = parsed;
+    tokenCursor = 0;
+}
+
+void TalkManager::Parse(TokenCollection &tc, const QString &str, const QRegularExpression &regex)
+{
+    QStringList parsed;
+    int cursorPos = 0;
+
+    auto iter = regex.globalMatch(str);
+
+    /// Separate tags and pieces of text into tokens
+
+    while (iter.hasNext()) {
+
+        /// Setup variables, get next match
+
+        auto match = iter.next();
+        QString leadText, tag;
+        QStringList params;
+
+        /// -------------------------------------
+        /// PARSING / SAVING LEADING TEXT
+        /// -------------------------------------
+
+        /// Separate text leading up to tag, and captured tag
+
+        leadText = str.mid(cursorPos, match.capturedStart() - cursorPos);
+
+        /// Append to list
+        if (!leadText.isEmpty()) {
+
+            /// If HTML tags are being parsed, then what we have is most definitely plaintext.
+            /// Can't be processed any further -> append.
+            if (regex == htmlRegex) {
+                tc.append(leadText, Token::PlainText);
+            }
+
+            /// If Command tags are being parsed, leadText may contain HTML. Parse again.
+            /// The "if" above ensures that the Parse function that parses HTML tags will not recurse.
+            else {
+                Parse(tc, leadText, htmlRegex);
+            }
+        }
+
+        /// -------------------------------------
+        /// SAVING TAG
+        /// -------------------------------------
+
+        /// Take tag (key in map) and see if there's any parameters
+        if (regex == htmlRegex) {
+
+            tag = match.captured();
+
+        } else {
+
+            tag = match.captured(1);
+            auto _p = match.captured(2);
+
+            if (!_p.isNull()) {
+                auto _list = _p.split(',', Qt::SkipEmptyParts);
+
+                for (auto &it: _list)
+                    it = it.trimmed();
+
+                params = _list;
+            }
+        }
+
+        ///Mark tag type correctly.
+        tc.append(tag, regex == htmlRegex ? Token::HtmlTag : Token::CommandTag, params);
+
+        cursorPos = match.capturedEnd();
+    }
+
+    ///If there is some text left, parse it the same way as leadText above.
+
+    if (cursorPos < str.length()) {
+        auto remainderText = str.mid(cursorPos, str.length() - cursorPos);
+
+        if (!remainderText.isEmpty()) {
+
+            if (regex == htmlRegex) {
+                tc.append(remainderText, Token::PlainText);
+            }
+            else {
+                Parse(tc, remainderText, htmlRegex);
+            }
+        }
+    }
 
     currentTokensList = parsed;
     tokenCursor = 0;

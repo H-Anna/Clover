@@ -52,6 +52,11 @@ else()
     surfacemanager.cpp
     filereader.h
     filereader.cpp
+    tokencollection.h
+    tokencollection.cpp
+    token.h
+    token.cpp
+
   )
 endif()
 

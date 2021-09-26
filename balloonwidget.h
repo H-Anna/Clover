@@ -5,7 +5,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPixmap>
-#include <QTextBrowser>
+#include <QPlainTextEdit>
 #include <QTimer>
 
 class BalloonWidget: public QWidget
@@ -16,6 +16,7 @@ public:
     ~BalloonWidget();
 
     void clearBalloonText();
+    void appendHtml(const QString& text);
 signals:
     void prepareTextSignal(const QString& text);
     void changeBalloonSignal(const QString& path);
@@ -29,7 +30,7 @@ protected:
 private:
     QPoint dragPosition;
     QPixmap displayedImage;
-    QTextBrowser* textBrowser;
+    QPlainTextEdit* textBrowser;
     int textIdx;
     QTimer* textTimer;
     QString printingText;

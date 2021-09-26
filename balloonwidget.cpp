@@ -31,6 +31,12 @@ void BalloonWidget::clearBalloonText()
         textBrowser->clear();
 }
 
+void BalloonWidget::appendHtml(const QString &text)
+{
+    if (textBrowser != nullptr)
+        textBrowser->appendHtml("<b>");
+}
+
 void BalloonWidget::mouseMoveEvent(QMouseEvent *event)
 {
     if (event->buttons() & Qt::LeftButton) {
@@ -62,7 +68,8 @@ void BalloonWidget::paintEvent(QPaintEvent *)
 
 void BalloonWidget::setupTextBrowser()
 {
-    textBrowser = new QTextBrowser(this);
+    textBrowser = new QPlainTextEdit(this);
+    textBrowser->setReadOnly(true);
     textBrowser->setAttribute(Qt::WA_TranslucentBackground);
     textBrowser->setFocusPolicy(Qt::WheelFocus);
     textBrowser->setContextMenuPolicy(Qt::NoContextMenu);
@@ -78,7 +85,6 @@ void BalloonWidget::setupTextBrowser()
     textBrowser->setPalette(p);
 
     textBrowser->show();
-    //emit prepareTextSignal("Hello \nLorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas lacinia eros in elit tristique porttitor. Nam a consectetur augue. Mauris maximus, tellus sit amet vulputate volutpat, tellus lectus elementum urna, non malesuada justo tellus sed magna. Integer a ultricies felis. Proin nec efficitur nisi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.");
 
 }
 

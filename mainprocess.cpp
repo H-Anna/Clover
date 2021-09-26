@@ -1,9 +1,13 @@
 #include "mainprocess.h"
 
 MainProcess::MainProcess(TalkManager &tm)
+    :
+    ghostWidgets(QList<GhostWidget*>()),
+    balloonWidgets(QList<BalloonWidget*>()),
+    currentTC(nullptr),
+    tokenCursor(0),
+    insertedDoctype(false)
 {
-    ghostWidgets = QList<GhostWidget*>();
-    balloonWidgets = QList<BalloonWidget*>();
 
     ghostInScope = new GhostWidget();
     ghostWidgets.append(ghostInScope);
@@ -11,20 +15,15 @@ MainProcess::MainProcess(TalkManager &tm)
     balloonInScope = new BalloonWidget();
     balloonWidgets.append(balloonInScope);
 
-    ghostWidgets.at(0)->show();
-    balloonWidgets.at(0)->show();
+    ghostInScope->show();
+    balloonInScope->show();
 
     /// --------IMPORTANT SIGNALS--------
 
-    /// On receiving a token from the TM, evaluate it
-
-    connect(&tm, SIGNAL(TokenReadySignal(const QString&)),
-            this, SLOT(EvaluateToken(const QString&)));
-
-    /// On having evaluated a token, ask for more
+    /// Each time this signal fires, evaluate the next token
 
     connect(this, SIGNAL(finishedTokenEvaluationSignal()),
-            &tm, SLOT(GetNextToken()));
+            this, SLOT(EvaluateTokens()));
 
     /// ---------------------------------
 
@@ -40,7 +39,7 @@ MainProcess::MainProcess(TalkManager &tm)
     /// I will evaluate other options, such as passing a parameter to help evaluate which widget should be
     /// listening to a particular signal.
     ///
-    /// TODO: When switching scope, DISCONNECT pointer signals, CHANGE pointer, then RECONNECT signals
+    /// TODO: When switching scope, DISCONNECT signals, CHANGE pointer, then RECONNECT signals
     ///
     /// TODO: SEMANTIC ERROR: connecting a new signal but forgetting to disconnect it. How to get around this?
 
@@ -49,9 +48,6 @@ MainProcess::MainProcess(TalkManager &tm)
 
     /// ------------LAMBDA MAP------------
 
-    /// Also making sure the TalkManager and MainProcess use the same tag regex.
-
-    tagRegex = tm.GetTagRegex();
     BuildTagLambdaMap();
 }
 
@@ -73,6 +69,7 @@ MainProcess::~MainProcess()
 
     delete ghostInScope;
     delete balloonInScope;
+    delete currentTC;
 
     for (auto &it: tagLambdaMap.values()) {
         delete &it;
@@ -81,58 +78,64 @@ MainProcess::~MainProcess()
     tagLambdaMap.clear();
 }
 
-void MainProcess::EvaluateToken(const QString &token)
+void MainProcess::EvaluateTokens()
 {
-    QString tag;
-    QStringList params = QStringList();
+    if (currentTC == nullptr)
+        return;
 
-    auto match = tagRegex.match(token);
+    if (!insertedDoctype && currentTC->HasHtml()) {
 
-    /// Command tag
-    if (match.hasMatch()) {
-
-        /// Take tag (key in map) and see if there's any parameters
-
-        tag = match.captured(1);
-        auto _p = match.captured(2);
-
-        if (!_p.isNull()) {
-            auto _list = _p.split(',', Qt::SkipEmptyParts);
-
-            for (auto &it: _list)
-                it = it.trimmed();
-
-            params = _list;
-        }
-
-        /// Choose lambda to execute based on tag, using a map...
-
-        if (tagLambdaMap.contains(tag)) {
-
-            tagLambdaMap[tag](*this, params);
-
-        } else {
-
-            /// ...or print WARNING to console if the tag is not defined.
-            /// TODO: use exceptions instead?
-
-            qDebug() << "WARNING - MainProcess - Tag not defined in tagLambdaMap.";
-            printUndefinedTag(tag, params);
-            emit finishedTokenEvaluationSignal();
-        }
+        balloonInScope->appendHtml("<!DOCTYPE html>");
+        insertedDoctype = true;
     }
 
-    /// If no tag was detected, it's just plaintext, so display it.
+    auto token = currentTC->GetNextToken();
 
-    else {
-        /// Prints to balloon. Waits for finishedTextPrintSignal!
-        emit printTextSignal(token);
+    switch (token.getType()) {
+        case Token::CommandTag:
+        {
+            ExecuteCommand(token);
+            break;
+        }
+
+        case Token::HtmlTag:
+        {
+            /// TODO: this doesn't work. Why??
+
+            balloonInScope->appendHtml(token.getContents());
+            emit finishedTokenEvaluationSignal();
+            break;
+        }
+
+        case Token::PlainText:
+        {
+            emit printTextSignal(token.getContents());
+            break;
+        }
+
+        case Token::END:
+        {
+            /// DO NOT EMIT finishedTokenEvaluationSignal OR ELSE IT WILL LOOP FOREVER
+
+            qDebug() << "INFO - MainProcess - All tokens have been passed.";
+            break;
+        }
+
+        default:
+        {
+            qDebug() << "WARNING - MainProcess - Unexpected token type" << token.getType();
+            qDebug().nospace() << "Token parameters: " << token.getParams() << "  ||  Token contents: " << token.getContents();
+
+            emit finishedTokenEvaluationSignal();
+            break;
+        }
+
     }
 }
 
-void MainProcess::printUndefinedTag(const QString &tag, const QStringList &params)
+void MainProcess::SaveTokenCollection(TokenCollection &tc)
 {
-    qDebug() << "Undefined tag:" << tag << "Parameters:" << params;
+    currentTC = &tc;
 }
 
 void MainProcess::BuildTagLambdaMap()
@@ -186,7 +189,8 @@ void MainProcess::BuildTagLambdaMap()
     tagLambdaMap.insert("s",[](MainProcess& mp, const QStringList& params){
 
         if (params.count() > 1) {
-            qDebug() << "WARNING - MainProcess - Surface change tag has multiple parameters, UNHANDLED CASE. No signal emitted.";
+            qDebug() << "WARNING - MainProcess - Surface change tag has multiple parameters, UNHANDLED CASE. Skipping to next token.";
+            emit mp.finishedTokenEvaluationSignal();
             return;
         }
 
@@ -240,7 +244,21 @@ void MainProcess::DisconnectTagSignals(const BalloonWidget &w)
             &w, SLOT(prepareText(const QString&)));
 
     disconnect(&w, SIGNAL(finishedTextPrintSignal()),
-            this, SIGNAL(finishedTokenEvaluationSignal()));
+               this, SIGNAL(finishedTokenEvaluationSignal()));
+}
+
+void MainProcess::ExecuteCommand(const Token &token)
+{
+    auto tag = token.getContents();
+
+    if (tagLambdaMap.keys().contains(tag)) {
+        auto params = token.getParams();
+        tagLambdaMap[tag](*this, params);
+
+    } else {
+        qDebug() << "WARNING - MainProcess - CommandTag" << tag << "is not part of tagLambdaMap. Skipping to next token.";
+        emit finishedTokenEvaluationSignal();
+    }
 }
 
 
