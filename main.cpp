@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
     path = R"(../data)";
 #endif
 
+    dataDir.cd(path);
+
     /// Load files with FileReader as JSON objects
 
     QList<QJsonObject> jsonObjects;
