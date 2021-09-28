@@ -6,6 +6,7 @@ GhostWidget::GhostWidget(QWidget *parent)
     setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
 
+    /// TODO: implement change surface
     connect(this, SIGNAL(changeSurfaceSignal(const QString&)), this, SLOT(changeSurface(const QString&)));
     connect(this, SIGNAL(changeSurfaceSignal(const QString&)), this, SLOT(update()));
 
@@ -16,9 +17,9 @@ GhostWidget::GhostWidget(QWidget *parent)
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    emit changeSurfaceSignal(QString(R"(D:\D_Programs\GitHub\GhostTest\data\surface1501.png)"));
+    changeSurface(QString(R"(D:\D_Programs\GitHub\GhostTest\data\surface1501.png)"));
 
-    qDebug() << "INFO - GhostWidget - The ghost has loaded.";
+    emit ghostLoadedSignal();
 }
 
 GhostWidget::~GhostWidget()

@@ -17,9 +17,9 @@ public:
     void PrintTalksList();
     QString GetTalk(int idx);
     TokenCollection MakeTokens(const QString& talk);
-    void Parse(const QString& talk);
+    QString PreprocessTalk(const QString& talk);
     void Parse(TokenCollection& tc, const QString& str, const QRegularExpression& regex);
-    void ParseHtml(const QString& str);
+
 
     QStringList GetCurrentTokensList();
     QRegularExpression GetTagRegex();

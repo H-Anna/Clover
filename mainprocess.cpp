@@ -1,12 +1,11 @@
 #include "mainprocess.h"
 
-MainProcess::MainProcess(TalkManager &tm)
+MainProcess::MainProcess()
     :
     ghostWidgets(QList<GhostWidget*>()),
     balloonWidgets(QList<BalloonWidget*>()),
     currentTC(nullptr),
-    tokenCursor(0),
-    insertedDoctype(false)
+    tokenCursor(0)
 {
 
     ghostInScope = new GhostWidget();
@@ -83,13 +82,9 @@ void MainProcess::EvaluateTokens()
     if (currentTC == nullptr)
         return;
 
-    if (!insertedDoctype && currentTC->HasHtml()) {
-
-        balloonInScope->appendHtml("<!DOCTYPE html>");
-        insertedDoctype = true;
-    }
-
     auto token = currentTC->GetNextToken();
+
+    qDebug().noquote() << "INFO - MainProcess - Token:" << token.getContents() << " Type:" << token.getType();
 
     switch (token.getType()) {
         case Token::CommandTag:
@@ -100,8 +95,6 @@ void MainProcess::EvaluateTokens()
 
         case Token::HtmlTag:
         {
-            /// TODO: this doesn't work. Why??
-
             balloonInScope->appendHtml(token.getContents());
             emit finishedTokenEvaluationSignal();
             break;
@@ -113,11 +106,12 @@ void MainProcess::EvaluateTokens()
             break;
         }
 
-        case Token::END:
+        case Token::End:
         {
             /// DO NOT EMIT finishedTokenEvaluationSignal OR ELSE IT WILL LOOP FOREVER
-
+            balloonInScope->printBalloonContents();
             qDebug() << "INFO - MainProcess - All tokens have been passed.";
+
             break;
         }
 
@@ -175,7 +169,7 @@ void MainProcess::BuildTagLambdaMap()
 
     /// You can omit "params" if you don't use it in your lambda to get rid of warnings.
     tagLambdaMap.insert("clr", [](MainProcess& mp, const QStringList&){
-        mp.balloonInScope->clearBalloonText();
+        mp.balloonInScope->clearBalloon();
         emit mp.finishedTokenEvaluationSignal(); });
 
     tagLambdaMap.insert("hide", [](MainProcess& mp, const QStringList&){
@@ -206,6 +200,8 @@ void MainProcess::BuildTagLambdaMap()
 
         emit mp.finishedTokenEvaluationSignal(); });
 
+    /// TODO: does every single lambda function have to emit FTE? This makes it possible for other
+    /// objects to block MainProcess until they're finished, but it's very redundant...
 }
 
 void MainProcess::ConnectTagSignals(const GhostWidget &w)

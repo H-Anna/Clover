@@ -7,6 +7,10 @@
 #include <QPixmap>
 #include <QPlainTextEdit>
 #include <QTimer>
+#include <QTextBrowser>
+#include <QDesktopServices>
+
+#include <QDebug>
 
 class BalloonWidget: public QWidget
 {
@@ -15,9 +19,13 @@ public:
     BalloonWidget(QWidget *parent = nullptr);
     ~BalloonWidget();
 
-    void clearBalloonText();
+    void clearBalloon();
     void appendHtml(const QString& text);
+    void printBalloonContents();
+
 signals:
+    void balloonLoadedSignal();
+
     void prepareTextSignal(const QString& text);
     void changeBalloonSignal(const QString& path);
     void finishedTextPrintSignal();
@@ -30,8 +38,10 @@ protected:
 private:
     QPoint dragPosition;
     QPixmap displayedImage;
-    QPlainTextEdit* textBrowser;
-    int textIdx;
+
+    QTextBrowser* textBrowser;
+    QPlainTextEdit* textHolder;
+    int textCursor;
     QTimer* textTimer;
     QString printingText;
 
@@ -41,6 +51,9 @@ private slots:
     void prepareText(const QString& text);
     void printText();
     void changeBalloon(const QString& path);
+
+    void textBrowserUpdate();
+    void PrintAnchor(const QUrl& link);
 };
 
 #endif // BALLOONWIDGET_H

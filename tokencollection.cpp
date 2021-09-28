@@ -29,3 +29,8 @@ Token TokenCollection::GetNextToken()
     }
     return tokenList.at(tokenCursor++);
 }
+
+void TokenCollection::Finalize()
+{
+    ///If you want to post-process your tokens (eg. discard certain ones) then do that here.
+}

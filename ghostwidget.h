@@ -18,6 +18,8 @@ public:
     ~GhostWidget();
 
 signals:
+    void ghostLoadedSignal();
+
     void changeSurfaceSignal(const QString& path);
 
 public slots:

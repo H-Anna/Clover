@@ -34,8 +34,6 @@ void SurfaceManager::PrintSurfaceList()
 {
     qDebug() << "INFO - SurfaceManager";
 
-    //std::cout << "INFO - SurfaceManager" << std::endl;
-
     if (surfaceList.count() > 0) {
         qDebug() << "Surfaces loaded:" << surfaceList.count();
         qDebug() << "ID\tImage\tAlias";

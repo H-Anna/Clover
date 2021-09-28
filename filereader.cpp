@@ -15,6 +15,9 @@ bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, const QString &abso
 
     for (auto &it: filesInfoList) {
 
+        if (!it.fileName().endsWith(".json"))
+            continue;
+
         auto file = new QFile(it.absoluteFilePath());
         file->open(QIODevice::ReadOnly);
         QString contents = file->readAll();
@@ -22,13 +25,19 @@ bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, const QString &abso
 
         QJsonObject json = QJsonDocument::fromJson(contents.toUtf8()).object();
 
-        if (json.empty())
+        if (json.empty()) {
+            qDebug() << "WARNING - FileReader - File" << file->fileName() << "has invalid JSON: "
+                                                                             "unable to process, skipping to next file.";
             continue;
+        }
 
         QString type = json.value("type").toString();
 
-        if (type.isEmpty())
+        if (type.isEmpty()) {
+            qDebug() << "WARNING - FileReader - File" << file->fileName() << "has invalid JSON: "
+                                                                             "no 'type' defined, skipping to next file.";
             continue;
+        }
 
         validObjects->append(json);
         validCount++;

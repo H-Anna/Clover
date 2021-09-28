@@ -12,7 +12,7 @@ class MainProcess: public QObject
 
     Q_OBJECT
 public:
-    MainProcess(TalkManager& tm);
+    MainProcess();
     ~MainProcess();
     void SaveTokenCollection(TokenCollection &tc);
 
@@ -41,8 +41,6 @@ private:
 
     TokenCollection* currentTC;
     int tokenCursor;
-
-    bool insertedDoctype;
 
 signals:
     bool changeSurfaceSignal(int id);

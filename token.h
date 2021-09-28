@@ -11,11 +11,11 @@ public:
         HtmlTag,
         CommandTag,
         PlainText,
-        END
+        End
     };
 
     Token();
-    Token(const QString& _contents, TokenType _type, QStringList _params);
+    Token(const QString& _contents, TokenType _type, QStringList _params = QStringList());
 
     QString getContents() const;
     TokenType getType() const;

@@ -62,47 +62,25 @@ QString TalkManager::GetTalk(int idx)
 TokenCollection TalkManager::MakeTokens(const QString &talk)
 {
     auto tokens = new TokenCollection();
-    Parse(*tokens, talk, tagRegex);
+
+    /// Preprocessing talks, such as replacing &quot with quotation marks
+
+    auto _talk = PreprocessTalk(talk);
+
+    Parse(*tokens, _talk, tagRegex);
+
+    /// If you want to post-process tokens, call tokens->Finalize() here
+
     return *tokens;
 
 }
 
-void TalkManager::Parse(const QString &talk)
+QString TalkManager::PreprocessTalk(const QString &talk)
 {
-    QStringList parsed;
-    int cursorPos = 0;
+    QString _t = talk;
+    _t.replace("&quot", "\"");
 
-    auto iter = tagRegex.globalMatch(talk);
-
-    /// Separate tags and pieces of text into tokens
-
-    while (iter.hasNext()) {
-
-        /// Setup variables, get next match
-
-        auto match = iter.next();
-        auto matchStr = match.captured();
-        QString leadText, tag;
-
-        /// Separate text leading up to tag, and captured tag
-
-        leadText = talk.mid(cursorPos, match.capturedStart() - cursorPos);
-        tag = matchStr;
-
-        /// Append to list
-
-        if (!leadText.isEmpty())
-            parsed.append(leadText);
-
-        parsed.append(tag);
-        cursorPos = match.capturedEnd();
-    }
-
-    if (cursorPos < talk.length())
-        parsed.append(talk.mid(cursorPos, talk.length() - cursorPos));
-
-    currentTokensList = parsed;
-    tokenCursor = 0;
+    return _t;
 }
 
 void TalkManager::Parse(TokenCollection &tc, const QString &str, const QRegularExpression &regex)

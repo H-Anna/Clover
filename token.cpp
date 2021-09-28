@@ -2,13 +2,13 @@
 
 Token::Token():
     contents(QString()),
-    type(TokenType::END),
+    type(TokenType::End),
     params()
 {
 
 }
 
-Token::Token(const QString &_contents, TokenType _type, QStringList _params = QStringList()):
+Token::Token(const QString &_contents, TokenType _type, QStringList _params):
     contents(_contents),
     type(_type),
     params(_params)

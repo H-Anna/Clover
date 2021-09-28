@@ -15,6 +15,7 @@ public:
     void append(const QString& token, Token::TokenType type, const QStringList& params = QStringList());
 
     Token GetNextToken();
+    void Finalize();
 
 private:
 
