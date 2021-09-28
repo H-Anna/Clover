@@ -7,13 +7,16 @@ bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, const QString &abso
     auto filesInfoList = QDir(absolutePath).entryInfoList(QDir::Files);
 
     if (filesInfoList.empty()) {
-        std::cout << "ERROR - FileReader - No files in directory!" << std::endl;
+        qDebug() << "ERROR - FileReader - No files in directory!";
         return false;
     }
 
     ///Read files, convert to JSON object and determine if it can be parsed
 
     for (auto &it: filesInfoList) {
+
+        if (!it.fileName().endsWith(".json"))
+            continue;
 
         auto file = new QFile(it.absoluteFilePath());
         file->open(QIODevice::ReadOnly);
@@ -22,19 +25,25 @@ bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, const QString &abso
 
         QJsonObject json = QJsonDocument::fromJson(contents.toUtf8()).object();
 
-        if (json.empty())
+        if (json.empty()) {
+            qDebug() << "WARNING - FileReader - File" << file->fileName() << "has invalid JSON: "
+                                                                             "unable to process, skipping to next file.";
             continue;
+        }
 
         QString type = json.value("type").toString();
 
-        if (type.isEmpty())
+        if (type.isEmpty()) {
+            qDebug() << "WARNING - FileReader - File" << file->fileName() << "has invalid JSON: "
+                                                                             "no 'type' defined, skipping to next file.";
             continue;
+        }
 
         validObjects->append(json);
         validCount++;
     }
 
-    std::cout << "INFO - FileReader - Read " << validCount << " files as valid JSONs." << std::endl;
+    qDebug().nospace() << "INFO - FileReader - Read " << validCount << " files as valid JSONs.";
 
     return true;
 }

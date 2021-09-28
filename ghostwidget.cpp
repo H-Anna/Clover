@@ -6,6 +6,7 @@ GhostWidget::GhostWidget(QWidget *parent)
     setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
 
+    /// TODO: implement change surface
     connect(this, SIGNAL(changeSurfaceSignal(const QString&)), this, SLOT(changeSurface(const QString&)));
     connect(this, SIGNAL(changeSurfaceSignal(const QString&)), this, SLOT(update()));
 
@@ -16,13 +17,27 @@ GhostWidget::GhostWidget(QWidget *parent)
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    emit changeSurfaceSignal(QString(R"(D:\D_Programs\GitHub\GhostTest\data\surface1501.png)"));
+    changeSurface(QString(R"(D:\D_Programs\GitHub\GhostTest\data\surface1501.png)"));
 
-    std::cout << "The ghost has appeared." << std::endl;
+    emit ghostLoadedSignal();
 }
 
 GhostWidget::~GhostWidget()
 {
+}
+
+void GhostWidget::changeSurfaceSlot(int id)
+{
+    //TODO
+
+    qDebug() << "INFO - GhostWidget - Change to surface" << id;
+}
+
+void GhostWidget::changeSurfaceSlot(const QString &alias)
+{
+    //TODO
+
+    qDebug() << "INFO - GhostWidget - Change to surface with alias" << alias;
 }
 
 void GhostWidget::mouseMoveEvent(QMouseEvent *event)
@@ -52,7 +67,9 @@ void GhostWidget::paintEvent(QPaintEvent *)
 
 void GhostWidget::changeSurface(const QString &path)
 {
+    show();
     displayedImage = QPixmap(path);
 }
+
 
 

@@ -12,7 +12,7 @@ SurfaceManager::~SurfaceManager()
 
 bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &imgPath)
 {
-    ///Read json object and load contents into surfaceList
+    /// Read JSON object and load contents into surfaceList
 
     QJsonArray surfaceArray = json->value("surfaces").toArray();
 
@@ -32,16 +32,16 @@ bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &imgPath)
 
 void SurfaceManager::PrintSurfaceList()
 {
-    std::cout << "INFO - SurfaceManager" << std::endl;
+    qDebug() << "INFO - SurfaceManager";
 
     if (surfaceList.count() > 0) {
-        std::cout << "Surfaces loaded: " << surfaceList.count() << std::endl;
-        std::cout << "ID\tImage\tAlias" << std::endl;
+        qDebug() << "Surfaces loaded:" << surfaceList.count();
+        qDebug() << "ID\tImage\tAlias";
 
         for (auto &it: surfaceList) {
-            std::cout << it.PrintData().toStdString() << std::endl;
+            qDebug().noquote() << it.PrintData();
         }
     } else {
-        std::cout << "No surfaces loaded." << std::endl;
+        qDebug() << "No surfaces loaded.";
     }
 }

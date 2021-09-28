@@ -1,15 +1,16 @@
 #ifndef BALLOONWIDGET_H
 #define BALLOONWIDGET_H
 
-#include <iostream>
-#include <QObject>
 #include <QWidget>
-#include <QAction>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPixmap>
-#include <QTextBrowser>
+#include <QPlainTextEdit>
 #include <QTimer>
+#include <QTextBrowser>
+#include <QDesktopServices>
+
+#include <QDebug>
 
 class BalloonWidget: public QWidget
 {
@@ -17,9 +18,17 @@ class BalloonWidget: public QWidget
 public:
     BalloonWidget(QWidget *parent = nullptr);
     ~BalloonWidget();
+
+    void clearBalloon();
+    void appendHtml(const QString& text);
+    void printBalloonContents();
+
 signals:
+    void balloonLoadedSignal();
+
     void prepareTextSignal(const QString& text);
     void changeBalloonSignal(const QString& path);
+    void finishedTextPrintSignal();
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -29,19 +38,22 @@ protected:
 private:
     QPoint dragPosition;
     QPixmap displayedImage;
+
     QTextBrowser* textBrowser;
-    int textIdx;
+    QPlainTextEdit* textHolder;
+    int textCursor;
     QTimer* textTimer;
     QString printingText;
 
     void setupTextBrowser();
-    void printByChar(const QString& text);
-
 
 private slots:
     void prepareText(const QString& text);
     void printText();
     void changeBalloon(const QString& path);
+
+    void textBrowserUpdate();
+    void PrintAnchor(const QUrl& link);
 };
 
 #endif // BALLOONWIDGET_H

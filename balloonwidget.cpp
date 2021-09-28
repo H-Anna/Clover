@@ -6,39 +6,51 @@ BalloonWidget::BalloonWidget(QWidget *parent)
     setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
 
+    /// TODO: implement "change balloon" tag
     connect(this, SIGNAL(changeBalloonSignal(const QString&)), this, SLOT(changeBalloon(const QString&)));
     connect(this, SIGNAL(changeBalloonSignal(const QString&)), this, SLOT(update()));
     connect(this, SIGNAL(prepareTextSignal(const QString&)), this, SLOT(prepareText(const QString&)));
 
     changeBalloon(QString(R"(D:\D_Programs\GitHub\GhostTest\data\balloons0.png)"));
     textBrowser = nullptr;
-    textIdx = 0;
+    textCursor = 0;
+    textHolder = new QPlainTextEdit(this);
+    textHolder->hide();
+
+    connect(textHolder, SIGNAL(textChanged()), this, SLOT(textBrowserUpdate()));
 
     textTimer = new QTimer(this);
     connect(textTimer, &QTimer::timeout, this, &BalloonWidget::printText);
-    textTimer->setInterval(10);
+    textTimer->setInterval(50);
+
+    emit balloonLoadedSignal();
+
 }
 
 BalloonWidget::~BalloonWidget()
 {
     delete textTimer;
     delete textBrowser;
+    delete textHolder;
 }
 
-void BalloonWidget::printText()
+void BalloonWidget::clearBalloon()
 {
-    textBrowser->insertPlainText(printingText.at(textIdx));
-    textIdx++;
-
-    if (textIdx >= printingText.length()) {
-        textIdx = 0;
-        textTimer->stop();
-    }
+    if (textHolder != nullptr)
+        textHolder->clear();
 }
 
-void BalloonWidget::changeBalloon(const QString &path)
+void BalloonWidget::appendHtml(const QString &text)
 {
-    displayedImage = QPixmap(path);
+    if (textHolder != nullptr)
+        textHolder->insertPlainText(text);
+}
+
+void BalloonWidget::printBalloonContents()
+{
+    if (textHolder != nullptr)
+        qDebug() << "INFO - BalloonWidget - textHolder contains:";
+        qDebug() << textHolder->toPlainText();
 }
 
 void BalloonWidget::mouseMoveEvent(QMouseEvent *event)
@@ -52,6 +64,7 @@ void BalloonWidget::mouseMoveEvent(QMouseEvent *event)
 void BalloonWidget::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
+
         dragPosition = event->globalPos() - frameGeometry().topLeft();
         event->accept();
     }
@@ -73,8 +86,11 @@ void BalloonWidget::paintEvent(QPaintEvent *)
 void BalloonWidget::setupTextBrowser()
 {
     textBrowser = new QTextBrowser(this);
+    textBrowser->setReadOnly(true);
+    textBrowser->setAcceptRichText(true);
     textBrowser->setAttribute(Qt::WA_TranslucentBackground);
-    textBrowser->setFocusPolicy(Qt::WheelFocus);
+    //textBrowser->setOpenExternalLinks(true);
+    textBrowser->setOpenLinks(false);
     textBrowser->setContextMenuPolicy(Qt::NoContextMenu);
     textBrowser->setFrameShape(QFrame::NoFrame);
     textBrowser->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
@@ -82,18 +98,58 @@ void BalloonWidget::setupTextBrowser()
     textBrowser->resize(QSize(displayedImage.size().width()-65, displayedImage.size().height()-70));
     textBrowser->move(30,15);
 
+    connect(textBrowser, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(PrintAnchor(const QUrl &)));
+
     QPalette p = textBrowser->palette();
     p.setColor(QPalette::Base, QColor(255,255,255,0));
     p.setColor(QPalette::Text, Qt::black);
     textBrowser->setPalette(p);
 
     textBrowser->show();
-    emit prepareTextSignal("Hello \nLorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas lacinia eros in elit tristique porttitor. Nam a consectetur augue. Mauris maximus, tellus sit amet vulputate volutpat, tellus lectus elementum urna, non malesuada justo tellus sed magna. Integer a ultricies felis. Proin nec efficitur nisi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.");
-
 }
 
 void BalloonWidget::prepareText(const QString &text)
 {
     printingText = text;
     textTimer->start();
+}
+
+void BalloonWidget::printText()
+{
+    if (textHolder != nullptr) {
+        textHolder->insertPlainText(printingText.at(textCursor));
+        textCursor++;
+
+        if (textCursor >= printingText.length()) {
+            textCursor = 0;
+            textTimer->stop();
+            emit finishedTextPrintSignal();
+        }
+    } else {
+        qDebug() << "ERROR - BalloonWidget - textHolder = nullptr, can't print (printText).";
+    }
+
+}
+
+void BalloonWidget::changeBalloon(const QString &path)
+{
+    displayedImage = QPixmap(path);
+}
+
+void BalloonWidget::textBrowserUpdate()
+{
+    if (textBrowser != nullptr) {
+        textBrowser->setHtml(textHolder->toPlainText());
+        textBrowser->moveCursor(QTextCursor::End);
+    }
+    else
+        qDebug() << "ERROR - BalloonWidget - textBrowser = nullptr, can't print (textBrowserUpdate).";
+}
+
+void BalloonWidget::PrintAnchor(const QUrl &link)
+{
+    qDebug() << link.toString();
+    if (link.scheme() == "http" || link.scheme() == "https") {
+        QDesktopServices::openUrl(link);
+    }
 }

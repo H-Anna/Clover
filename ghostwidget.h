@@ -1,14 +1,13 @@
 #ifndef GHOSTWIDGET_H
 #define GHOSTWIDGET_H
 
-#include <iostream>
-
 #include <QCoreApplication>
 #include <QWidget>
 #include <QAction>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPixmap>
+#include <QDebug>
 
 class GhostWidget : public QWidget
 {
@@ -19,7 +18,14 @@ public:
     ~GhostWidget();
 
 signals:
+    void ghostLoadedSignal();
+
     void changeSurfaceSignal(const QString& path);
+
+public slots:
+    void changeSurfaceSlot(int id);
+    void changeSurfaceSlot(const QString& alias);
+
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;

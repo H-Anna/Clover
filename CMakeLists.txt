@@ -42,16 +42,21 @@ else()
     ghostwidget.h
     balloonwidget.cpp
     balloonwidget.h
-surface.cpp
-surface.h
-mainprocess.h
-mainprocess.cpp
-talkmanager.h
-talkmanager.cpp
-surfacemanager.h
-surfacemanager.cpp
-filereader.h
-filereader.cpp
+    surface.cpp
+    surface.h
+    mainprocess.h
+    mainprocess.cpp
+    talkmanager.h
+    talkmanager.cpp
+    surfacemanager.h
+    surfacemanager.cpp
+    filereader.h
+    filereader.cpp
+    tokencollection.h
+    tokencollection.cpp
+    token.h
+    token.cpp
+
   )
 endif()
 

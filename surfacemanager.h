@@ -1,8 +1,6 @@
 #ifndef SURFACEMANAGER_H
 #define SURFACEMANAGER_H
 
-#include <iostream>
-
 #include <QJsonObject>
 #include <QJsonArray>
 

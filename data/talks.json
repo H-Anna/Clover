@@ -4,6 +4,10 @@
 	[
 		"This is a test.",
 		"This contains a newline tag.<n>This is a new line.",
-		"<s[0]>This is my default pose.<s[shy]>This is a pose with an alias."
+		"<s[0]>This is my default pose.<s[shy]>This is a pose with an alias.",
+		"<!s[1]>This is normal text and my pose at idx 1.<b>This is bold text.</b><!s[shy]> This is a pose with an alias.<!s[1,2,3]>This is a surface tag with multiple parameters.<!hide> I am going to hide until this text is finished printing.<!show> I've returned. I'm now going to waste space in this balloon.<!clr>I've cleared the balloon so there's some more space to write. I will now wait for 5 seconds.<!wait[5000]> The wait is over. I will give you an undefined tag.<!hello[debug]> Done.",
+		"<p>This is an HTML tag test.</p><p>I've created a new paragraph.<p>The last paragraph didn't have a &quotclosing tag.&quot</p>It's <b>crazy</b> to think how <i>well</i> you can <u>customize your text</u> with HTML.",
+		"<a href=&quothttps://doc.qt.io/qt-5/richtext-html-subset.html&quot>Click this link</a> to find out which HTML tags are supported by the Qt web engine."
+		
 	]
 }
