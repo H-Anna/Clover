@@ -3,14 +3,13 @@
 
 #include <ghostwidget.h>
 #include <balloonwidget.h>
-#include <talkmanager.h>
-
+#include <tokencollection.h>
 
 class MainProcess: public QObject
 {
     typedef void (*tagLambdaPtr)(MainProcess&, const QStringList&);
 
-    Q_OBJECT
+    Q_OBJECT;
 public:
     MainProcess();
     ~MainProcess();

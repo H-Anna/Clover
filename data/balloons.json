@@ -1,0 +1,10 @@
+{
+	"type": "balloon",
+	"balloons":
+	[
+		{
+			"id": 0,
+			"image": "balloons0.png"
+		}
+	]
+}
