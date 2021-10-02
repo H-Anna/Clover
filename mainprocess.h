@@ -4,6 +4,7 @@
 #include <ghostwidget.h>
 #include <balloonwidget.h>
 #include <tokencollection.h>
+#include <surfacemanager.h>
 
 class MainProcess: public QObject
 {
@@ -11,7 +12,7 @@ class MainProcess: public QObject
 
     Q_OBJECT;
 public:
-    MainProcess();
+    MainProcess(SurfaceManager *_sm);
     ~MainProcess();
     void SaveTokenCollection(TokenCollection &tc);
 
@@ -28,7 +29,7 @@ private:
     void DisconnectTagSignals(const BalloonWidget& w);
     void ExecuteCommand(const Token& token);
 
-    void printUndefinedTag(const QString& tag, const QStringList& params);
+    void PrintUndefinedTag(const QString& tag, const QStringList& params);
 
     QList<GhostWidget*> ghostWidgets;
     QList<BalloonWidget*> balloonWidgets;
@@ -40,6 +41,8 @@ private:
 
     TokenCollection* currentTC;
     int tokenCursor;
+
+    SurfaceManager* sm;
 
 signals:
     bool changeSurfaceSignal(int id);

@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    MainProcess* mainproc = new MainProcess();
+    MainProcess* mainproc = new MainProcess(sm);
 
     auto tc = tm->MakeTokens(tm->GetTalk(1000));
     mainproc->SaveTokenCollection(tc);

@@ -12,7 +12,7 @@ SurfaceManager::~SurfaceManager()
 
 bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &imgPath)
 {
-    /// Read JSON object and load contents into surfaceList
+    /// Read JSON object, load contents into surfaceList
 
     QJsonArray surfaceArray = json->value("surfaces").toArray();
 
@@ -24,7 +24,13 @@ bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &imgPath)
         if (surfaceArray.at(i)["alias"] != QJsonValue::Null)
             alias = surfaceArray.at(i)["alias"].toString();
 
-        surfaceList.append(Surface(id, img, alias));
+
+        auto s = new Surface(id, img, alias);
+        surfaceList.append(s);
+        surfaceIDMap.insert(s->GetId(), s);
+        if (s->HasAlias())
+            surfaceAliasMap.insert(s->GetAlias(), s);
+
     }
 
     return true;
@@ -39,9 +45,25 @@ void SurfaceManager::PrintSurfaceList()
         qDebug() << "ID\tImage\tAlias";
 
         for (auto &it: surfaceList) {
-            qDebug().noquote() << it.PrintData();
+            qDebug().noquote() << it->PrintData();
         }
     } else {
         qDebug() << "No surfaces loaded.";
     }
+}
+
+Surface *SurfaceManager::GetSurface(unsigned int id)
+{
+    if (surfaceIDMap.keys().contains(id))
+        return surfaceIDMap[id];
+
+    return nullptr;
+}
+
+Surface* SurfaceManager::GetSurface(const QString &alias)
+{
+    if (surfaceAliasMap.keys().contains(alias))
+        return surfaceAliasMap[alias];
+
+    return nullptr;
 }

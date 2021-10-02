@@ -1,21 +1,21 @@
 #include "mainprocess.h"
 
-MainProcess::MainProcess()
+MainProcess::MainProcess(SurfaceManager *_sm)
     :
     ghostWidgets(QList<GhostWidget*>()),
     balloonWidgets(QList<BalloonWidget*>()),
     currentTC(nullptr),
-    tokenCursor(0)
+    tokenCursor(0),
+    sm(_sm)
 {
-
-    ghostInScope = new GhostWidget();
-    ghostWidgets.append(ghostInScope);
 
     balloonInScope = new BalloonWidget();
     balloonWidgets.append(balloonInScope);
-
-    ghostInScope->show();
     balloonInScope->show();
+
+    ghostInScope = new GhostWidget();
+    ghostWidgets.append(ghostInScope);
+    ghostInScope->show();
 
     /// --------IMPORTANT SIGNALS--------
 
@@ -75,6 +75,8 @@ MainProcess::~MainProcess()
     }
 
     tagLambdaMap.clear();
+    sm = nullptr;
+    delete sm;
 }
 
 void MainProcess::EvaluateTokens()
@@ -192,11 +194,22 @@ void MainProcess::BuildTagLambdaMap()
         bool canConvertToInt;
         str.toInt(&canConvertToInt);
 
+        Surface* s;
         if (canConvertToInt) {
-            mp.ghostInScope->changeSurfaceSlot(str.toInt());
+            //mp.ghostInScope->changeSurfaceSlot(str.toInt());
+            s = mp.sm->GetSurface(str.toInt());
         } else {
-            mp.ghostInScope->changeSurfaceSlot(str);
+            //mp.ghostInScope->changeSurfaceSlot(str);
+            s = mp.sm->GetSurface(str);
         }
+
+        if (s == nullptr) {
+            qDebug().nospace() << "WARNING - MainProcess - No surface found with param " << str << ", skipping to next token.";
+            emit mp.finishedTokenEvaluationSignal();
+            return;
+        }
+
+        mp.ghostInScope->changeSurface(s->GetImage());
 
         emit mp.finishedTokenEvaluationSignal(); });
 
