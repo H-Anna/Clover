@@ -14,10 +14,6 @@ GhostWidget::GhostWidget(QWidget *parent)
     setContextMenuPolicy(Qt::ActionsContextMenu);
 
     move(width()-100, height()-100);
-
-    changeSurface(QString(R"(D:\D_Programs\GitHub\GhostTest\data\surface1501.png)"));
-
-    emit ghostLoadedSignal();
 }
 
 GhostWidget::~GhostWidget()
@@ -48,12 +44,6 @@ void GhostWidget::paintEvent(QPaintEvent *)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawPixmap(QPoint(0,0), displayedImage, target);
-}
-
-void GhostWidget::changeSurface(const QString &path)
-{
-    displayedImage = QPixmap(path);
-    update();
 }
 
 

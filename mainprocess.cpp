@@ -2,20 +2,12 @@
 
 MainProcess::MainProcess(SurfaceManager *_sm)
     :
-    ghostWidgets(QList<GhostWidget*>()),
-    balloonWidgets(QList<BalloonWidget*>()),
+    ghost(new Ghost()),
+    balloon(new Balloon()),
     currentTC(nullptr),
     tokenCursor(0),
     sm(_sm)
 {
-
-    balloonInScope = new BalloonWidget();
-    balloonWidgets.append(balloonInScope);
-    balloonInScope->show();
-
-    ghostInScope = new GhostWidget();
-    ghostWidgets.append(ghostInScope);
-    ghostInScope->show();
 
     /// --------IMPORTANT SIGNALS--------
 
@@ -24,26 +16,12 @@ MainProcess::MainProcess(SurfaceManager *_sm)
     connect(this, SIGNAL(finishedTokenEvaluationSignal()),
             this, SLOT(EvaluateTokens()));
 
-    /// ---------------------------------
+    connect(this, SIGNAL(printTextSignal(const QString&)),
+            balloon, SIGNAL(printTextSignal(const QString&)));
 
-    /// -----------TAG SIGNALS-----------
+    connect(balloon, SIGNAL(finishedTextPrintSignal()),
+            this, SIGNAL(finishedTokenEvaluationSignal()));
 
-    /// Tag signals can be connected and disconnected.
-    /// This is to make everything easier when eventually, scope tags are introduced.
-    ///
-    /// TODO: scope tags.
-    ///
-    /// TODO: if you have multiple characters in your ghost, switching scope will disconnect signals from one,
-    /// and connect to another. I have no idea how CPU- or memory-intensive this process is, but when I find out
-    /// I will evaluate other options, such as passing a parameter to help evaluate which widget should be
-    /// listening to a particular signal.
-    ///
-    /// TODO: When switching scope, DISCONNECT signals, CHANGE pointer, then RECONNECT signals
-    ///
-    /// TODO: SEMANTIC ERROR: connecting a new signal but forgetting to disconnect it. How to get around this?
-
-    ConnectTagSignals(*ghostInScope);
-    ConnectTagSignals(*balloonInScope);
 
     /// ------------LAMBDA MAP------------
 
@@ -52,22 +30,10 @@ MainProcess::MainProcess(SurfaceManager *_sm)
 
 MainProcess::~MainProcess()
 {
-    /// Disconnect all signals before pointer destruction
 
-    while (!ghostWidgets.isEmpty()) {
-        auto w = ghostWidgets.takeFirst();
-        DisconnectTagSignals(*w);
-        delete w;
-    }
+    delete ghost;
+    delete balloon;
 
-    while (!balloonWidgets.isEmpty()) {
-        auto w = balloonWidgets.takeFirst();
-        DisconnectTagSignals(*w);
-        delete w;
-    }
-
-    delete ghostInScope;
-    delete balloonInScope;
     delete currentTC;
 
     for (auto &it: tagLambdaMap.values()) {
@@ -75,7 +41,6 @@ MainProcess::~MainProcess()
     }
 
     tagLambdaMap.clear();
-    sm = nullptr;
     delete sm;
 }
 
@@ -97,7 +62,7 @@ void MainProcess::EvaluateTokens()
 
         case Token::HtmlTag:
         {
-            balloonInScope->appendHtml(token.getContents());
+            balloon->AppendHtml(token.getContents());
             emit finishedTokenEvaluationSignal();
             break;
         }
@@ -111,7 +76,7 @@ void MainProcess::EvaluateTokens()
         case Token::End:
         {
             /// DO NOT EMIT finishedTokenEvaluationSignal OR ELSE IT WILL LOOP FOREVER
-            balloonInScope->printBalloonContents();
+            balloon->PrintBalloonContents();
             qDebug() << "INFO - MainProcess - All tokens have been passed.";
 
             break;
@@ -171,15 +136,15 @@ void MainProcess::BuildTagLambdaMap()
 
     /// You can omit "params" if you don't use it in your lambda to get rid of warnings.
     tagLambdaMap.insert("clr", [](MainProcess& mp, const QStringList&){
-        mp.balloonInScope->clearBalloon();
+        mp.balloon->ClearBalloon();
         emit mp.finishedTokenEvaluationSignal(); });
 
     tagLambdaMap.insert("hide", [](MainProcess& mp, const QStringList&){
-        mp.ghostInScope->hide();
+        mp.ghost->Hide();
         emit mp.finishedTokenEvaluationSignal(); });
 
     tagLambdaMap.insert("show", [](MainProcess& mp, const QStringList&){
-        mp.ghostInScope->show();
+        mp.ghost->Show();
         emit mp.finishedTokenEvaluationSignal(); });
 
     tagLambdaMap.insert("s",[](MainProcess& mp, const QStringList& params){
@@ -196,10 +161,10 @@ void MainProcess::BuildTagLambdaMap()
 
         Surface* s;
         if (canConvertToInt) {
-            //mp.ghostInScope->changeSurfaceSlot(str.toInt());
+
             s = mp.sm->GetSurface(str.toInt());
         } else {
-            //mp.ghostInScope->changeSurfaceSlot(str);
+
             s = mp.sm->GetSurface(str);
         }
 
@@ -209,51 +174,13 @@ void MainProcess::BuildTagLambdaMap()
             return;
         }
 
-        mp.ghostInScope->changeSurface(s->GetImage());
+        mp.ghost->ChangeSurface(s->GetImage());
 
         emit mp.finishedTokenEvaluationSignal(); });
 
     /// TODO: does every single lambda function have to emit FTE? This makes it possible for other
-    /// objects to block MainProcess until they're finished, but it's very redundant...
-}
-
-void MainProcess::ConnectTagSignals(const GhostWidget &w)
-{
-    connect(this, SIGNAL(changeSurfaceSignal(int)),
-            &w, SLOT(changeSurfaceSlot(int)));
-
-    connect(this, SIGNAL(changeSurfaceSignal(const QString&)),
-            &w, SLOT(changeSurfaceSlot(const QString&)));
-}
-
-void MainProcess::ConnectTagSignals(const BalloonWidget &w)
-{
-    connect(this, SIGNAL(printTextSignal(const QString&)),
-            &w, SLOT(prepareText(const QString&)));
-
-    /// On receiving certain signals, emit signal for asking for tokens.
-    /// Chaining signals together is useful!
-
-    connect(&w, SIGNAL(finishedTextPrintSignal()),
-            this, SIGNAL(finishedTokenEvaluationSignal()));
-}
-
-void MainProcess::DisconnectTagSignals(const GhostWidget &w)
-{
-    disconnect(this, SIGNAL(changeSurfaceSignal(int)),
-            &w, SLOT(changeSurfaceSlot(int)));
-
-    disconnect(this, SIGNAL(changeSurfaceSignal(const QString&)),
-            &w, SLOT(changeSurfaceSlot(const QString&)));
-}
-
-void MainProcess::DisconnectTagSignals(const BalloonWidget &w)
-{
-    disconnect(this, SIGNAL(printTextSignal(const QString&)),
-            &w, SLOT(prepareText(const QString&)));
-
-    disconnect(&w, SIGNAL(finishedTextPrintSignal()),
-               this, SIGNAL(finishedTokenEvaluationSignal()));
+    /// objects to block MainProcess until they're finished, but it's very redundant. Also
+    /// makes it possible for a semantic error (forgetting to emit FTE) to happen.
 }
 
 void MainProcess::ExecuteCommand(const Token &token)

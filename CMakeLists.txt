@@ -56,6 +56,10 @@ else()
     tokencollection.cpp
     token.h
     token.cpp
+    ghost.h
+    ghost.cpp
+    balloon.h
+    balloon.cpp
 
   )
 endif()
