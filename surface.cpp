@@ -30,3 +30,10 @@ bool Surface::HasAlias() const
 {
     return alias != "";
 }
+
+Animation *Surface::AddAnimation(unsigned int _id, DrawMethod _drawMethod)
+{
+    auto a = new Animation(_id, _drawMethod);
+    animationIDMap.insert(_id, a);
+    return a;
+}

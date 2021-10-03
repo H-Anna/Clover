@@ -18,11 +18,23 @@ public:
     Surface* GetSurface(const QString& alias);
 
 private:
-    //QList<Surface> surfaceList;
+
+    void MakeSurface(QJsonObject& obj);
+    void MakeAnimation(QJsonObject& obj, Surface& s);
+
+    QString imagePath;
 
     QMap<unsigned int, Surface*> surfaceIDMap;
     QMap<QString, Surface*> surfaceAliasMap;
-    QList<Surface*> surfaceList;
+
+    QMap<unsigned int, Animation*> animationIDMap;
+
+    const static inline QMap<QString,DrawMethod> drawMethodMap = {
+        {"base", DrawMethod::Base},
+        {"overlay", DrawMethod::Overlay},
+        {"clip", DrawMethod::Clip},
+        {"replace", DrawMethod::Replace}
+    };
 };
 
 #endif // SURFACEMANAGER_H

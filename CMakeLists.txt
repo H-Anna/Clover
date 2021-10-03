@@ -60,6 +60,12 @@ else()
     ghost.cpp
     balloon.h
     balloon.cpp
+    animation.h
+    animation.cpp
+    frame.h
+    frame.cpp
+
+    surface_enums.h
 
   )
 endif()

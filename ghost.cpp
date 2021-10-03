@@ -37,3 +37,9 @@ GhostWidget *Ghost::GetInScope() const
 {
     return inScope;
 }
+
+int Ghost::GetID(GhostWidget *w) const
+{
+    return ghosts.key(w, -1);
+}
+

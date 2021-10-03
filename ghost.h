@@ -15,6 +15,7 @@ public:
     void ChangeSurface(const QString& path);
 
     GhostWidget *GetInScope() const;
+    int GetID(GhostWidget *w) const;
 
 private:
     QMap<int, GhostWidget*> ghosts;

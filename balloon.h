@@ -16,6 +16,7 @@ public:
     void ClearBalloon();
 
     BalloonWidget *GetInScope() const;
+    int GetID(BalloonWidget* w) const;
 
 signals:
     void printTextSignal(const QString& text);

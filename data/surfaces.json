@@ -30,6 +30,44 @@
 			"id": 5,
 			"image": "surface1505.png",
 			"alias": "happy"
+		},
+		{
+			"id": 6,
+			"alias": "beast",
+			"image": "beast0.png",
+			"animations": [
+				{
+					"id": 0,
+					"drawmethod": "always",
+					"frames": [
+						{
+							"id": 0,
+							"image": "beast0.png",
+							"drawmethod": "base"
+						},
+						{
+							"id": 1,
+							"image": "beast1.png",
+							"drawmethod": "replace"
+						},
+						{
+							"id": 2,
+							"image": "beast2.png",
+							"drawmethod": "replace"
+						},
+						{
+							"id": 3,
+							"image": "beast3.png",
+							"drawmethod": "replace"
+						},
+						{
+							"id": 4,
+							"image": "beast4.png",
+							"drawmethod": "replace"
+						}
+					]
+				}
+			]
 		}
 	]
 }

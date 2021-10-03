@@ -9,6 +9,9 @@ MainProcess::MainProcess(SurfaceManager *_sm)
     sm(_sm)
 {
 
+    ghostBalloonsMap.insert(ghost->GetID(ghost->GetInScope()),
+                            QList<int>({ balloon->GetID(balloon->GetInScope()) }) );
+
     /// --------IMPORTANT SIGNALS--------
 
     /// Each time this signal fires, evaluate the next token

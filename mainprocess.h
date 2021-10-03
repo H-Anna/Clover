@@ -30,6 +30,7 @@ private:
     Balloon* balloon;
 
     QMap<QString, tagLambdaPtr> tagLambdaMap;
+    QMap<int,QList<int>> ghostBalloonsMap;
 
     TokenCollection* currentTC;
     int tokenCursor;
