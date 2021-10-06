@@ -7,7 +7,12 @@ SurfaceManager::SurfaceManager()
 
 SurfaceManager::~SurfaceManager()
 {
-
+    for (auto &it: surfaces) {
+        delete it;
+    }
+    for (auto &it: timers.values()) {
+        delete it;
+    }
 }
 
 bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &imgPath)
@@ -51,9 +56,9 @@ void SurfaceManager::Animate(Animation* a, Ghost &g)
         timer = timers.value(a);
     } else {
         timer = new QTimer(this);
-        timers[a] = timer;
         timer->callOnTimeout(this, [this, a, &g](){ Animate(a, g); });
         timer->setSingleShot(true);
+        timers[a] = timer;
     }
 
     timer->setInterval(f->GetMs());
@@ -107,12 +112,12 @@ void SurfaceManager::PrintSurfaceList()
 {
     qDebug() << "INFO - SurfaceManager";
 
-    if (surfaceIDMap.count() > 0) {
-        qDebug() << "Surfaces loaded:" << surfaceIDMap.count();
+    if (surfaces.count() > 0) {
+        qDebug() << "Surfaces loaded:" << surfaces.count();
         qDebug() << "ID\tImage\tName";
 
-        for (auto &it: surfaceIDMap.keys()) {
-            qDebug().noquote() << surfaceIDMap.value(it)->PrintData();
+        for (auto &it: surfaces.keys()) {
+            qDebug().noquote() << surfaces.value(it)->PrintData();
         }
     } else {
         qDebug() << "No surfaces loaded.";
@@ -121,16 +126,16 @@ void SurfaceManager::PrintSurfaceList()
 
 Surface *SurfaceManager::GetSurface(unsigned int id)
 {
-    if (surfaceIDMap.keys().contains(id))
-        return surfaceIDMap[id];
+    if (surfaces.keys().contains(id))
+        return surfaces[id];
 
     return nullptr;
 }
 
 Surface* SurfaceManager::GetSurface(const QString &name)
 {
-    if (surfaceNameMap.keys().contains(name))
-        return surfaceNameMap[name];
+    if (namedSurfaces.keys().contains(name))
+        return namedSurfaces[name];
 
     return nullptr;
 }
@@ -145,9 +150,9 @@ void SurfaceManager::MakeSurface(QJsonObject &obj)
     QString name = obj.value("name").toString("");
 
     auto s = new Surface(id, img, name);
-    surfaceIDMap.insert(s->GetId(), s);
+    surfaces.insert(s->GetId(), s);
     if (s->HasName())
-        surfaceNameMap.insert(s->GetName(), s);
+        namedSurfaces.insert(s->GetName(), s);
 
     /// Make animations
 

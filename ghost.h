@@ -26,9 +26,9 @@ public:
 private:
     GhostWidget* inScope;
     unsigned int idInScope;
-    QMap<unsigned int, GhostWidget*> ghosts;
-    QMap<unsigned int, Surface*> currentSurface;
-    QMap<unsigned int, QList<Animation*>> currentAnimations;
+    QVector<GhostWidget*> ghosts;
+    QMap<GhostWidget*, Surface*> currentSurface;
+    QMap<GhostWidget*, QList<Animation*>> currentAnimations;
 };
 
 #endif // GHOST_H

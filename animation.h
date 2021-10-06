@@ -9,6 +9,7 @@ class Animation
 {
 public:
     Animation(int _id, QString _name = "", Frequency _frequency = Frequency::Never);
+    ~Animation();
 
     QString PrintData();
 

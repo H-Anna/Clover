@@ -9,6 +9,7 @@ class Surface
 {
 public:
     Surface(unsigned int _id, const QString& _image, const QString& _name = "");
+    ~Surface();
 
     QString PrintData();
 
@@ -26,7 +27,7 @@ private:
     QString image;
     QString name;
 
-    QMap<unsigned int, Animation*> animationIDMap;
+    QMap<unsigned int, Animation*> animations;
     QMap<QString, Animation*> namedAnimations;
 };
 

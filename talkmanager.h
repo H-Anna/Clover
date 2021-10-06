@@ -25,7 +25,6 @@ public:
 signals:
     void TokenReadySignal(const QString& token);
 
-    //TODO: replace talksList with a QMap
 private:
     QVector<QString> talksList;
     unsigned int tokenCursor;

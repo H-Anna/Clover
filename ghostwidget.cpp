@@ -38,7 +38,6 @@ void GhostWidget::mousePressEvent(QMouseEvent *event)
 
 void GhostWidget::paintEvent(QPaintEvent *)
 {
-
     QRect target(QPoint(0,0), displayedImage.size());
 
     QPainter painter(this);

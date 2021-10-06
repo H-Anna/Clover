@@ -31,8 +31,8 @@ private:
 
     QString imagePath;
 
-    QMap<unsigned int, Surface*> surfaceIDMap;
-    QMap<QString, Surface*> surfaceNameMap;
+    QMap<unsigned int, Surface*> surfaces;
+    QMap<QString, Surface*> namedSurfaces;
 
     QMap<Animation*, QTimer*> timers;
 };

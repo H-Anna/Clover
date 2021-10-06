@@ -23,7 +23,7 @@ signals:
     void finishedTextPrintSignal();
 
 private:
-    QMap<unsigned int, BalloonWidget*> balloons;
+    QVector<BalloonWidget*> balloons;
     BalloonWidget* inScope;
 };
 

@@ -3,19 +3,24 @@
 Ghost::Ghost():
     inScope(new GhostWidget()),
     idInScope(0),
-    ghosts(QMap<unsigned int, GhostWidget*>()),
-    currentSurface(QMap<unsigned int, Surface*>()),
-    currentAnimations(QMap<unsigned int, QList<Animation*>>())
+    ghosts(QVector<GhostWidget*>()),
+    currentSurface(QMap<GhostWidget*, Surface*>()),
+    currentAnimations(QMap<GhostWidget*, QList<Animation*>>())
 
 {
-    ghosts.insert(idInScope,inScope);
+    ghosts.append(inScope);
     inScope->show();
 }
 
 Ghost::~Ghost()
 {
-    for (auto &key: ghosts.keys()) {
-        delete ghosts[key];
+    for (auto &w: ghosts) {
+        delete currentSurface.value(w);
+
+        for (auto &it: currentAnimations.value(w)) {
+            delete it;
+        }
+        delete w;
     }
 
     inScope = nullptr;
@@ -34,14 +39,14 @@ void Ghost::Show()
 
 void Ghost::ChangeSurface(Surface *surface)
 {
-    currentSurface[idInScope] = surface;
+    currentSurface[inScope] = surface;
     inScope->displayedImage = QPixmap(surface->GetImage());
     inScope->update();
 }
 
 Surface *Ghost::GetCurrentSurface()
 {
-    return currentSurface[idInScope];
+    return currentSurface[inScope];
 }
 
 Frame *Ghost::ApplyAnimation(Animation *a)
@@ -59,17 +64,17 @@ Frame *Ghost::ApplyAnimation(Animation *a)
 
 void Ghost::AppendAnimation(Animation *a)
 {
-    if (currentAnimations.keys().contains(idInScope)) {
-       auto list = currentAnimations.value(idInScope);
+    if (currentAnimations.keys().contains(inScope)) {
+       auto list = currentAnimations.value(inScope);
 
        if (!list.contains(a)) {
 
             list.append(a);
-            currentAnimations[idInScope] = list;
+            currentAnimations[inScope] = list;
        }
     } else {
         auto list = QList<Animation*>({ a });
-        currentAnimations.insert(idInScope, list);
+        currentAnimations.insert(inScope, list);
     }
 }
 
@@ -80,6 +85,9 @@ GhostWidget *Ghost::GetInScope() const
 
 unsigned int Ghost::GetID(GhostWidget *w) const
 {
-    return ghosts.key(w, -1);
+    if (ghosts.contains(w))
+        return ghosts.indexOf(w);
+
+    return -1;
 }
 

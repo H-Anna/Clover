@@ -10,6 +10,13 @@ Animation::Animation(int _id, QString _name, Frequency _frequency):
 
 }
 
+Animation::~Animation()
+{
+    while (!frames.isEmpty()) {
+        delete frames.takeLast();
+    }
+}
+
 QString Animation::PrintData()
 {
     auto str = QString(QString::number(id) + "\t" + EnumConverter::GetFrequency(frequency) + "\n");

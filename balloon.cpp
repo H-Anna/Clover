@@ -3,7 +3,7 @@
 Balloon::Balloon()
 {
     inScope = new BalloonWidget();
-    balloons.insert(0,inScope);
+    balloons.append(inScope);
 
     connect(this, SIGNAL(printTextSignal(const QString&)),
             inScope, SLOT(prepareText(const QString&)));
@@ -16,11 +16,10 @@ Balloon::Balloon()
 
 Balloon::~Balloon()
 {
-    for (auto &key: balloons.keys()) {
-        delete balloons[key];
+    while (!balloons.isEmpty()) {
+        delete balloons.takeLast();
     }
 
-    inScope = nullptr;
     delete inScope;
 }
 
@@ -50,5 +49,8 @@ BalloonWidget *Balloon::GetInScope() const
 
 unsigned int Balloon::GetID(BalloonWidget *w) const
 {
-    return balloons.key(w, -1);
+    if (balloons.contains(w))
+        balloons.indexOf(w);
+
+    return -1;
 }
