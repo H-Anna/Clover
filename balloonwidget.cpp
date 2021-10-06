@@ -33,13 +33,6 @@ BalloonWidget::~BalloonWidget()
     delete textHolder;
 }
 
-void BalloonWidget::printBalloonContents()
-{
-    if (textHolder != nullptr)
-        qDebug() << "INFO - BalloonWidget - textHolder contains:";
-        qDebug() << textHolder->toPlainText();
-}
-
 void BalloonWidget::mouseMoveEvent(QMouseEvent *event)
 {
     if (event->buttons() & Qt::LeftButton) {

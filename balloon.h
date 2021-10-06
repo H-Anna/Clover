@@ -16,18 +16,15 @@ public:
     void ClearBalloon();
 
     BalloonWidget *GetInScope() const;
-    int GetID(BalloonWidget* w) const;
+    unsigned int GetID(BalloonWidget* w) const;
 
 signals:
     void printTextSignal(const QString& text);
     void finishedTextPrintSignal();
 
 private:
-    QMap<int, BalloonWidget*> balloons;
+    QMap<unsigned int, BalloonWidget*> balloons;
     BalloonWidget* inScope;
-
-signals:
-
 };
 
 #endif // BALLOON_H

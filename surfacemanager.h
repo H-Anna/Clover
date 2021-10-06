@@ -3,11 +3,14 @@
 
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QTimer>
 
 #include <surface.h>
+#include <ghost.h>
 
-class SurfaceManager
+class SurfaceManager: public QObject
 {
+    Q_OBJECT;
 public:
     SurfaceManager();
     ~SurfaceManager();
@@ -15,26 +18,23 @@ public:
     bool LoadSurfaces(QJsonObject* json, const QString& imgPath);
     void PrintSurfaceList();
     Surface* GetSurface(unsigned int id);
-    Surface* GetSurface(const QString& alias);
+    Surface* GetSurface(const QString& name);
+
+    void ApplyGraphics(const QString& tag, QStringList params, Ghost& g);
+
+private slots:
+    void Animate(Animation *a, Ghost& g);
 
 private:
-
     void MakeSurface(QJsonObject& obj);
     void MakeAnimation(QJsonObject& obj, Surface& s);
 
     QString imagePath;
 
     QMap<unsigned int, Surface*> surfaceIDMap;
-    QMap<QString, Surface*> surfaceAliasMap;
+    QMap<QString, Surface*> surfaceNameMap;
 
-    QMap<unsigned int, Animation*> animationIDMap;
-
-    const static inline QMap<QString,DrawMethod> drawMethodMap = {
-        {"base", DrawMethod::Base},
-        {"overlay", DrawMethod::Overlay},
-        {"clip", DrawMethod::Clip},
-        {"replace", DrawMethod::Replace}
-    };
+    QMap<Animation*, QTimer*> timers;
 };
 
 #endif // SURFACEMANAGER_H

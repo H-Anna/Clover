@@ -5,17 +5,17 @@
 		{
 			"id": 0,
 			"image": "surface0.png",
-			"alias": "neutral"
+			"name": "neutral"
 		},
 		{
 			"id": 1,
 			"image": "surface1501.png",
-			"alias": "shy"
+			"name": "shy"
 		},
 		{
 			"id": 2,
 			"image": "surface1502.png",
-			"alias": "shocked"
+			"name": "shocked"
 		},
 		{
 			"id": 3,
@@ -24,46 +24,48 @@
 		{
 			"id": 4,
 			"image": "surface1504.png",
-			"alias": "sad"
+			"name": "sad"
 		},
 		{
 			"id": 5,
 			"image": "surface1505.png",
-			"alias": "happy"
+			"name": "happy"
 		},
 		{
 			"id": 6,
-			"alias": "beast",
+			"name": "beast",
 			"image": "beast0.png",
-			"animations": [
+			"animations":
+			[
 				{
 					"id": 0,
-					"drawmethod": "always",
-					"frames": [
+					"frequency": "always",
+					"frames":
+					[
 						{
-							"id": 0,
 							"image": "beast0.png",
-							"drawmethod": "base"
+							"drawmethod": "base",
+							"ms": 100
 						},
 						{
-							"id": 1,
 							"image": "beast1.png",
-							"drawmethod": "replace"
+							"drawmethod": "replace",
+							"ms": 100
 						},
 						{
-							"id": 2,
 							"image": "beast2.png",
-							"drawmethod": "replace"
+							"drawmethod": "replace",
+							"ms": 100
 						},
 						{
-							"id": 3,
 							"image": "beast3.png",
-							"drawmethod": "replace"
+							"drawmethod": "replace",
+							"ms": 100
 						},
 						{
-							"id": 4,
 							"image": "beast4.png",
-							"drawmethod": "replace"
+							"drawmethod": "replace",
+							"ms": 100
 						}
 					]
 				}

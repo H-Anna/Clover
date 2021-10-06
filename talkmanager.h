@@ -20,19 +20,15 @@ public:
     QString PreprocessTalk(const QString& talk);
     void Parse(TokenCollection& tc, const QString& str, const QRegularExpression& regex);
 
-
-    QStringList GetCurrentTokensList();
     QRegularExpression GetTagRegex();
 
 signals:
     void TokenReadySignal(const QString& token);
-public slots:
-    void GetNextToken();
 
+    //TODO: replace talksList with a QMap
 private:
-    QStringList talksList;
-    QStringList currentTokensList;
-    int tokenCursor;
+    QVector<QString> talksList;
+    unsigned int tokenCursor;
     QRegularExpression tagRegex, htmlRegex;
 };
 #endif // TALKMANAGER_H

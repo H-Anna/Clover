@@ -11,15 +11,12 @@ class TokenCollection
 public:
     TokenCollection();
 
-    bool HasHtml();
     void append(const QString& token, Token::TokenType type, const QStringList& params = QStringList());
 
     Token GetNextToken();
     void Finalize();
 
 private:
-
-    bool hasHtml;
     int tokenCursor;
     QList<Token> tokenList;
 };

@@ -3,23 +3,25 @@
 
 #include <QString>
 
-#include <surface_enums.h>
+#include <enumconverter.h>
 
 class Frame
 {
 public:
-    Frame(int _id, const QString& _image, DrawMethod _drawMethod);
+    Frame(unsigned int _id, const QString& _image, DrawMethod _drawMethod, unsigned int _ms);
 
     QString PrintData();
 
-    int GetId() const;
+    unsigned int GetId() const;
     QString GetImage() const;
     DrawMethod GetDrawMethod() const;
+    unsigned int GetMs() const;
 
 private:
-    int id;
+    unsigned int id;
     QString image;
     DrawMethod drawMethod;
+    unsigned int ms;
 
 };
 

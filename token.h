@@ -17,9 +17,9 @@ public:
     Token();
     Token(const QString& _contents, TokenType _type, QStringList _params = QStringList());
 
-    QString getContents() const;
-    TokenType getType() const;
-    QStringList getParams() const;
+    QString GetContents() const;
+    TokenType GetType() const;
+    QStringList GetParams() const;
 
 private:
     QString contents;

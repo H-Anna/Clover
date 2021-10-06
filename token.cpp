@@ -16,17 +16,17 @@ Token::Token(const QString &_contents, TokenType _type, QStringList _params):
 
 }
 
-QString Token::getContents() const
+QString Token::GetContents() const
 {
     return contents;
 }
 
-Token::TokenType Token::getType() const
+Token::TokenType Token::GetType() const
 {
     return type;
 }
 
-QStringList Token::getParams() const
+QStringList Token::GetParams() const
 {
     return params;
 }

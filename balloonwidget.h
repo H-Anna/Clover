@@ -14,12 +14,10 @@
 
 class BalloonWidget: public QWidget
 {
-    Q_OBJECT
+    Q_OBJECT;
 public:
     BalloonWidget(QWidget *parent = nullptr);
     ~BalloonWidget();
-
-    void printBalloonContents();
 
     QPlainTextEdit* textHolder;
 
@@ -42,7 +40,7 @@ private:
     QPixmap displayedImage;
 
     QTextBrowser* textBrowser;
-    int textCursor;
+    unsigned int textCursor;
     QTimer* textTimer;
     QString printingText;
 

@@ -2,6 +2,8 @@
 #define GHOST_H
 
 #include <ghostwidget.h>
+#include <surface.h>
+
 #include <QObject>
 
 class Ghost: public QObject
@@ -10,16 +12,23 @@ class Ghost: public QObject
 public:
     Ghost();
     ~Ghost();
+
     void Hide();
     void Show();
-    void ChangeSurface(const QString& path);
+    void ChangeSurface(Surface *surface);
+    Surface* GetCurrentSurface();
+    Frame* ApplyAnimation(Animation* a);
+    void AppendAnimation(Animation* a);
 
     GhostWidget *GetInScope() const;
-    int GetID(GhostWidget *w) const;
+    unsigned int GetID(GhostWidget *w) const;
 
 private:
-    QMap<int, GhostWidget*> ghosts;
     GhostWidget* inScope;
+    unsigned int idInScope;
+    QMap<unsigned int, GhostWidget*> ghosts;
+    QMap<unsigned int, Surface*> currentSurface;
+    QMap<unsigned int, QList<Animation*>> currentAnimations;
 };
 
 #endif // GHOST_H

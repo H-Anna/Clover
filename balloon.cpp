@@ -48,7 +48,7 @@ BalloonWidget *Balloon::GetInScope() const
     return inScope;
 }
 
-int Balloon::GetID(BalloonWidget *w) const
+unsigned int Balloon::GetID(BalloonWidget *w) const
 {
     return balloons.key(w, -1);
 }

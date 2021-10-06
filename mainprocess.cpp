@@ -10,7 +10,7 @@ MainProcess::MainProcess(SurfaceManager *_sm)
 {
 
     ghostBalloonsMap.insert(ghost->GetID(ghost->GetInScope()),
-                            QList<int>({ balloon->GetID(balloon->GetInScope()) }) );
+                            QList<unsigned int>({ balloon->GetID(balloon->GetInScope()) }) );
 
     /// --------IMPORTANT SIGNALS--------
 
@@ -54,9 +54,9 @@ void MainProcess::EvaluateTokens()
 
     auto token = currentTC->GetNextToken();
 
-    qDebug().noquote() << "INFO - MainProcess - Token:" << token.getContents() << " Type:" << token.getType();
+    qDebug().noquote() << "INFO - MainProcess - Token:" << token.GetContents() << " Type:" << token.GetType();
 
-    switch (token.getType()) {
+    switch (token.GetType()) {
         case Token::CommandTag:
         {
             ExecuteCommand(token);
@@ -65,14 +65,14 @@ void MainProcess::EvaluateTokens()
 
         case Token::HtmlTag:
         {
-            balloon->AppendHtml(token.getContents());
+            balloon->AppendHtml(token.GetContents());
             emit finishedTokenEvaluationSignal();
             break;
         }
 
         case Token::PlainText:
         {
-            emit printTextSignal(token.getContents());
+            emit printTextSignal(token.GetContents());
             break;
         }
 
@@ -87,8 +87,8 @@ void MainProcess::EvaluateTokens()
 
         default:
         {
-            qDebug() << "WARNING - MainProcess - Unexpected token type" << token.getType();
-            qDebug().nospace() << "Token parameters: " << token.getParams() << "  ||  Token contents: " << token.getContents();
+            qDebug() << "WARNING - MainProcess - Unexpected token type" << token.GetType();
+            qDebug().nospace() << "Token parameters: " << token.GetParams() << "  ||  Token contents: " << token.GetContents();
 
             emit finishedTokenEvaluationSignal();
             break;
@@ -158,26 +158,19 @@ void MainProcess::BuildTagLambdaMap()
             return;
         }
 
-        QString str = params[0];
-        bool canConvertToInt;
-        str.toInt(&canConvertToInt);
+        mp.sm->ApplyGraphics("s", params, *(mp.ghost));
 
-        Surface* s;
-        if (canConvertToInt) {
+        emit mp.finishedTokenEvaluationSignal(); });
 
-            s = mp.sm->GetSurface(str.toInt());
-        } else {
+    tagLambdaMap.insert("i",[](MainProcess& mp, const QStringList& params){
 
-            s = mp.sm->GetSurface(str);
-        }
-
-        if (s == nullptr) {
-            qDebug().nospace() << "WARNING - MainProcess - No surface found with param " << str << ", skipping to next token.";
+        if (params.count() > 1) {
+            qDebug() << "WARNING - MainProcess - Animation change tag has multiple parameters, UNHANDLED CASE. Skipping to next token.";
             emit mp.finishedTokenEvaluationSignal();
             return;
         }
 
-        mp.ghost->ChangeSurface(s->GetImage());
+        mp.sm->ApplyGraphics("i", params, *(mp.ghost));
 
         emit mp.finishedTokenEvaluationSignal(); });
 
@@ -188,10 +181,10 @@ void MainProcess::BuildTagLambdaMap()
 
 void MainProcess::ExecuteCommand(const Token &token)
 {
-    auto tag = token.getContents();
+    auto tag = token.GetContents();
 
     if (tagLambdaMap.keys().contains(tag)) {
-        auto params = token.getParams();
+        auto params = token.GetParams();
         tagLambdaMap[tag](*this, params);
 
     } else {

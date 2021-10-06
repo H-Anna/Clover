@@ -8,66 +8,27 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# QtCreator supports the following variables for Android, which are identical to qmake Android variables.
-# Check http://doc.qt.io/qt-5/deployment-android.html for more information.
-# They need to be set before the find_package(Qt5 ...) call.
-
-#if(ANDROID)
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-#    if (ANDROID_ABI STREQUAL "armeabi-v7a")
-#        set(ANDROID_EXTRA_LIBS
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libcrypto.so
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libssl.so)
-#    endif()
-#endif()
-
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
+find_package(QT NAMES Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
-if(ANDROID)
-  add_library(GhostTest SHARED
+add_executable(GhostTest
     main.cpp
     ghostwidget.cpp
-    ghostwidget.h
     balloonwidget.cpp
-    balloonwidget.h
-  )
-else()
-  add_executable(GhostTest
-    main.cpp
-    ghostwidget.cpp
-    ghostwidget.h
-    balloonwidget.cpp
-    balloonwidget.h
     surface.cpp
-    surface.h
-    mainprocess.h
     mainprocess.cpp
-    talkmanager.h
     talkmanager.cpp
-    surfacemanager.h
     surfacemanager.cpp
-    filereader.h
     filereader.cpp
-    tokencollection.h
     tokencollection.cpp
-    token.h
     token.cpp
-    ghost.h
     ghost.cpp
-    balloon.h
     balloon.cpp
-    animation.h
     animation.cpp
-    frame.h
     frame.cpp
-
-    surface_enums.h
-
-  )
-endif()
+)
 
 target_link_libraries(GhostTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)

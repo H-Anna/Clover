@@ -19,8 +19,6 @@ public:
 public slots:
     void EvaluateTokens();
 
-signals:
-
 private:
     void BuildTagLambdaMap();
     void ExecuteCommand(const Token& token);
@@ -30,10 +28,10 @@ private:
     Balloon* balloon;
 
     QMap<QString, tagLambdaPtr> tagLambdaMap;
-    QMap<int,QList<int>> ghostBalloonsMap;
+    QMap<unsigned int,QList<unsigned int>> ghostBalloonsMap;
 
     TokenCollection* currentTC;
-    int tokenCursor;
+    unsigned int tokenCursor;
 
     SurfaceManager* sm;
 

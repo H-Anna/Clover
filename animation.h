@@ -1,30 +1,34 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
-#include <QList>
-#include <QMap>
+#include <QVector>
 
 #include <frame.h>
 
 class Animation
 {
 public:
-    Animation(int _id, DrawMethod _drawMethod);
+    Animation(int _id, QString _name = "", Frequency _frequency = Frequency::Never);
 
     QString PrintData();
 
-    int GetId() const;
-    QMap<int, Frame*> GetFrames() const;
-    DrawMethod GetDrawMethod() const;
+    unsigned int GetId() const;
+    const QString& GetName() const;
+    bool HasName() const;
+    Frequency GetFrequency() const;
+    QVector<Frame*> GetFrames() const;
 
-    void AddFrame(int _id, const QString& _image, DrawMethod _drawMethod);
+    void AddFrame(const QString& _image, DrawMethod _drawMethod, unsigned int _ms);
+    Frame* GetNextFrame();
 
 private:
 
-    int id;
-    DrawMethod drawMethod;
+    unsigned int id;
+    QString name;
+    Frequency frequency;
 
-    QMap<int, Frame*> frameIDMap;
+    unsigned int frameCursor;
+    QVector<Frame*> frames;
 
 };
 
