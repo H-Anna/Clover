@@ -9,7 +9,6 @@ BalloonWidget::BalloonWidget(QWidget *parent)
     /// TODO: implement "change balloon" tag
     connect(this, SIGNAL(changeBalloonSignal(const QString&)), this, SLOT(changeBalloon(const QString&)));
     connect(this, SIGNAL(changeBalloonSignal(const QString&)), this, SLOT(update()));
-    connect(this, SIGNAL(prepareTextSignal(const QString&)), this, SLOT(prepareText(const QString&)));
 
     changeBalloon(QString(R"(D:\D_Programs\GitHub\GhostTest\data\balloons0.png)"));
     textBrowser = nullptr;
@@ -32,25 +31,6 @@ BalloonWidget::~BalloonWidget()
     delete textTimer;
     delete textBrowser;
     delete textHolder;
-}
-
-void BalloonWidget::clearBalloon()
-{
-    if (textHolder != nullptr)
-        textHolder->clear();
-}
-
-void BalloonWidget::appendHtml(const QString &text)
-{
-    if (textHolder != nullptr)
-        textHolder->insertPlainText(text);
-}
-
-void BalloonWidget::printBalloonContents()
-{
-    if (textHolder != nullptr)
-        qDebug() << "INFO - BalloonWidget - textHolder contains:";
-        qDebug() << textHolder->toPlainText();
 }
 
 void BalloonWidget::mouseMoveEvent(QMouseEvent *event)
@@ -89,7 +69,6 @@ void BalloonWidget::setupTextBrowser()
     textBrowser->setReadOnly(true);
     textBrowser->setAcceptRichText(true);
     textBrowser->setAttribute(Qt::WA_TranslucentBackground);
-    //textBrowser->setOpenExternalLinks(true);
     textBrowser->setOpenLinks(false);
     textBrowser->setContextMenuPolicy(Qt::NoContextMenu);
     textBrowser->setFrameShape(QFrame::NoFrame);

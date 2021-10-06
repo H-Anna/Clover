@@ -14,14 +14,12 @@
 
 class BalloonWidget: public QWidget
 {
-    Q_OBJECT
+    Q_OBJECT;
 public:
     BalloonWidget(QWidget *parent = nullptr);
     ~BalloonWidget();
 
-    void clearBalloon();
-    void appendHtml(const QString& text);
-    void printBalloonContents();
+    QPlainTextEdit* textHolder;
 
 signals:
     void balloonLoadedSignal();
@@ -29,6 +27,8 @@ signals:
     void prepareTextSignal(const QString& text);
     void changeBalloonSignal(const QString& path);
     void finishedTextPrintSignal();
+
+
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -40,8 +40,7 @@ private:
     QPixmap displayedImage;
 
     QTextBrowser* textBrowser;
-    QPlainTextEdit* textHolder;
-    int textCursor;
+    unsigned int textCursor;
     QTimer* textTimer;
     QString printingText;
 

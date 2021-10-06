@@ -17,14 +17,7 @@ public:
     GhostWidget(QWidget *parent = nullptr);
     ~GhostWidget();
 
-signals:
-    void ghostLoadedSignal();
-
-    void changeSurfaceSignal(const QString& path);
-
-public slots:
-    void changeSurfaceSlot(int id);
-    void changeSurfaceSlot(const QString& alias);
+    QPixmap displayedImage;
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -33,9 +26,6 @@ protected:
 
 private:
     QPoint dragPosition;
-    QPixmap displayedImage;
-private slots:
-    void changeSurface(const QString& path);
 
 };
 #endif // GHOSTWIDGET_H

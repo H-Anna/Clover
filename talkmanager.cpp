@@ -2,7 +2,6 @@
 
 TalkManager::TalkManager(const QString &regexStr, const QString &htmlRegexStr)
     :
-    currentTokensList(QStringList()),
     tokenCursor(0)
 {
     tagRegex.setPattern(regexStr);
@@ -17,7 +16,7 @@ bool TalkManager::LoadTalks(QJsonObject *json)
 {
     QJsonArray talksArray = json->value("talks").toArray();
 
-    if (talksArray.empty()) {
+    if (talksArray.isEmpty()) {
         qDebug() << "ERROR - TalkManager - Talks couldn't be loaded!";
         return false;
     }
@@ -85,7 +84,6 @@ QString TalkManager::PreprocessTalk(const QString &talk)
 
 void TalkManager::Parse(TokenCollection &tc, const QString &str, const QRegularExpression &regex)
 {
-    QStringList parsed;
     int cursorPos = 0;
 
     auto iter = regex.globalMatch(str);
@@ -170,22 +168,7 @@ void TalkManager::Parse(TokenCollection &tc, const QString &str, const QRegularE
         }
     }
 
-    currentTokensList = parsed;
     tokenCursor = 0;
-}
-
-void TalkManager::GetNextToken()
-{
-    if (tokenCursor < currentTokensList.length()) {
-        emit TokenReadySignal(currentTokensList.at(tokenCursor++));
-    } else {
-        qDebug() << "INFO - TalkManager - All tokens have been passed.";
-    }
-}
-
-QStringList TalkManager::GetCurrentTokensList()
-{
-    return currentTokensList;
 }
 
 QRegularExpression TalkManager::GetTagRegex()

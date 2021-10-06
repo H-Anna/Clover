@@ -6,7 +6,7 @@ bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, const QString &abso
 
     auto filesInfoList = QDir(absolutePath).entryInfoList(QDir::Files);
 
-    if (filesInfoList.empty()) {
+    if (filesInfoList.isEmpty()) {
         qDebug() << "ERROR - FileReader - No files in directory!";
         return false;
     }
@@ -25,7 +25,7 @@ bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, const QString &abso
 
         QJsonObject json = QJsonDocument::fromJson(contents.toUtf8()).object();
 
-        if (json.empty()) {
+        if (json.isEmpty()) {
             qDebug() << "WARNING - FileReader - File" << file->fileName() << "has invalid JSON: "
                                                                              "unable to process, skipping to next file.";
             continue;

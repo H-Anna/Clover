@@ -6,10 +6,6 @@ GhostWidget::GhostWidget(QWidget *parent)
     setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
 
-    /// TODO: implement change surface
-    connect(this, SIGNAL(changeSurfaceSignal(const QString&)), this, SLOT(changeSurface(const QString&)));
-    connect(this, SIGNAL(changeSurfaceSignal(const QString&)), this, SLOT(update()));
-
     QAction *quitAction = new QAction(tr("E&xit"), this);
     quitAction->setShortcut(tr("Ctrl+Q"));
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
@@ -17,27 +13,11 @@ GhostWidget::GhostWidget(QWidget *parent)
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    changeSurface(QString(R"(D:\D_Programs\GitHub\GhostTest\data\surface1501.png)"));
-
-    emit ghostLoadedSignal();
+    move(width()-100, height()-100);
 }
 
 GhostWidget::~GhostWidget()
 {
-}
-
-void GhostWidget::changeSurfaceSlot(int id)
-{
-    //TODO
-
-    qDebug() << "INFO - GhostWidget - Change to surface" << id;
-}
-
-void GhostWidget::changeSurfaceSlot(const QString &alias)
-{
-    //TODO
-
-    qDebug() << "INFO - GhostWidget - Change to surface with alias" << alias;
 }
 
 void GhostWidget::mouseMoveEvent(QMouseEvent *event)
@@ -63,12 +43,6 @@ void GhostWidget::paintEvent(QPaintEvent *)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawPixmap(QPoint(0,0), displayedImage, target);
-}
-
-void GhostWidget::changeSurface(const QString &path)
-{
-    show();
-    displayedImage = QPixmap(path);
 }
 
 
