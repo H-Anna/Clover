@@ -1,6 +1,8 @@
 #ifndef GHOSTWIDGET_H
 #define GHOSTWIDGET_H
 
+#include <surface_enums.h>
+
 #include <QCoreApplication>
 #include <QWidget>
 #include <QAction>
@@ -11,13 +13,17 @@
 
 class GhostWidget : public QWidget
 {
-    Q_OBJECT
+    Q_OBJECT;
 
 public:
-    GhostWidget(QWidget *parent = nullptr);
+    GhostWidget(unsigned int _layerCount = 1, QWidget *parent = nullptr);
     ~GhostWidget();
 
+    void SetSurface(QVector<QString> images);
+    void SetAnimation(QString image, unsigned int layer, DrawMethod dm);
+
     QPixmap displayedImage;
+    QVector<QPixmap> pixmaps;
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -26,6 +32,8 @@ protected:
 
 private:
     QPoint dragPosition;
+    QSize baseSize;
+    unsigned int layerCount;
 
 };
 #endif // GHOSTWIDGET_H

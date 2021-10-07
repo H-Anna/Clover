@@ -24,6 +24,8 @@ private:
     void ExecuteCommand(const Token& token);
     void PrintUndefinedTag(const QString& tag, const QStringList& params);
 
+    SurfaceManager* sm;
+
     Ghost* ghost;
     Balloon* balloon;
 
@@ -32,8 +34,6 @@ private:
 
     TokenCollection* currentTC;
     unsigned int tokenCursor;
-
-    SurfaceManager* sm;
 
 signals:
     bool printTextSignal(const QString& text);

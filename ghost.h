@@ -10,7 +10,7 @@ class Ghost: public QObject
 {
     Q_OBJECT;
 public:
-    Ghost();
+    Ghost(unsigned int _layerCount = 1);
     ~Ghost();
 
     void Hide();

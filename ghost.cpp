@@ -1,7 +1,7 @@
 #include "ghost.h"
 
-Ghost::Ghost():
-    inScope(new GhostWidget()),
+Ghost::Ghost(unsigned int _layerCount):
+    inScope(new GhostWidget(_layerCount)),
     idInScope(0),
     ghosts(QVector<GhostWidget*>()),
     currentSurface(QMap<GhostWidget*, Surface*>()),
@@ -40,7 +40,7 @@ void Ghost::Show()
 void Ghost::ChangeSurface(Surface *surface)
 {
     currentSurface[inScope] = surface;
-    inScope->displayedImage = QPixmap(surface->GetImage());
+    inScope->SetSurface(surface->GetElements());
     inScope->update();
 }
 
@@ -55,8 +55,9 @@ Frame *Ghost::ApplyAnimation(Animation *a)
 
     if (f != nullptr) {
         AppendAnimation(a);
-        inScope->displayedImage = QPixmap(f->GetImage());
-        inScope->update();
+        //inScope->displayedImage = QPixmap(f->GetImage());
+        //inScope->update();
+        inScope->SetAnimation(f->GetImage(), a->GetLayer(), f->GetDrawMethod());
     }
 
     return f;

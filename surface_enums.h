@@ -6,13 +6,15 @@ enum DrawMethod
     Base,
     Overlay,
     Clip,
-    Replace
+    Replace,
+    Insert
 };
 
 enum Frequency
 {
     Never,
-    Always
+    Always,
+    Loop
 };
 
 #endif // SURFACE_ENUMS_H

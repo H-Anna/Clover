@@ -8,7 +8,7 @@
 class Animation
 {
 public:
-    Animation(int _id, QString _name = "", Frequency _frequency = Frequency::Never);
+    Animation(int _id, QString _name = "", Frequency _frequency = Frequency::Never, unsigned int _layer = 0);
     ~Animation();
 
     QString PrintData();
@@ -18,15 +18,19 @@ public:
     bool HasName() const;
     Frequency GetFrequency() const;
     QVector<Frame*> GetFrames() const;
+    unsigned int GetLayer() const;
 
     void AddFrame(const QString& _image, DrawMethod _drawMethod, unsigned int _ms);
     Frame* GetNextFrame();
+
+
 
 private:
 
     unsigned int id;
     QString name;
     Frequency frequency;
+    unsigned int layer;
 
     unsigned int frameCursor;
     QVector<Frame*> frames;

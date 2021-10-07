@@ -22,6 +22,8 @@ public:
 
     void ApplyGraphics(const QString& tag, QStringList params, Ghost& g);
 
+    unsigned int GetLayerCount() const;
+
 private slots:
     void Animate(Animation *a, Ghost& g);
 
@@ -30,6 +32,7 @@ private:
     void MakeAnimation(QJsonObject& obj, Surface& s);
 
     QString imagePath;
+    unsigned int layerCount;
 
     QMap<unsigned int, Surface*> surfaces;
     QMap<QString, Surface*> namedSurfaces;
