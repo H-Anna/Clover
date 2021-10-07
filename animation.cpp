@@ -1,9 +1,10 @@
 #include "animation.h"
 
-Animation::Animation(int _id, QString _name, Frequency _frequency):
+Animation::Animation(int _id, QString _name, Frequency _frequency, unsigned int _layer):
     id(_id),
     name(_name),
     frequency(_frequency),
+    layer(_layer),
     frameCursor(0),
     frames(QVector<Frame*>())
 {
@@ -55,6 +56,11 @@ Frequency Animation::GetFrequency() const
     return frequency;
 }
 
+unsigned int Animation::GetLayer() const
+{
+    return layer;
+}
+
 void Animation::AddFrame(const QString &_image, DrawMethod _drawMethod, unsigned int _ms)
 {
     unsigned int _id = frames.length();
@@ -69,6 +75,7 @@ Frame *Animation::GetNextFrame()
     if (frameCursor >= frames.length()) {
 
         switch (frequency) {
+        case Frequency::Loop:
         case Frequency::Always: {
             frameCursor -= frames.length();
 
@@ -85,3 +92,5 @@ Frame *Animation::GetNextFrame()
         return frames.at(frameCursor++);
     }
 }
+
+

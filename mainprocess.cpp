@@ -1,12 +1,11 @@
 #include "mainprocess.h"
 
-MainProcess::MainProcess(SurfaceManager *_sm)
-    :
-    ghost(new Ghost()),
+MainProcess::MainProcess(SurfaceManager *_sm):
+    sm(_sm),
+    ghost(new Ghost(sm->GetLayerCount())),
     balloon(new Balloon()),
     currentTC(nullptr),
-    tokenCursor(0),
-    sm(_sm)
+    tokenCursor(0)
 {
 
     ghostBalloonsMap.insert(ghost->GetID(ghost->GetInScope()),

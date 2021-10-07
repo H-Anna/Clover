@@ -1,71 +1,83 @@
 {
 	"type": "surface",
+	"layercount": 15,
 	"surfaces":
 	[
 		{
 			"id": 0,
-			"image": "surface0.png",
-			"name": "neutral"
-		},
-		{
-			"id": 1,
-			"image": "surface1501.png",
-			"name": "shy"
-		},
-		{
-			"id": 2,
-			"image": "surface1502.png",
-			"name": "shocked"
-		},
-		{
-			"id": 3,
-			"image": "surface1503.png"
-		},
-		{
-			"id": 4,
-			"image": "surface1504.png",
-			"name": "sad"
-		},
-		{
-			"id": 5,
-			"image": "surface1505.png",
-			"name": "happy"
-		},
-		{
-			"id": 6,
-			"name": "beast",
-			"image": "beast0.png",
+			"elements":
+			[
+				"tail_1.png",
+				"leg_BL.png",
+				"leg_FL.png",
+				"body.png",
+				"leg_BR.png",
+				"leg_FR.png",
+				"mane.png",
+				"ears_N.png",
+				"head.png",
+				"",
+				"nose_R.png",
+				"eyes_N.png",
+				"brows_N.png"
+				
+			],
 			"animations":
 			[
 				{
 					"id": 0,
-					"frequency": "always",
+					"name": "tail",
+					"frequency": "loop",
+					"layer": 0,
 					"frames":
 					[
 						{
-							"image": "beast0.png",
-							"drawmethod": "base",
-							"ms": 100
+							"image": "tail_2.png",
+							"drawmethod": "replace",
+							"ms": 200
 						},
 						{
-							"image": "beast1.png",
+							"image": "tail_3.png",
 							"drawmethod": "replace",
-							"ms": 100
+							"ms": 200
 						},
 						{
-							"image": "beast2.png",
+							"image": "tail_2.png",
 							"drawmethod": "replace",
-							"ms": 100
+							"ms": 200
 						},
 						{
-							"image": "beast3.png",
+							"image": "tail_1.png",
 							"drawmethod": "replace",
-							"ms": 100
-						},
+							"ms": 200
+						}
+					]
+				},
+				{
+					"id": 1,
+					"name": "smile",
+					"frequency": "never",
+					"layer": 9,
+					"frames":
+					[
 						{
-							"image": "beast4.png",
+							"image": "mouth_S.png",
 							"drawmethod": "replace",
-							"ms": 100
+							"ms": 10
+						}
+					]
+				},
+				{
+					"id": 2,
+					"name": "perk",
+					"frequency": "never",
+					"layer": 7,
+					"frames":
+					[
+						{
+							"image": "ears_P.png",
+							"drawmethod": "replace",
+							"ms": 10
 						}
 					]
 				}

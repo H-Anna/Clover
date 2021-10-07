@@ -31,12 +31,13 @@ private:
     const static inline QMap<QString,DrawMethod> drawMethodMap = {
             {"base", DrawMethod::Base},
             {"overlay", DrawMethod::Overlay},
-            {"clip", DrawMethod::Clip},
-            {"replace", DrawMethod::Replace}
+            {"replace", DrawMethod::Replace},
+            {"insert", DrawMethod::Insert}
         };
 
     const static inline QMap<QString,Frequency> frequencyMap = {
         {"always", Frequency::Always},
+        {"loop", Frequency::Loop},
         {"never", Frequency::Never}
     };
 };

@@ -25,6 +25,7 @@ bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &imgPath)
     imagePath = imgPath + "\/";
 #endif
 
+    layerCount = json->value("layercount").toInt();
     QJsonArray surfaceArray = json->value("surfaces").toArray();
 
     if (surfaceArray.isEmpty())
@@ -49,6 +50,9 @@ void SurfaceManager::Animate(Animation* a, Ghost &g)
 
         return;
     }
+
+    if (f->GetMs() == 0)
+        return;
 
     QTimer* timer;
 
@@ -85,7 +89,19 @@ void SurfaceManager::ApplyGraphics(const QString &tag, QStringList params, Ghost
             return;
         }
 
+        /// Apply surface
+
         g.ChangeSurface(s);
+
+        /// If it has animations that always play, play them.
+
+        auto always = s->GetAlwaysAnimations();
+
+        if (always.length() > 0) {
+            for (auto &it: always) {
+                Animate(it, g);
+            }
+        }
 
     } else if (tag == "i") {
 
@@ -145,14 +161,18 @@ void SurfaceManager::MakeSurface(QJsonObject &obj)
     /// Make surface
 
     unsigned int id = obj.value("id").toInt();
-    QString img = imagePath + obj.value("image").toString();
+    auto elements = obj.value("elements").toArray();
 
     QString name = obj.value("name").toString("");
 
-    auto s = new Surface(id, img, name);
+    auto s = new Surface(id, name);
     surfaces.insert(s->GetId(), s);
     if (s->HasName())
         namedSurfaces.insert(s->GetName(), s);
+
+    for (auto it: elements) {
+        s->AddElement(imagePath + it.toString());
+    }
 
     /// Make animations
 
@@ -177,9 +197,10 @@ void SurfaceManager::MakeAnimation(QJsonObject &obj, Surface& s)
     /// Make animation & frames
 
     unsigned int id = obj.value("id").toInt();
+    unsigned int layer = obj.value("layer").toInt(0);
     Frequency frequency = EnumConverter::GetFrequency(obj.value("frequency").toString().toLower());
     QString name = obj.value("name").toString("");
-    auto a = s.AddAnimation(id, name, frequency);
+    auto a = s.AddAnimation(id, name, frequency, layer);
 
     for (int k = 0; k < framesArray.count(); k++) {
 
@@ -188,8 +209,13 @@ void SurfaceManager::MakeAnimation(QJsonObject &obj, Surface& s)
         QJsonObject frame = framesArray.at(k).toObject();
         QString image = imagePath + frame.value("image").toString();
         DrawMethod drawMethod = EnumConverter::GetDrawMethod(frame.value("drawmethod").toString().toLower());
-        unsigned int ms = frame.value("ms").toInt();
+        unsigned int ms = frame.value("ms").toInt(0);
 
         a->AddFrame(image, drawMethod, ms);
     }
+}
+
+unsigned int SurfaceManager::GetLayerCount() const
+{
+    return layerCount;
 }
