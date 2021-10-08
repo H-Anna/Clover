@@ -39,9 +39,9 @@ bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &imgPath)
     return true;
 }
 
-void SurfaceManager::Animate(Animation* a, Ghost &g)
+void SurfaceManager::Animate(Animation* a)
 {
-    auto f = g.ApplyAnimation(a);
+    auto f = a->GetNextFrame();
 
     if (f == nullptr) {
 
@@ -50,6 +50,9 @@ void SurfaceManager::Animate(Animation* a, Ghost &g)
 
         return;
     }
+    f->GetImage(), a->GetLayer(), f->GetDrawMethod();
+
+    emit applyAnimationSignal(a, f);
 
     if (f->GetMs() == 0)
         return;
@@ -60,7 +63,7 @@ void SurfaceManager::Animate(Animation* a, Ghost &g)
         timer = timers.value(a);
     } else {
         timer = new QTimer(this);
-        timer->callOnTimeout(this, [this, a, &g](){ Animate(a, g); });
+        timer->callOnTimeout(this, [this, a](){ Animate(a); });
         timer->setSingleShot(true);
         timers[a] = timer;
     }
@@ -69,7 +72,7 @@ void SurfaceManager::Animate(Animation* a, Ghost &g)
     timer->start();
 }
 
-void SurfaceManager::ApplyGraphics(const QString &tag, QStringList params, Ghost &g)
+void SurfaceManager::ApplyGraphics(const QString &tag, QStringList params, Surface *currentSurface)
 {
     QString str = params[0];
     bool canConvertToInt;
@@ -91,7 +94,8 @@ void SurfaceManager::ApplyGraphics(const QString &tag, QStringList params, Ghost
 
         /// Apply surface
 
-        g.ChangeSurface(s);
+        //g.ChangeSurface(s);
+        emit changeSurfaceSignal(s);
 
         /// If it has animations that always play, play them.
 
@@ -99,13 +103,13 @@ void SurfaceManager::ApplyGraphics(const QString &tag, QStringList params, Ghost
 
         if (always.length() > 0) {
             for (auto &it: always) {
-                Animate(it, g);
+                Animate(it);
             }
         }
 
     } else if (tag == "i") {
 
-        Surface* s = g.GetCurrentSurface();
+        Surface* s = currentSurface;
 
         Animation* a = nullptr;
         if (canConvertToInt) {
@@ -120,7 +124,7 @@ void SurfaceManager::ApplyGraphics(const QString &tag, QStringList params, Ghost
             return;
         }
 
-        Animate(a, g);
+        Animate(a);
     }
 }
 

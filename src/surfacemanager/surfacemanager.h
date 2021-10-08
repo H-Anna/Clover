@@ -6,7 +6,6 @@
 #include <QTimer>
 
 #include <surface.h>
-#include <ghost.h>
 
 class SurfaceManager: public QObject
 {
@@ -19,13 +18,17 @@ public:
     void PrintSurfaceList();
     Surface* GetSurface(unsigned int id);
     Surface* GetSurface(const QString& name);
-
-    void ApplyGraphics(const QString& tag, QStringList params, Ghost& g);
-
     unsigned int GetLayerCount() const;
 
+public slots:
+    void ApplyGraphics(const QString& tag, QStringList params, Surface* currentSurface);
+
+signals:
+    void applyAnimationSignal(Animation* a, Frame* f);
+    void changeSurfaceSignal(Surface* s);
+
 private slots:
-    void Animate(Animation *a, Ghost& g);
+    void Animate(Animation *a);
 
 private:
     void MakeSurface(QJsonObject& obj);

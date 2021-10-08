@@ -1,8 +1,7 @@
 #include "mainprocess.h"
 
-MainProcess::MainProcess(SurfaceManager *_sm):
-    sm(_sm),
-    ghost(new Ghost(sm->GetLayerCount())),
+MainProcess::MainProcess(unsigned int _layerCount):
+    ghost(new Ghost(_layerCount)),
     balloon(new Balloon()),
     currentTC(nullptr),
     tokenCursor(0)
@@ -43,7 +42,6 @@ MainProcess::~MainProcess()
     }
 
     tagLambdaMap.clear();
-    delete sm;
 }
 
 void MainProcess::EvaluateTokens()
@@ -99,6 +97,11 @@ void MainProcess::EvaluateTokens()
 void MainProcess::SaveTokenCollection(TokenCollection &tc)
 {
     currentTC = &tc;
+}
+
+Ghost *MainProcess::GetGhost() const
+{
+    return ghost;
 }
 
 void MainProcess::BuildTagLambdaMap()
@@ -157,8 +160,7 @@ void MainProcess::BuildTagLambdaMap()
             return;
         }
 
-        mp.sm->ApplyGraphics("s", params, *(mp.ghost));
-
+        emit mp.applyGraphicsSignal("s", params, mp.ghost->GetCurrentSurface());
         emit mp.finishedTokenEvaluationSignal(); });
 
     tagLambdaMap.insert("i",[](MainProcess& mp, const QStringList& params){
@@ -169,8 +171,7 @@ void MainProcess::BuildTagLambdaMap()
             return;
         }
 
-        mp.sm->ApplyGraphics("i", params, *(mp.ghost));
-
+        emit mp.applyGraphicsSignal("i", params, mp.ghost->GetCurrentSurface());
         emit mp.finishedTokenEvaluationSignal(); });
 
     /// TODO: does every single lambda function have to emit FTE? This makes it possible for other

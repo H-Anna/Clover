@@ -4,12 +4,15 @@ Ghost::Ghost(unsigned int _layerCount):
     inScope(new GhostWidget(_layerCount)),
     idInScope(0),
     ghosts(QVector<GhostWidget*>()),
-    currentSurface(QMap<GhostWidget*, Surface*>()),
-    currentAnimations(QMap<GhostWidget*, QList<Animation*>>())
+    currentSurface(QMap<GhostWidget*, Surface*>())
+    //currentAnimations(QMap<GhostWidget*, QList<Animation*>>())
 
 {
     ghosts.append(inScope);
     inScope->show();
+
+//    connect(this, SIGNAL(applyAnimationSignal(const QString&, unsigned int, DrawMethod)),
+//            inScope, SLOT(SetAnimation(const QString&, unsigned int, DrawMethod)));
 }
 
 Ghost::~Ghost()
@@ -17,9 +20,9 @@ Ghost::~Ghost()
     for (auto &w: ghosts) {
         delete currentSurface.value(w);
 
-        for (auto &it: currentAnimations.value(w)) {
-            delete it;
-        }
+//        for (auto &it: currentAnimations.value(w)) {
+//            delete it;
+//        }
         delete w;
     }
 
@@ -41,7 +44,6 @@ void Ghost::ChangeSurface(Surface *surface)
 {
     currentSurface[inScope] = surface;
     inScope->SetSurface(surface->GetElements());
-    inScope->update();
 }
 
 Surface *Ghost::GetCurrentSurface()
@@ -49,18 +51,10 @@ Surface *Ghost::GetCurrentSurface()
     return currentSurface[inScope];
 }
 
-Frame *Ghost::ApplyAnimation(Animation *a)
+void Ghost::ApplyAnimation(Animation* a, Frame* f)
 {
-    auto f = a->GetNextFrame();
-
-    if (f != nullptr) {
-        AppendAnimation(a);
-        //inScope->displayedImage = QPixmap(f->GetImage());
-        //inScope->update();
-        inScope->SetAnimation(f->GetImage(), a->GetLayer(), f->GetDrawMethod());
-    }
-
-    return f;
+    AppendAnimation(a);
+    inScope->SetAnimation(f->GetImage(), a->GetLayer(), f->GetDrawMethod());
 }
 
 void Ghost::AppendAnimation(Animation *a)

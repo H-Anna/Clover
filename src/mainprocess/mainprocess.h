@@ -4,7 +4,6 @@
 #include <ghost.h>
 #include <balloon.h>
 #include <tokencollection.h>
-#include <surfacemanager.h>
 
 class MainProcess: public QObject
 {
@@ -12,10 +11,14 @@ class MainProcess: public QObject
 
     Q_OBJECT;
 public:
-    MainProcess(SurfaceManager *_sm);
+    MainProcess(unsigned int _layerCount);
     ~MainProcess();
     void SaveTokenCollection(TokenCollection &tc);
 
+    Ghost* GetGhost() const;
+
+signals:
+    void applyGraphicsSignal(const QString& tag, QStringList params, Surface* currentSurface);
 public slots:
     void EvaluateTokens();
 
@@ -23,8 +26,6 @@ private:
     void BuildTagLambdaMap();
     void ExecuteCommand(const Token& token);
     void PrintUndefinedTag(const QString& tag, const QStringList& params);
-
-    SurfaceManager* sm;
 
     Ghost* ghost;
     Balloon* balloon;

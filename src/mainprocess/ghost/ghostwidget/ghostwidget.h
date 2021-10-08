@@ -20,10 +20,12 @@ public:
     ~GhostWidget();
 
     void SetSurface(QVector<QString> images);
-    void SetAnimation(QString image, unsigned int layer, DrawMethod dm);
 
     QPixmap displayedImage;
     QVector<QPixmap> pixmaps;
+
+public slots:
+    void SetAnimation(QString image, unsigned int layer, DrawMethod dm);
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;

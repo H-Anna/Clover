@@ -45,8 +45,18 @@ int main(int argc, char *argv[])
         }
     }
 
-    MainProcess* mainproc = new MainProcess(sm);
+    MainProcess* mainproc = new MainProcess(sm->GetLayerCount());
 
+    QObject::connect(mainproc, SIGNAL(applyGraphicsSignal(const QString&, QStringList, Surface*)),
+            sm, SLOT(ApplyGraphics(const QString&, QStringList, Surface*)));
+
+    QObject::connect(sm, SIGNAL(applyAnimationSignal(Animation*, Frame*)),
+                     mainproc->GetGhost(), SLOT(ApplyAnimation(Animation*, Frame*)));
+
+    QObject::connect(sm, SIGNAL(changeSurfaceSignal(Surface*)),
+                     mainproc->GetGhost(), SLOT(ChangeSurface(Surface*)));
+
+    //TODO random talk
     auto tc = tm->MakeTokens(tm->GetTalk(1000));
     mainproc->SaveTokenCollection(tc);
     mainproc->EvaluateTokens();

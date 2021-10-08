@@ -25,18 +25,19 @@ GhostWidget::~GhostWidget()
 
 void GhostWidget::SetSurface(QVector<QString> images)
 {
-    //TODO drawmethod
+    //TODO drawmethod?
 
     pixmaps.clear();
     pixmaps.reserve(layerCount);
     for (unsigned int i = 0; i < layerCount; i++) {
 
         if (i >= images.length() || images.at(i) == "")
-            pixmaps.append(QPixmap());
+            pixmaps.append(QPixmap(0,0));
         else
             pixmaps.append(images.at(i));
 
     }
+
     baseSize = pixmaps.at(0).size();
     update();
 }
@@ -71,7 +72,7 @@ void GhostWidget::SetAnimation(QString image, unsigned int layer, DrawMethod dm)
 
         } else {
             while (diff > 0) {
-                pixmaps.append(QPixmap());
+                pixmaps.append(QPixmap(0,0));
                 diff--;
             }
 
@@ -85,8 +86,6 @@ void GhostWidget::SetAnimation(QString image, unsigned int layer, DrawMethod dm)
     }
 
     }
-
-
 
     update();
 }
@@ -109,16 +108,16 @@ void GhostWidget::mousePressEvent(QMouseEvent *event)
 
 void GhostWidget::paintEvent(QPaintEvent *)
 {
-    //QRect target(QPoint(0,0), displayedImage.size());
-
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    //painter.drawPixmap(QPoint(0,0), displayedImage, target);
-    //painter.drawPixmap(QPoint(0,0), pixmaps.at(0));
 
-    for (auto &it: pixmaps) {
-        if (it != QPixmap()) {
-            painter.drawPixmap(QPoint(0,0), it);
+    for (int i = 0; i < pixmaps.length(); i++) {
+
+        /// Comparing two QPixmaps directly results in a QCursor error... for some reason.
+
+        if (pixmaps.at(i).operator QVariant() != QPixmap(0,0).operator QVariant()) {
+
+            painter.drawPixmap(QPoint(0,0), pixmaps.at(i));
         }
     }
 

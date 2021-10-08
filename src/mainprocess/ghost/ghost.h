@@ -15,15 +15,23 @@ public:
 
     void Hide();
     void Show();
-    void ChangeSurface(Surface *surface);
     Surface* GetCurrentSurface();
-    Frame* ApplyAnimation(Animation* a);
-    void AppendAnimation(Animation* a);
-
     GhostWidget *GetInScope() const;
     unsigned int GetID(GhostWidget *w) const;
 
+signals:
+    //void applyAnimationSignal(const QString& image, unsigned int layer, DrawMethod dm);
+    void applyAnimationSignal(Animation* a, Frame* f);
+
+public slots:
+    void ChangeSurface(Surface *surface);
+    //void ApplyAnimation(const QString &image, unsigned int layer, DrawMethod dm);
+    void ApplyAnimation(Animation *a, Frame *f);
+
 private:
+    void AppendAnimation(Animation* a);
+
+
     GhostWidget* inScope;
     unsigned int idInScope;
     QVector<GhostWidget*> ghosts;
