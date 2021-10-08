@@ -1,8 +1,6 @@
 #ifndef FRAME_H
 #define FRAME_H
 
-#include <QString>
-
 #include <enumconverter.h>
 
 class Frame

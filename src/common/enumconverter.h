@@ -1,7 +1,7 @@
 #ifndef ENUMCONVERTER_H
 #define ENUMCONVERTER_H
 
-#include <surface_enums.h>
+#include "surface_enums.h"
 
 #include <QString>
 #include <QMap>

@@ -13,9 +13,9 @@ int main(int argc, char *argv[])
     QString path;
 
 #ifdef _WIN32
-    path = R"(..\..\data)";
+    path = R"(..\..\..\data)";
 #elif unix || __unix || __unix__
-    path = R"(../data)";
+    path = R"(../../../data)";
 #endif
 
     dataDir.cd(path);

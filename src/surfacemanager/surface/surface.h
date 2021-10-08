@@ -1,8 +1,6 @@
 #ifndef SURFACE_H
 #define SURFACE_H
 
-#include <QMap>
-
 #include <animation.h>
 
 class Surface

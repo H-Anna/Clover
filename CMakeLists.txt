@@ -11,24 +11,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+include_directories(${CMAKE_SOURCE_DIR}/src/common)
 
-add_executable(GhostTest
-    main.cpp
-    ghostwidget.cpp
-    balloonwidget.cpp
-    surface.cpp
-    mainprocess.cpp
-    talkmanager.cpp
-    surfacemanager.cpp
-    filereader.cpp
-    tokencollection.cpp
-    token.cpp
-    ghost.cpp
-    balloon.cpp
-    animation.cpp
-    frame.cpp
-)
-
-target_link_libraries(GhostTest PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+add_subdirectory(src)
