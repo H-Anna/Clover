@@ -29,9 +29,9 @@ void GhostWidget::SetSurface(QVector<QString> images)
 
     pixmaps.clear();
     pixmaps.reserve(layerCount);
-    for (unsigned int i = 0; i < layerCount; i++) {
+    for (unsigned int i = 0; i < images.length(); i++) {
 
-        if (i >= images.length() || images.at(i) == "")
+        if (images.at(i) == "")
             pixmaps.append(QPixmap(0,0));
         else
             pixmaps.append(images.at(i));

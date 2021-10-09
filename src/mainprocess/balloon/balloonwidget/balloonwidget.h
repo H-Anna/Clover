@@ -20,14 +20,16 @@ public:
     BalloonWidget(QWidget *parent = nullptr);
     ~BalloonWidget();
 
-    void ChangeBalloon(const QString& path, QPoint TL, QPoint BR);
-
     QPlainTextEdit* textHolder;
 
 signals:
     void balloonLoadedSignal();
     void prepareTextSignal(const QString& text);
     void finishedTextPrintSignal();
+
+public slots:
+    void ChangeBalloon(const QString& path, QPoint TL, QPoint BR);
+    void ChangeTextSpeed(unsigned int newSpeed);
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -39,7 +41,11 @@ private:
     QPixmap displayedImage;
 
     TextArea* textArea;
+
+    const unsigned int defaultTextSpeed = 50;
+
     unsigned int textCursor;
+    unsigned int textSpeed;
     QTimer* textTimer;
     QString printingText;
 

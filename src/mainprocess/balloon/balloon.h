@@ -10,15 +10,17 @@ class Balloon: public QObject
 {
     Q_OBJECT;
 public:
-    Balloon();
+    Balloon(QVector<BalloonSurface*> _defaultBalloons);
     ~Balloon();
 
     void AppendHtml(const QString& text);
     void PrintBalloonContents();
     void ClearBalloon();
+    void ChangeTextSpeed(unsigned int newSpeed);
 
     BalloonWidget *GetInScope() const;
     unsigned int GetID(BalloonWidget* w) const;
+
 
 signals:
     void printTextSignal(const QString& text);
@@ -26,10 +28,17 @@ signals:
 
 public slots:
     void ChangeBalloon(BalloonSurface* b);
+    void ChangeScope(unsigned int id);
 
 private:
+    void ConnectScope();
+    void DisconnectScope();
+
     QVector<BalloonWidget*> balloons;
     BalloonWidget* inScope;
+    unsigned int idInScope;
+
+    QVector<BalloonSurface*> defaultBalloons;
 };
 
 #endif // BALLOON_H

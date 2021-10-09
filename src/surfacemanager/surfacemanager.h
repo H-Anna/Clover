@@ -19,17 +19,21 @@ public:
     void PrintSurfaceList();
     Surface* GetSurface(unsigned int id);
     Surface* GetSurface(const QString& name);
+    BalloonSurface* GetBalloonSurface(unsigned int id);
     unsigned int GetLayerCount() const;
+    QVector<Surface*> GetDefaultSurfaces() const;
+    QVector<BalloonSurface*> GetDefaultBalloons() const;
 
     bool LoadBalloons(QJsonObject *json, const QString &imgPath);
 
     void Initialize();
 
 public slots:
-    void ApplyGraphics(const QString& tag, QStringList params, Surface* currentSurface);
-
+    void ApplyAnimation(QStringList params, Surface *currentSurface);
+    void ApplySurface(QStringList params);
+    void ApplyBalloon(QStringList params);
 signals:
-    void applyAnimationSignal(Animation* a, Frame* f);
+    void animateGhostSignal(Animation* a, Frame* f);
     void changeSurfaceSignal(Surface* s);
     void changeBalloonSignal(BalloonSurface* b);
 

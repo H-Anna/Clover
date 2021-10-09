@@ -11,15 +11,20 @@ class MainProcess: public QObject
 
     Q_OBJECT;
 public:
-    MainProcess(unsigned int _layerCount);
+    MainProcess(unsigned int _layerCount, QVector<Surface*> defSurf, QVector<BalloonSurface*> defBall);
     ~MainProcess();
+
     void SaveTokenCollection(TokenCollection &tc);
 
     Ghost* GetGhost() const;
     Balloon* GetBalloon() const;
 
 signals:
-    void applyGraphicsSignal(const QString& tag, QStringList params, Surface* currentSurface);
+    //void applyGraphicsSignal(const QString& tag, QStringList params, Surface* currentSurface);
+    void applySurfaceSignal(QStringList params);
+    void applyAnimationSignal(QStringList params, Surface* s);
+    void applyBalloonSignal(QStringList params);
+    void changeScopeSignal(unsigned int id);
 public slots:
     void EvaluateTokens();
 
@@ -39,6 +44,8 @@ private:
 
 signals:
     bool printTextSignal(const QString& text);
+    void changeTextSpeedSignal(unsigned int newSpeed);
+
     void finishedTokenEvaluationSignal();
 
 };

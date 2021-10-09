@@ -11,6 +11,11 @@
 			"id": 1,
 			"image": "balloon1.png",
 			"textarea": [51,19,225,329]
+		},
+		{
+			"id": 2,
+			"image": "balloon2.png",
+			"textarea": [49,20,227,183]
 		}
 	]
 }

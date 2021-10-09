@@ -1,7 +1,8 @@
 #include "balloonwidget.h"
 
 BalloonWidget::BalloonWidget(QWidget *parent)
-    : QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint)
+    : QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint),
+      textSpeed(defaultTextSpeed)
 {
     setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
@@ -19,7 +20,9 @@ BalloonWidget::BalloonWidget(QWidget *parent)
 
     textTimer = new QTimer(this);
     connect(textTimer, &QTimer::timeout, this, &BalloonWidget::PrintText);
-    textTimer->setInterval(50);
+    textTimer->setInterval(textSpeed);
+
+    //SetupTextBrowser();
 
     emit balloonLoadedSignal();
 
@@ -102,9 +105,19 @@ void BalloonWidget::ChangeBalloon(const QString &path, QPoint TL, QPoint BR)
     displayedImage = QPixmap(path);
     int width = BR.x() - TL.x();
     int height = BR.y() - TL.y();
+
+    textHolder->clear();
+    textArea->deleteLater();
+
     SetupTextBrowser(TL, width, height);
 
     update();
+}
+
+void BalloonWidget::ChangeTextSpeed(unsigned int newSpeed)
+{
+    textSpeed = newSpeed;
+    textTimer->setInterval(textSpeed);
 }
 
 void BalloonWidget::TextBrowserUpdate()

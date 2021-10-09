@@ -1,8 +1,8 @@
 #include "mainprocess.h"
 
-MainProcess::MainProcess(unsigned int _layerCount):
-    ghost(new Ghost(_layerCount)),
-    balloon(new Balloon()),
+MainProcess::MainProcess(unsigned int _layerCount, QVector<Surface *> defSurf, QVector<BalloonSurface *> defBall):
+    ghost(new Ghost(defSurf, _layerCount)),
+    balloon(new Balloon(defBall)),
     currentTC(nullptr),
     tokenCursor(0)
 {
@@ -22,6 +22,12 @@ MainProcess::MainProcess(unsigned int _layerCount):
 
     connect(balloon, SIGNAL(finishedTextPrintSignal()),
             this, SIGNAL(finishedTokenEvaluationSignal()));
+
+    connect(this, SIGNAL(changeScopeSignal(unsigned int)),
+            ghost, SLOT(ChangeScope(unsigned int)));
+
+    connect(this, SIGNAL(changeScopeSignal(unsigned int)),
+            balloon, SLOT(ChangeScope(unsigned int)));
 
 
     /// ------------LAMBDA MAP------------
@@ -157,26 +163,66 @@ void MainProcess::BuildTagLambdaMap()
         mp.ghost->Show();
         emit mp.finishedTokenEvaluationSignal(); });
 
+    tagLambdaMap.insert("speed", [](MainProcess& mp, const QStringList& params){
+
+        bool canConvert;
+        int spd = params.at(0).toInt(&canConvert);
+
+        if (canConvert) {
+            mp.balloon->ChangeTextSpeed(spd);
+
+        } else {
+            qDebug() << "ERROR - MainProcess - Couldn't convert parameter to int, skipping token.";
+        }
+
+        emit mp.finishedTokenEvaluationSignal(); });
+
+    tagLambdaMap.insert("b",[](MainProcess& mp, const QStringList& params){
+
+        if (params.count() > 1) {
+            qDebug() << "WARNING - MainProcess - Balloon change tag has multiple parameters, UNHANDLED CASE. Skipping token.";
+        } else {
+            emit mp.applyBalloonSignal(params);
+        }
+
+        emit mp.finishedTokenEvaluationSignal(); });
+
     tagLambdaMap.insert("s",[](MainProcess& mp, const QStringList& params){
 
         if (params.count() > 1) {
-            qDebug() << "WARNING - MainProcess - Surface change tag has multiple parameters, UNHANDLED CASE. Skipping to next token.";
-            emit mp.finishedTokenEvaluationSignal();
-            return;
+            qDebug() << "WARNING - MainProcess - Surface change tag has multiple parameters, UNHANDLED CASE. Skipping token.";
+        } else {
+            emit mp.applySurfaceSignal(params);
         }
 
-        emit mp.applyGraphicsSignal("s", params, mp.ghost->GetCurrentSurface());
         emit mp.finishedTokenEvaluationSignal(); });
 
     tagLambdaMap.insert("i",[](MainProcess& mp, const QStringList& params){
 
         if (params.count() > 1) {
-            qDebug() << "WARNING - MainProcess - Animation change tag has multiple parameters, UNHANDLED CASE. Skipping to next token.";
-            emit mp.finishedTokenEvaluationSignal();
-            return;
+            qDebug() << "WARNING - MainProcess - Animation change tag has multiple parameters, UNHANDLED CASE. Skipping token.";
+        } else {
+            emit mp.applyAnimationSignal(params, mp.ghost->GetCurrentSurface());
         }
 
-        emit mp.applyGraphicsSignal("i", params, mp.ghost->GetCurrentSurface());
+        emit mp.finishedTokenEvaluationSignal(); });
+
+    tagLambdaMap.insert("p",[](MainProcess& mp, const QStringList& params){
+
+        if (params.count() > 1) {
+            qDebug() << "ERROR - MainProcess - Scope change tag has multiple parameters, UNHANDLED CASE. Skipping token.";
+        } else {
+
+            bool canConvert;
+            unsigned int id = params.at(0).toInt(&canConvert);
+
+            if (!canConvert) {
+                qDebug() << "ERROR - MainProcess - Scope change tag can't be converted to int, UNHANDLED CASE. Skipping token.";
+            } else {
+                emit mp.changeScopeSignal(id);
+            }
+        }
+
         emit mp.finishedTokenEvaluationSignal(); });
 
     /// TODO: does every single lambda function have to emit FTE? This makes it possible for other
@@ -193,7 +239,7 @@ void MainProcess::ExecuteCommand(const Token &token)
         tagLambdaMap[tag](*this, params);
 
     } else {
-        qDebug() << "WARNING - MainProcess - CommandTag" << tag << "is not part of tagLambdaMap. Skipping to next token.";
+        qDebug() << "WARNING - MainProcess - CommandTag" << tag << "is not part of tagLambdaMap. Skipping token.";
         emit finishedTokenEvaluationSignal();
     }
 }
