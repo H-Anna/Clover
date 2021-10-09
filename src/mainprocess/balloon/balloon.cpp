@@ -64,6 +64,11 @@ void Balloon::ConnectScope()
     connect(inScope, SIGNAL(finishedTextPrintSignal()),
             this, SIGNAL(finishedTextPrintSignal()));
 
+    /// The following signals should not be disconnected when the scope is switched
+
+    connect(this, SIGNAL(timeoutSignal()),
+            inScope, SLOT(PrepareTimeout()));
+
 }
 
 void Balloon::DisconnectScope()
@@ -73,7 +78,6 @@ void Balloon::DisconnectScope()
 
     disconnect(inScope, SIGNAL(finishedTextPrintSignal()),
             this, SIGNAL(finishedTextPrintSignal()));
-
 }
 
 void Balloon::AppendHtml(const QString &text)

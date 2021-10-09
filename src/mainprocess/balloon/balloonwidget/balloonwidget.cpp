@@ -22,9 +22,9 @@ BalloonWidget::BalloonWidget(QWidget *parent)
     connect(textTimer, &QTimer::timeout, this, &BalloonWidget::PrintText);
     textTimer->setInterval(textSpeed);
 
-    //SetupTextBrowser();
-
-    emit balloonLoadedSignal();
+    balloonTimeout = new QTimer(this);
+    balloonTimeout->setSingleShot(true);
+    connect(balloonTimeout, &QTimer::timeout, this, &QWidget::hide);
 
 }
 
@@ -79,6 +79,9 @@ void BalloonWidget::SetupTextBrowser(QPoint topLeft, int width, int height)
 
 void BalloonWidget::PrepareText(const QString &text)
 {
+    if (balloonTimeout->isActive())
+        balloonTimeout->stop();
+
     printingText = text;
     textTimer->start();
 }
@@ -118,6 +121,12 @@ void BalloonWidget::ChangeTextSpeed(unsigned int newSpeed)
 {
     textSpeed = newSpeed;
     textTimer->setInterval(textSpeed);
+}
+
+void BalloonWidget::PrepareTimeout()
+{
+    /// Times out in 10 seconds.
+    balloonTimeout->start(10000);
 }
 
 void BalloonWidget::TextBrowserUpdate()

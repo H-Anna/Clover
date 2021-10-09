@@ -25,6 +25,7 @@ public:
 signals:
     void printTextSignal(const QString& text);
     void finishedTextPrintSignal();
+    void timeoutSignal();
 
 public slots:
     void ChangeBalloon(BalloonSurface* b);

@@ -30,6 +30,7 @@ signals:
 public slots:
     void ChangeBalloon(const QString& path, QPoint TL, QPoint BR);
     void ChangeTextSpeed(unsigned int newSpeed);
+    void PrepareTimeout();
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -48,6 +49,8 @@ private:
     unsigned int textSpeed;
     QTimer* textTimer;
     QString printingText;
+
+    QTimer* balloonTimeout;
 
     void SetupTextBrowser(QPoint topLeft, int width, int height);
 

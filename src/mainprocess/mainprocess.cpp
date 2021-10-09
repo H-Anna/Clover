@@ -29,6 +29,9 @@ MainProcess::MainProcess(unsigned int _layerCount, QVector<Surface *> defSurf, Q
     connect(this, SIGNAL(changeScopeSignal(unsigned int)),
             balloon, SLOT(ChangeScope(unsigned int)));
 
+    connect(this, SIGNAL(endOfTokensSignal()),
+            balloon, SIGNAL(timeoutSignal()));
+
 
     /// ------------LAMBDA MAP------------
 
@@ -82,8 +85,9 @@ void MainProcess::EvaluateTokens()
         case Token::End:
         {
             /// DO NOT EMIT finishedTokenEvaluationSignal OR ELSE IT WILL LOOP FOREVER
-            balloon->PrintBalloonContents();
+            //balloon->PrintBalloonContents();
             qDebug() << "INFO - MainProcess - All tokens have been passed.";
+            emit endOfTokensSignal();
 
             break;
         }

@@ -25,6 +25,8 @@ signals:
     void applyAnimationSignal(QStringList params, Surface* s);
     void applyBalloonSignal(QStringList params);
     void changeScopeSignal(unsigned int id);
+
+    void endOfTokensSignal();
 public slots:
     void EvaluateTokens();
 
