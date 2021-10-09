@@ -81,11 +81,11 @@ Animation *Surface::AddAnimation(unsigned int _id, const QString& _name, Frequen
     return a;
 }
 
-QVector<Animation *> Surface::GetAlwaysAnimations() const
+QVector<Animation *> Surface::GetAnimations(Frequency f) const
 {
     QVector<Animation *> anims = QVector<Animation*>();
     for (auto &it: animations) {
-        if (it->GetFrequency() == Frequency::Always)
+        if (it->GetFrequency() == f)
             anims.append(it);
     }
     return anims;

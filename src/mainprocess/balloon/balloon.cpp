@@ -1,17 +1,18 @@
 #include "balloon.h"
 
-Balloon::Balloon()
+Balloon::Balloon(QVector<BalloonSurface*> _defaultBalloons):
+    inScope(new BalloonWidget()),
+    idInScope(0),
+    defaultBalloons(_defaultBalloons)
 {
-    inScope = new BalloonWidget();
     balloons.append(inScope);
 
-    connect(this, SIGNAL(printTextSignal(const QString&)),
-            inScope, SLOT(prepareText(const QString&)));
+    ConnectScope();
 
-    connect(inScope, SIGNAL(finishedTextPrintSignal()),
-            this, SIGNAL(finishedTextPrintSignal()));
+    auto b = defaultBalloons.at(0);
 
     inScope->show();
+    inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
 }
 
 Balloon::~Balloon()
@@ -21,6 +22,62 @@ Balloon::~Balloon()
     }
 
     delete inScope;
+}
+
+void Balloon::ChangeBalloon(BalloonSurface *b)
+{
+    inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
+}
+
+void Balloon::ChangeScope(unsigned int id)
+{
+
+    if (idInScope == id)
+        return;
+
+    DisconnectScope();
+
+    if (id >= balloons.length()) {
+
+        id = balloons.length();
+        balloons.append(new BalloonWidget());
+        inScope = balloons.last();
+
+    } else {
+        inScope = balloons.at(id);
+    }
+
+    ConnectScope();
+
+    idInScope = id;
+    int _id = idInScope < defaultBalloons.length() ? idInScope : 0;
+    auto b = defaultBalloons.at(_id);
+    inScope->show();
+    inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
+}
+
+void Balloon::ConnectScope()
+{
+    connect(this, SIGNAL(printTextSignal(const QString&)),
+            inScope, SLOT(PrepareText(const QString&)));
+
+    connect(inScope, SIGNAL(finishedTextPrintSignal()),
+            this, SIGNAL(finishedTextPrintSignal()));
+
+    /// The following signals should not be disconnected when the scope is switched
+
+    connect(this, SIGNAL(timeoutSignal()),
+            inScope, SLOT(PrepareTimeout()));
+
+}
+
+void Balloon::DisconnectScope()
+{
+    disconnect(this, SIGNAL(printTextSignal(const QString&)),
+            inScope, SLOT(PrepareText(const QString&)));
+
+    disconnect(inScope, SIGNAL(finishedTextPrintSignal()),
+            this, SIGNAL(finishedTextPrintSignal()));
 }
 
 void Balloon::AppendHtml(const QString &text)
@@ -40,6 +97,11 @@ void Balloon::ClearBalloon()
 {
     if (inScope->textHolder != nullptr)
         inScope->textHolder->clear();
+}
+
+void Balloon::ChangeTextSpeed(unsigned int newSpeed)
+{
+    inScope->ChangeTextSpeed(newSpeed);
 }
 
 BalloonWidget *Balloon::GetInScope() const

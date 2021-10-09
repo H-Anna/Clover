@@ -15,6 +15,37 @@ SurfaceManager::~SurfaceManager()
     }
 }
 
+bool SurfaceManager::LoadBalloons(QJsonObject *json, const QString &imgPath)
+{
+    /// Read JSON object, load contents into surfaceList
+
+#ifdef _WIN32
+    imagePath = imgPath + "\\";
+#elif unix || __unix || __unix__
+    imagePath = imgPath + "\/";
+#endif
+
+    QJsonArray balloonArray = json->value("balloons").toArray();
+
+    if (balloonArray.isEmpty())
+        return false;
+
+    for (int i = 0; i < balloonArray.count(); i++) {
+        auto obj = balloonArray.at(i).toObject();
+        MakeBalloonSurface(obj);
+    }
+
+    return true;
+}
+
+void SurfaceManager::Initialize()
+{
+    /// 0 is the default surface.
+
+    emit changeSurfaceSignal(surfaces.value(0));
+    emit changeBalloonSignal(balloonSurfaces.value(0));
+}
+
 bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &imgPath)
 {
     /// Read JSON object, load contents into surfaceList
@@ -52,7 +83,7 @@ void SurfaceManager::Animate(Animation* a)
     }
     f->GetImage(), a->GetLayer(), f->GetDrawMethod();
 
-    emit applyAnimationSignal(a, f);
+    emit animateGhostSignal(a, f);
 
     if (f->GetMs() == 0)
         return;
@@ -72,60 +103,86 @@ void SurfaceManager::Animate(Animation* a)
     timer->start();
 }
 
-void SurfaceManager::ApplyGraphics(const QString &tag, QStringList params, Surface *currentSurface)
-{
+void SurfaceManager::ApplyAnimation(QStringList params, Surface *currentSurface) {
+
     QString str = params[0];
     bool canConvertToInt;
     str.toInt(&canConvertToInt);
 
-    if (tag == "s") {
+    Surface* s = currentSurface;
 
-        Surface* s;
-        if (canConvertToInt) {
-            s = GetSurface(str.toInt());
-        } else {
-            s = GetSurface(str);
-        }
-
-        if (s == nullptr) {
-            qDebug().nospace() << "WARNING - SurfaceManager - No surface found with param " << str << ", skipping to next token.";
-            return;
-        }
-
-        /// Apply surface
-
-        //g.ChangeSurface(s);
-        emit changeSurfaceSignal(s);
-
-        /// If it has animations that always play, play them.
-
-        auto always = s->GetAlwaysAnimations();
-
-        if (always.length() > 0) {
-            for (auto &it: always) {
-                Animate(it);
-            }
-        }
-
-    } else if (tag == "i") {
-
-        Surface* s = currentSurface;
-
-        Animation* a = nullptr;
-        if (canConvertToInt) {
-            a = s->GetAnimation(str.toInt());
-        } else {
-            a = s->GetAnimation(str);
-
-        }
-
-        if (a == nullptr) {
-            qDebug().nospace() << "WARNING - SurfaceManager - No animation found with param " << str << ", skipping to next token.";
-            return;
-        }
-
-        Animate(a);
+    Animation* a = nullptr;
+    if (canConvertToInt) {
+        a = s->GetAnimation(str.toInt());
+    } else {
+        a = s->GetAnimation(str);
     }
+
+    if (a == nullptr) {
+        qDebug().nospace() << "WARNING - SurfaceManager - No animation found with param " << str << ", skipping to next token.";
+        return;
+    }
+
+    Animate(a);
+}
+
+void SurfaceManager::ApplySurface(QStringList params) {
+
+    QString str = params[0];
+    bool canConvertToInt;
+    str.toInt(&canConvertToInt);
+
+    Surface* s;
+    if (canConvertToInt) {
+        s = GetSurface(str.toInt());
+    } else {
+        s = GetSurface(str);
+    }
+
+    if (s == nullptr) {
+        qDebug().nospace() << "WARNING - SurfaceManager - No surface found with param " << str << ", skipping to next token.";
+        return;
+    }
+
+    /// Apply surface
+
+    emit changeSurfaceSignal(s);
+
+    /// If it has animations that always play, play them.
+
+    auto always = s->GetAnimations(Frequency::Always);
+
+    if (always.length() > 0) {
+
+        for (auto &it: always) {
+            Animate(it);
+        }
+    }
+}
+
+void SurfaceManager::ApplyBalloon(QStringList params) {
+
+    QString str = params[0];
+    bool canConvertToInt;
+    str.toInt(&canConvertToInt);
+
+    BalloonSurface* b;
+
+    if (canConvertToInt) {
+        b = GetBalloonSurface(str.toInt());
+    } else {
+        /// String fallback
+        b = GetBalloonSurface(0);
+    }
+
+    if (b == nullptr) {
+        qDebug().nospace() << "WARNING - SurfaceManager - No balloon surface found with param " << str << ", skipping to next token.";
+        return;
+    }
+
+    /// Apply balloon
+
+    emit changeBalloonSignal(b);
 }
 
 void SurfaceManager::PrintSurfaceList()
@@ -146,18 +203,17 @@ void SurfaceManager::PrintSurfaceList()
 
 Surface *SurfaceManager::GetSurface(unsigned int id)
 {
-    if (surfaces.keys().contains(id))
-        return surfaces[id];
-
-    return nullptr;
+    return surfaces.value(id, nullptr);
 }
 
 Surface* SurfaceManager::GetSurface(const QString &name)
 {
-    if (namedSurfaces.keys().contains(name))
-        return namedSurfaces[name];
+    return namedSurfaces.value(name, nullptr);
+}
 
-    return nullptr;
+BalloonSurface *SurfaceManager::GetBalloonSurface(unsigned int id)
+{
+    return balloonSurfaces.value(id, nullptr);
 }
 
 void SurfaceManager::MakeSurface(QJsonObject &obj)
@@ -219,7 +275,33 @@ void SurfaceManager::MakeAnimation(QJsonObject &obj, Surface& s)
     }
 }
 
+void SurfaceManager::MakeBalloonSurface(QJsonObject &obj) {
+
+    unsigned int id = obj.value("id").toInt();
+    QString image = imagePath + obj.value("image").toString();
+    auto textarea = obj.value("textarea").toArray();
+
+    balloonSurfaces.insert(id, new BalloonSurface(id, image, textarea.at(0).toInt(), textarea.at(1).toInt(),
+                                                  textarea.at(2).toInt(), textarea.at(3).toInt()));
+
+}
+
 unsigned int SurfaceManager::GetLayerCount() const
 {
     return layerCount;
+}
+
+QVector<Surface *> SurfaceManager::GetDefaultSurfaces() const
+{
+    QVector<Surface*> vector;
+    vector.append(surfaces.value(0));
+    vector.append(surfaces.value(100));
+    return vector;
+}
+
+QVector<BalloonSurface *> SurfaceManager::GetDefaultBalloons() const
+{
+    QVector<BalloonSurface*> vector;
+    vector.append(balloonSurfaces.value(0));
+    return vector;
 }

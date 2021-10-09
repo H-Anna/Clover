@@ -22,13 +22,12 @@ public:
     Animation* AddAnimation(unsigned int _id, const QString &_name, Frequency _frequency, unsigned int _layer);
     Animation* GetAnimation(unsigned int _id) const;
     Animation* GetAnimation(const QString& _name) const;
-    QVector<Animation*> GetAlwaysAnimations() const;
+    QVector<Animation*> GetAnimations(Frequency f) const;
 
 private:
     unsigned int id;
     QVector<QString> elements;
     QString name;
-    bool hasAlwaysAnimation;
 
     QMap<unsigned int, Animation*> animations;
     QMap<QString, Animation*> namedAnimations;

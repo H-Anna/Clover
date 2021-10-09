@@ -1,18 +1,18 @@
 #include "ghost.h"
 
-Ghost::Ghost(unsigned int _layerCount):
+Ghost::Ghost(QVector<Surface*> _defaultSurfaces, unsigned int _layerCount):
     inScope(new GhostWidget(_layerCount)),
     idInScope(0),
     ghosts(QVector<GhostWidget*>()),
-    currentSurface(QMap<GhostWidget*, Surface*>())
-    //currentAnimations(QMap<GhostWidget*, QList<Animation*>>())
+    currentSurface(QMap<GhostWidget*, Surface*>()),
+    currentAnimations(QMap<GhostWidget*, QList<Animation*>>()),
+    layerCount(_layerCount),
+    defaultSurfaces(_defaultSurfaces)
 
 {
     ghosts.append(inScope);
+    inScope->SetSurface(defaultSurfaces.at(0)->GetElements());
     inScope->show();
-
-//    connect(this, SIGNAL(applyAnimationSignal(const QString&, unsigned int, DrawMethod)),
-//            inScope, SLOT(SetAnimation(const QString&, unsigned int, DrawMethod)));
 }
 
 Ghost::~Ghost()
@@ -20,9 +20,9 @@ Ghost::~Ghost()
     for (auto &w: ghosts) {
         delete currentSurface.value(w);
 
-//        for (auto &it: currentAnimations.value(w)) {
-//            delete it;
-//        }
+        for (auto &it: currentAnimations.value(w)) {
+            delete it;
+        }
         delete w;
     }
 
@@ -51,10 +51,33 @@ Surface *Ghost::GetCurrentSurface()
     return currentSurface[inScope];
 }
 
-void Ghost::ApplyAnimation(Animation* a, Frame* f)
+void Ghost::AnimateGhost(Animation* a, Frame* f)
 {
     AppendAnimation(a);
     inScope->SetAnimation(f->GetImage(), a->GetLayer(), f->GetDrawMethod());
+}
+
+void Ghost::ChangeScope(unsigned int id)
+{
+    if (idInScope == id)
+        return;
+
+    if (id >= ghosts.length()) {
+
+        id = ghosts.length();
+        ghosts.append(new GhostWidget(layerCount));
+        inScope = ghosts.last();
+
+    } else {
+
+        inScope = ghosts.at(id);
+    }
+
+    idInScope = id;
+
+    int _id = idInScope < defaultSurfaces.length() ? idInScope : 0;
+    inScope->SetSurface(defaultSurfaces.at(_id)->GetElements());
+    inScope->show();
 }
 
 void Ghost::AppendAnimation(Animation *a)

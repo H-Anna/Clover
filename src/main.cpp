@@ -43,18 +43,32 @@ int main(int argc, char *argv[])
         else if (type == "surface") {
             sm->LoadSurfaces(&json, DATAPATH);
         }
+        else if (type == "balloon") {
+            sm->LoadBalloons(&json, DATAPATH);
+        }
     }
 
-    MainProcess* mainproc = new MainProcess(sm->GetLayerCount());
+    MainProcess* mainproc = new MainProcess(sm->GetLayerCount(), sm->GetDefaultSurfaces(), sm->GetDefaultBalloons());
 
-    QObject::connect(mainproc, SIGNAL(applyGraphicsSignal(const QString&, QStringList, Surface*)),
-            sm, SLOT(ApplyGraphics(const QString&, QStringList, Surface*)));
 
-    QObject::connect(sm, SIGNAL(applyAnimationSignal(Animation*, Frame*)),
-                     mainproc->GetGhost(), SLOT(ApplyAnimation(Animation*, Frame*)));
+    QObject::connect(mainproc, SIGNAL(applySurfaceSignal(QStringList)),
+            sm, SLOT(ApplySurface(QStringList)));
+
+    QObject::connect(mainproc, SIGNAL(applyBalloonSignal(QStringList)),
+            sm, SLOT(ApplyBalloon(QStringList)));
+
+    QObject::connect(mainproc, SIGNAL(applyAnimationSignal(QStringList, Surface*)),
+            sm, SLOT(ApplyAnimation(QStringList, Surface*)));
+
+    QObject::connect(sm, SIGNAL(animateGhostSignal(Animation*, Frame*)),
+                     mainproc->GetGhost(), SLOT(AnimateGhost(Animation*, Frame*)));
 
     QObject::connect(sm, SIGNAL(changeSurfaceSignal(Surface*)),
                      mainproc->GetGhost(), SLOT(ChangeSurface(Surface*)));
+
+    QObject::connect(sm, SIGNAL(changeBalloonSignal(BalloonSurface*)),
+                     mainproc->GetBalloon(), SLOT(ChangeBalloon(BalloonSurface*)));
+
 
     //TODO random talk
     auto tc = tm->MakeTokens(tm->GetTalk(1000));
