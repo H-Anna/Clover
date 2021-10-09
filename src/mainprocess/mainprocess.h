@@ -16,6 +16,7 @@ public:
     void SaveTokenCollection(TokenCollection &tc);
 
     Ghost* GetGhost() const;
+    Balloon* GetBalloon() const;
 
 signals:
     void applyGraphicsSignal(const QString& tag, QStringList params, Surface* currentSurface);

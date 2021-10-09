@@ -7,19 +7,18 @@ BalloonWidget::BalloonWidget(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
 
     /// TODO: implement "change balloon" tag
-    connect(this, SIGNAL(changeBalloonSignal(const QString&)), this, SLOT(changeBalloon(const QString&)));
-    connect(this, SIGNAL(changeBalloonSignal(const QString&)), this, SLOT(update()));
+    //connect(this, SIGNAL(changeBalloonSignal(const QString&)), this, SLOT(changeBalloon(const QString&)));
+    //connect(this, SIGNAL(changeBalloonSignal(const QString&)), this, SLOT(update()));
 
-    changeBalloon(QString(R"(D:\D_Programs\GitHub\GhostTest\data\balloons0.png)"));
-    textBrowser = nullptr;
+    textArea = nullptr;
     textCursor = 0;
     textHolder = new QPlainTextEdit(this);
     textHolder->hide();
 
-    connect(textHolder, SIGNAL(textChanged()), this, SLOT(textBrowserUpdate()));
+    connect(textHolder, SIGNAL(textChanged()), this, SLOT(TextBrowserUpdate()));
 
     textTimer = new QTimer(this);
-    connect(textTimer, &QTimer::timeout, this, &BalloonWidget::printText);
+    connect(textTimer, &QTimer::timeout, this, &BalloonWidget::PrintText);
     textTimer->setInterval(50);
 
     emit balloonLoadedSignal();
@@ -29,7 +28,7 @@ BalloonWidget::BalloonWidget(QWidget *parent)
 BalloonWidget::~BalloonWidget()
 {
     delete textTimer;
-    delete textBrowser;
+    delete textArea;
     delete textHolder;
 }
 
@@ -58,42 +57,30 @@ void BalloonWidget::paintEvent(QPaintEvent *)
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawPixmap(QPoint(0,0), displayedImage, target);
 
-    if (textBrowser == nullptr)
-        setupTextBrowser();
+//    if (textArea == nullptr)
+//        SetupTextBrowser();
 
 }
 
-void BalloonWidget::setupTextBrowser()
+void BalloonWidget::SetupTextBrowser(QPoint topLeft, int width, int height)
 {
-    textBrowser = new QTextBrowser(this);
-    textBrowser->setReadOnly(true);
-    textBrowser->setAcceptRichText(true);
-    textBrowser->setAttribute(Qt::WA_TranslucentBackground);
-    textBrowser->setOpenLinks(false);
-    textBrowser->setContextMenuPolicy(Qt::NoContextMenu);
-    textBrowser->setFrameShape(QFrame::NoFrame);
-    textBrowser->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
-    textBrowser->setMouseTracking(false);
-    textBrowser->resize(QSize(displayedImage.size().width()-65, displayedImage.size().height()-70));
-    textBrowser->move(30,15);
+    textArea = new TextArea(this);
 
-    connect(textBrowser, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(PrintAnchor(const QUrl &)));
+    textArea->move(topLeft);
+    textArea->resize(width, height);
 
-    QPalette p = textBrowser->palette();
-    p.setColor(QPalette::Base, QColor(255,255,255,0));
-    p.setColor(QPalette::Text, Qt::black);
-    textBrowser->setPalette(p);
+    connect(textArea, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(PrintAnchor(const QUrl &)));
 
-    textBrowser->show();
+    textArea->show();
 }
 
-void BalloonWidget::prepareText(const QString &text)
+void BalloonWidget::PrepareText(const QString &text)
 {
     printingText = text;
     textTimer->start();
 }
 
-void BalloonWidget::printText()
+void BalloonWidget::PrintText()
 {
     if (textHolder != nullptr) {
         textHolder->insertPlainText(printingText.at(textCursor));
@@ -110,19 +97,24 @@ void BalloonWidget::printText()
 
 }
 
-void BalloonWidget::changeBalloon(const QString &path)
+void BalloonWidget::ChangeBalloon(const QString &path, QPoint TL, QPoint BR)
 {
     displayedImage = QPixmap(path);
+    int width = BR.x() - TL.x();
+    int height = BR.y() - TL.y();
+    SetupTextBrowser(TL, width, height);
+
+    update();
 }
 
-void BalloonWidget::textBrowserUpdate()
+void BalloonWidget::TextBrowserUpdate()
 {
-    if (textBrowser != nullptr) {
-        textBrowser->setHtml(textHolder->toPlainText());
-        textBrowser->moveCursor(QTextCursor::End);
+    if (textArea != nullptr) {
+        textArea->setHtml(textHolder->toPlainText());
+        textArea->moveCursor(QTextCursor::End);
     }
     else
-        qDebug() << "ERROR - BalloonWidget - textBrowser = nullptr, can't print (textBrowserUpdate).";
+        qDebug() << "ERROR - BalloonWidget - textArea = nullptr, can't print (textBrowserUpdate).";
 }
 
 void BalloonWidget::PrintAnchor(const QUrl &link)

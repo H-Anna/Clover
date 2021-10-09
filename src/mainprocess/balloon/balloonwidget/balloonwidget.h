@@ -1,13 +1,14 @@
 #ifndef BALLOONWIDGET_H
 #define BALLOONWIDGET_H
 
+#include <textarea.h>
+
 #include <QWidget>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPixmap>
 #include <QPlainTextEdit>
 #include <QTimer>
-#include <QTextBrowser>
 #include <QDesktopServices>
 
 #include <QDebug>
@@ -19,16 +20,14 @@ public:
     BalloonWidget(QWidget *parent = nullptr);
     ~BalloonWidget();
 
+    void ChangeBalloon(const QString& path, QPoint TL, QPoint BR);
+
     QPlainTextEdit* textHolder;
 
 signals:
     void balloonLoadedSignal();
-
     void prepareTextSignal(const QString& text);
-    void changeBalloonSignal(const QString& path);
     void finishedTextPrintSignal();
-
-
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -39,19 +38,18 @@ private:
     QPoint dragPosition;
     QPixmap displayedImage;
 
-    QTextBrowser* textBrowser;
+    TextArea* textArea;
     unsigned int textCursor;
     QTimer* textTimer;
     QString printingText;
 
-    void setupTextBrowser();
+    void SetupTextBrowser(QPoint topLeft, int width, int height);
 
 private slots:
-    void prepareText(const QString& text);
-    void printText();
-    void changeBalloon(const QString& path);
+    void PrepareText(const QString& text);
+    void PrintText();
 
-    void textBrowserUpdate();
+    void TextBrowserUpdate();
     void PrintAnchor(const QUrl& link);
 };
 

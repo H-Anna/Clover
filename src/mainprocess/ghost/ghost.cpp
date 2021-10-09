@@ -4,8 +4,8 @@ Ghost::Ghost(unsigned int _layerCount):
     inScope(new GhostWidget(_layerCount)),
     idInScope(0),
     ghosts(QVector<GhostWidget*>()),
-    currentSurface(QMap<GhostWidget*, Surface*>())
-    //currentAnimations(QMap<GhostWidget*, QList<Animation*>>())
+    currentSurface(QMap<GhostWidget*, Surface*>()),
+    currentAnimations(QMap<GhostWidget*, QList<Animation*>>())
 
 {
     ghosts.append(inScope);
@@ -20,9 +20,9 @@ Ghost::~Ghost()
     for (auto &w: ghosts) {
         delete currentSurface.value(w);
 
-//        for (auto &it: currentAnimations.value(w)) {
-//            delete it;
-//        }
+        for (auto &it: currentAnimations.value(w)) {
+            delete it;
+        }
         delete w;
     }
 

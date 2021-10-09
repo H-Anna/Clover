@@ -43,6 +43,9 @@ int main(int argc, char *argv[])
         else if (type == "surface") {
             sm->LoadSurfaces(&json, DATAPATH);
         }
+        else if (type == "balloon") {
+            sm->LoadBalloons(&json, DATAPATH);
+        }
     }
 
     MainProcess* mainproc = new MainProcess(sm->GetLayerCount());
@@ -55,6 +58,12 @@ int main(int argc, char *argv[])
 
     QObject::connect(sm, SIGNAL(changeSurfaceSignal(Surface*)),
                      mainproc->GetGhost(), SLOT(ChangeSurface(Surface*)));
+
+    QObject::connect(sm, SIGNAL(changeBalloonSignal(BalloonSurface*)),
+                     mainproc->GetBalloon(), SLOT(ChangeBalloon(BalloonSurface*)));
+
+
+    sm->Initialize();
 
     //TODO random talk
     auto tc = tm->MakeTokens(tm->GetTalk(1000));

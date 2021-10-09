@@ -6,7 +6,7 @@ Balloon::Balloon()
     balloons.append(inScope);
 
     connect(this, SIGNAL(printTextSignal(const QString&)),
-            inScope, SLOT(prepareText(const QString&)));
+            inScope, SLOT(PrepareText(const QString&)));
 
     connect(inScope, SIGNAL(finishedTextPrintSignal()),
             this, SIGNAL(finishedTextPrintSignal()));
@@ -21,6 +21,11 @@ Balloon::~Balloon()
     }
 
     delete inScope;
+}
+
+void Balloon::ChangeBalloon(BalloonSurface *b)
+{
+    inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
 }
 
 void Balloon::AppendHtml(const QString &text)

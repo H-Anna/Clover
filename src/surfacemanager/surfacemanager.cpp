@@ -15,6 +15,37 @@ SurfaceManager::~SurfaceManager()
     }
 }
 
+bool SurfaceManager::LoadBalloons(QJsonObject *json, const QString &imgPath)
+{
+    /// Read JSON object, load contents into surfaceList
+
+#ifdef _WIN32
+    imagePath = imgPath + "\\";
+#elif unix || __unix || __unix__
+    imagePath = imgPath + "\/";
+#endif
+
+    QJsonArray balloonArray = json->value("balloons").toArray();
+
+    if (balloonArray.isEmpty())
+        return false;
+
+    for (int i = 0; i < balloonArray.count(); i++) {
+        auto obj = balloonArray.at(i).toObject();
+        MakeBalloonSurface(obj);
+    }
+
+    return true;
+}
+
+void SurfaceManager::Initialize()
+{
+    /// 0 is the default surface.
+
+    emit changeSurfaceSignal(surfaces.value(0));
+    emit changeBalloonSignal(balloonSurfaces.value(0));
+}
+
 bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &imgPath)
 {
     /// Read JSON object, load contents into surfaceList
@@ -217,6 +248,17 @@ void SurfaceManager::MakeAnimation(QJsonObject &obj, Surface& s)
 
         a->AddFrame(image, drawMethod, ms);
     }
+}
+
+void SurfaceManager::MakeBalloonSurface(QJsonObject &obj) {
+
+    unsigned int id = obj.value("id").toInt();
+    QString image = imagePath + obj.value("image").toString();
+    auto textarea = obj.value("textarea").toArray();
+
+    balloonSurfaces.insert(id, new BalloonSurface(id, image, textarea.at(0).toInt(), textarea.at(1).toInt(),
+                                                  textarea.at(2).toInt(), textarea.at(3).toInt()));
+
 }
 
 unsigned int SurfaceManager::GetLayerCount() const

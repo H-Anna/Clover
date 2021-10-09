@@ -104,6 +104,11 @@ Ghost *MainProcess::GetGhost() const
     return ghost;
 }
 
+Balloon *MainProcess::GetBalloon() const
+{
+    return balloon;
+}
+
 void MainProcess::BuildTagLambdaMap()
 {
     /// This part fills me with existential dread...

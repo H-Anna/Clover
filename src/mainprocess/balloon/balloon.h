@@ -2,6 +2,8 @@
 #define BALLOON_H
 
 #include <balloonwidget.h>
+#include <balloonsurface.h>
+
 #include <QObject>
 
 class Balloon: public QObject
@@ -21,6 +23,9 @@ public:
 signals:
     void printTextSignal(const QString& text);
     void finishedTextPrintSignal();
+
+public slots:
+    void ChangeBalloon(BalloonSurface* b);
 
 private:
     QVector<BalloonWidget*> balloons;
