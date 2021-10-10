@@ -12,6 +12,7 @@ Ghost::Ghost(QVector<Surface*> _defaultSurfaces, unsigned int _layerCount):
 {
     ghosts.append(inScope);
     inScope->SetSurface(defaultSurfaces.at(0)->GetElements());
+    currentSurface.insert(inScope, defaultSurfaces.at(0));
     inScope->show();
 }
 
@@ -64,20 +65,22 @@ void Ghost::ChangeScope(unsigned int id)
 
     if (id >= ghosts.length()) {
 
+        /// Create new ghost
+
         id = ghosts.length();
         ghosts.append(new GhostWidget(layerCount));
         inScope = ghosts.last();
+
+        idInScope = id;
+
+        int _id = idInScope < defaultSurfaces.length() ? idInScope : 0;
+        inScope->SetSurface(defaultSurfaces.at(_id)->GetElements());
+        inScope->show();
 
     } else {
 
         inScope = ghosts.at(id);
     }
-
-    idInScope = id;
-
-    int _id = idInScope < defaultSurfaces.length() ? idInScope : 0;
-    inScope->SetSurface(defaultSurfaces.at(_id)->GetElements());
-    inScope->show();
 }
 
 void Ghost::AppendAnimation(Animation *a)

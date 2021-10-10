@@ -39,9 +39,17 @@ void Balloon::ChangeScope(unsigned int id)
 
     if (id >= balloons.length()) {
 
+        /// Create new balloon
+
         id = balloons.length();
         balloons.append(new BalloonWidget());
         inScope = balloons.last();
+
+        idInScope = id;
+        int _id = idInScope < defaultBalloons.length() ? idInScope : 0;
+        auto b = defaultBalloons.at(_id);
+        inScope->show();
+        inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
 
     } else {
         inScope = balloons.at(id);
@@ -49,11 +57,7 @@ void Balloon::ChangeScope(unsigned int id)
 
     ConnectScope();
 
-    idInScope = id;
-    int _id = idInScope < defaultBalloons.length() ? idInScope : 0;
-    auto b = defaultBalloons.at(_id);
-    inScope->show();
-    inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
+
 }
 
 void Balloon::ConnectScope()

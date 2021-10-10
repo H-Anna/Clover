@@ -3,8 +3,8 @@ add_subdirectory(mainprocess)
 add_subdirectory(surfacemanager)
 add_subdirectory(talkmanager)
 
-add_executable(GhostTest main.cpp)
-target_link_libraries(GhostTest
+add_executable(Clover main.cpp)
+target_link_libraries(Clover
 	FileReader
 	MainProcess
 	SurfaceManager

@@ -41,10 +41,10 @@ int main(int argc, char *argv[])
             tm->LoadTalks(&json);
         }
         else if (type == "surface") {
-            sm->LoadSurfaces(&json, DATAPATH);
+            sm->LoadSurfaces(&json, dataDir.absolutePath());
         }
         else if (type == "balloon") {
-            sm->LoadBalloons(&json, DATAPATH);
+            sm->LoadBalloons(&json, dataDir.absolutePath());
         }
     }
 

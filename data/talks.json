@@ -11,7 +11,7 @@
 		"<!s[0]>Hello! <!wait[2000]><!i[0]><!i[1]><!i[2]>I'm a lion.",
 		"<!speed[10]>This text print very very quickly. <!speed[100]>But this is very slow.",
 		"<!s[0]>Hello! <!wait[2000]><!i[0]><!i[1]><!i[2]>I'm a lion.<!wait[2000]><!b[1]>This is my big balloon.<p>Pretty cool huh?<p>You can fit a lot of text in here.",
-		"Hello! I am a big lion.<!wait[1000]><!p[1]>I am a smol lion :3"
+		"<!i[1]>Hello! I am a big lion.<!wait[1000]><!p[1]>I am a smol lion :3<!wait[1000]><!p[0]><!i[0]><!i[2]><p>We are two lions on your screen."
 		
 	]
 }
