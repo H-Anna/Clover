@@ -1,0 +1,20 @@
+# Clover - Baseware for Desktop Mascots
+Software dedicated to display a desktop mascot that talks to the user and provides various other functions. Known among certain 
+## Features:
+### Out-of-the-box
+Although this software is still Work In Progress, supported features may include:
+
+ - Talking to the user
+ - Talking to each other, when multiple mascots are running
+ - Opening browser links, emails and files with your default choice of software
+
+### Open-source
+Clone this project and modify it to your liking. Licenced under GPLv3, all software derived from Clover is required to be open-source as well. However, you may keep the rights to non-code works, such as artwork and dialogue, therefore mascots that do not have extra functions are not considered derivations. (Artwork currently featured on the repo was made for testing purposes, and is not covered by GPLv3. It may be removed from future releases.)
+### Cross-platform
+The goal is for Clover to be available to Windows, Linux and Mac users alike.
+### Technology
+Clover is written in C++, built with CMake, and uses the Qt framework for its Widgets, among other things.
+### Documentation
+Extensive documentation will be created for multiple skill levels. Perhaps you have very little knowledge of programming and just want to create a mascot. Maybe you want to contribute to Clover itself.
+### Acknowledgements
+This project was inspired by [SSP (SakuraScript Parser)](http://ssp.shillest.net), a Japanese baseware created and maintained by Ponapalt.
