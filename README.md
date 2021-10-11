@@ -1,5 +1,5 @@
 # Clover - Baseware for Desktop Mascots
-Software dedicated to display a desktop mascot that talks to the user and provides various other functions. Known among certain 
+Software dedicated to display a desktop mascot that talks to the user and provides various other functions.
 ## Features:
 ### Out-of-the-box
 Although this software is still Work In Progress, supported features may include:
