@@ -279,7 +279,7 @@ void MainProcess::ExecuteCommand(const Token &token)
 
     if (tagLambdaMap.keys().contains(tag)) {
         auto params = token.GetParams();
-        tagLambdaMap[tag](*this, params);
+        tagLambdaMap.value(tag)(*this, params);
 
     } else {
         qDebug().noquote() << QString("WARNING - MainProcess - CommandTag %1 is not part of tagLambdaMap. Skipping token.").arg(tag);

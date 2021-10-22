@@ -15,7 +15,7 @@ VariableStore::~VariableStore()
 QVariant VariableStore::GetVariable(const QString &key)
 {
     if (globalFunctions.contains(key)) {
-        return globalFunctions.value(key);
+        return globalFunctions.value(key)();
     }
 
     return variables.value(key, QString(""));
@@ -29,8 +29,6 @@ void VariableStore::SetVariable(const QString &key, const QVariant &value)
 void VariableStore::BuildLambdaMap()
 {
     globalFunctions = QMap<QString, globalFuncPtr>();
-
-    // TODO: why do these return true????
 
     globalFunctions.insert("TIME", [](){
 
