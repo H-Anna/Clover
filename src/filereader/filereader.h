@@ -8,7 +8,7 @@
 class FileReader
 {
 public:
-    static bool ReadFiles(QList<QJsonObject>* validObjects, const QString& absolutePath);
+    static bool ReadFiles(QList<QJsonObject>* validObjects, QString *iniFile, const QString& absolutePath);
 };
 
 #endif // FILEREADER_H

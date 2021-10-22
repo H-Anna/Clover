@@ -4,6 +4,7 @@
 #include <ghost.h>
 #include <balloon.h>
 #include <tokencollection.h>
+#include <variablestore.h>
 
 class MainProcess: public QObject
 {
@@ -11,7 +12,7 @@ class MainProcess: public QObject
 
     Q_OBJECT;
 public:
-    MainProcess(unsigned int _layerCount, QVector<Surface*> defSurf, QVector<BalloonSurface*> defBall);
+    MainProcess(VariableStore *_vs, unsigned int _layerCount, QVector<Surface*> defSurf, QVector<BalloonSurface*> defBall);
     ~MainProcess();
 
     void SaveTokenCollection(TokenCollection &tc);
@@ -20,7 +21,6 @@ public:
     Balloon* GetBalloon() const;
 
 signals:
-    //void applyGraphicsSignal(const QString& tag, QStringList params, Surface* currentSurface);
     void applySurfaceSignal(QStringList params);
     void applyAnimationSignal(QStringList params, Surface* s);
     void applyBalloonSignal(QStringList params);
@@ -34,6 +34,8 @@ private:
     void BuildTagLambdaMap();
     void ExecuteCommand(const Token& token);
     void PrintUndefinedTag(const QString& tag, const QStringList& params);
+
+    VariableStore* vs;
 
     Ghost* ghost;
     Balloon* balloon;

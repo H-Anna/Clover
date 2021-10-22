@@ -2,6 +2,7 @@
 #include <filereader.h>
 #include <talkmanager.h>
 #include <surfacemanager.h>
+//#include <variablestore.h>
 
 #include <QApplication>
 
@@ -23,8 +24,9 @@ int main(int argc, char *argv[])
     /// Load files with FileReader as JSON objects
 
     QList<QJsonObject> jsonObjects;
+    QString iniFile;
 
-    if (!FileReader::ReadFiles(&jsonObjects, dataDir.absolutePath())) {
+    if (!FileReader::ReadFiles(&jsonObjects, &iniFile, dataDir.absolutePath())) {
        qDebug() << "ERROR - FileReader: Something happened during file reading.";
     }
 
@@ -48,8 +50,10 @@ int main(int argc, char *argv[])
         }
     }
 
-    MainProcess* mainproc = new MainProcess(sm->GetLayerCount(), sm->GetDefaultSurfaces(), sm->GetDefaultBalloons());
+    /// Load variables from ini file(s)
+    auto vs = VariableStore(iniFile);
 
+    MainProcess* mainproc = new MainProcess(&vs, sm->GetLayerCount(), sm->GetDefaultSurfaces(), sm->GetDefaultBalloons());
 
     QObject::connect(mainproc, SIGNAL(applySurfaceSignal(QStringList)),
             sm, SLOT(ApplySurface(QStringList)));
@@ -57,11 +61,11 @@ int main(int argc, char *argv[])
     QObject::connect(mainproc, SIGNAL(applyBalloonSignal(QStringList)),
             sm, SLOT(ApplyBalloon(QStringList)));
 
-    QObject::connect(mainproc, SIGNAL(applyAnimationSignal(QStringList, Surface*)),
-            sm, SLOT(ApplyAnimation(QStringList, Surface*)));
+    QObject::connect(mainproc, SIGNAL(applyAnimationSignal(QStringList,Surface*)),
+            sm, SLOT(ApplyAnimation(QStringList,Surface*)));
 
-    QObject::connect(sm, SIGNAL(animateGhostSignal(Animation*, Frame*)),
-                     mainproc->GetGhost(), SLOT(AnimateGhost(Animation*, Frame*)));
+    QObject::connect(sm, SIGNAL(animateGhostSignal(Animation*,Frame*)),
+                     mainproc->GetGhost(), SLOT(AnimateGhost(Animation*,Frame*)));
 
     QObject::connect(sm, SIGNAL(changeSurfaceSignal(Surface*)),
                      mainproc->GetGhost(), SLOT(ChangeSurface(Surface*)));

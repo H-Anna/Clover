@@ -4,6 +4,8 @@
 #include <surface_enums.h>
 
 #include <QCoreApplication>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QWidget>
 #include <QAction>
 #include <QMouseEvent>
@@ -34,7 +36,9 @@ protected:
 
 private:
     QPoint dragPosition;
-    QSize baseSize;
+    QRect baseRect;
+
+    QPoint startPoint;
     unsigned int layerCount;
 
 };

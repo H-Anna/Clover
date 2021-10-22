@@ -119,7 +119,7 @@ void SurfaceManager::ApplyAnimation(QStringList params, Surface *currentSurface)
     }
 
     if (a == nullptr) {
-        qDebug().nospace() << "WARNING - SurfaceManager - No animation found with param " << str << ", skipping to next token.";
+        qDebug().noquote() << QString("WARNING - SurfaceManager - No animation found with param %1, skipping to next token.").arg(str);
         return;
     }
 
@@ -140,7 +140,7 @@ void SurfaceManager::ApplySurface(QStringList params) {
     }
 
     if (s == nullptr) {
-        qDebug().nospace() << "WARNING - SurfaceManager - No surface found with param " << str << ", skipping to next token.";
+        qDebug().noquote() << QString("WARNING - SurfaceManager - No surface found with param %1, skipping to next token.").arg(str);
         return;
     }
 
@@ -176,7 +176,7 @@ void SurfaceManager::ApplyBalloon(QStringList params) {
     }
 
     if (b == nullptr) {
-        qDebug().nospace() << "WARNING - SurfaceManager - No balloon surface found with param " << str << ", skipping to next token.";
+        qDebug().noquote() << QString("WARNING - SurfaceManager - No balloon surface found with param %1, skipping to next token.").arg(str);
         return;
     }
 
@@ -190,7 +190,7 @@ void SurfaceManager::PrintSurfaceList()
     qDebug() << "INFO - SurfaceManager";
 
     if (surfaces.count() > 0) {
-        qDebug() << "Surfaces loaded:" << surfaces.count();
+        qDebug() << QString("Surfaces loaded: %1").arg(surfaces.count());
         qDebug() << "ID\tImage\tName";
 
         for (auto &it: surfaces.keys()) {

@@ -26,6 +26,27 @@ Token::TokenType Token::GetType() const
     return type;
 }
 
+QString Token::GetTypeAsString() const
+{
+    switch (type) {
+
+    case HtmlTag: {
+        return "HtmlTag";
+    }
+    case CommandTag: {
+        return "CommandTag";
+    }
+    case PlainText: {
+        return "PlainText";
+    }
+    case End: {
+        return "End";
+    }
+    }
+
+    return "NULL";
+}
+
 QStringList Token::GetParams() const
 {
     return params;

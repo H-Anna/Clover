@@ -1,6 +1,6 @@
 #include "filereader.h"
 
-bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, const QString &absolutePath)
+bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, QString *iniFile, const QString &absolutePath)
 {
     int validCount = 0;
 
@@ -15,35 +15,40 @@ bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, const QString &abso
 
     for (auto &it: filesInfoList) {
 
-        if (!it.fileName().endsWith(".json"))
-            continue;
+        if (it.fileName().endsWith(".ini")) {
 
-        auto file = new QFile(it.absoluteFilePath());
-        file->open(QIODevice::ReadOnly);
-        QString contents = file->readAll();
-        file->close();
-
-        QJsonObject json = QJsonDocument::fromJson(contents.toUtf8()).object();
-
-        if (json.isEmpty()) {
-            qDebug() << "WARNING - FileReader - File" << file->fileName() << "has invalid JSON: "
-                                                                             "unable to process, skipping to next file.";
-            continue;
+            *iniFile = it.absoluteFilePath();
         }
 
-        QString type = json.value("type").toString();
+        if (it.fileName().endsWith(".json")) {
 
-        if (type.isEmpty()) {
-            qDebug() << "WARNING - FileReader - File" << file->fileName() << "has invalid JSON: "
-                                                                             "no 'type' defined, skipping to next file.";
-            continue;
+            auto file = new QFile(it.absoluteFilePath());
+            file->open(QIODevice::ReadOnly);
+            QString contents = file->readAll();
+            file->close();
+
+            QJsonObject json = QJsonDocument::fromJson(contents.toUtf8()).object();
+
+            if (json.isEmpty()) {
+                qDebug().noquote() << QString("WARNING - FileReader - File %1 has invalid JSON. "
+                                              "Unable to process. Skipping file.").arg(file->fileName());
+                continue;
+            }
+
+            QString type = json.value("type").toString();
+
+            if (type.isEmpty()) {
+                qDebug().noquote() << QString("WARNING - FileReader - File %1 has invalid JSON. "
+                            "No 'type' defined. Skipping file.").arg(file->fileName());
+                continue;
+            }
+
+            validObjects->append(json);
+            validCount++;
         }
-
-        validObjects->append(json);
-        validCount++;
     }
 
-    qDebug().nospace() << "INFO - FileReader - Read " << validCount << " files as valid JSONs.";
+    qDebug().noquote() << QString("INFO - FileReader - Read %1 files as valid JSONs.").arg(validCount);
 
     return true;
 }
