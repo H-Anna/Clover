@@ -15,7 +15,7 @@ public:
 
     void Hide();
     void Show();
-    Surface* GetCurrentSurface();
+    Surface* GetCurrentSurface() const;
     GhostWidget *GetInScope() const;
     unsigned int GetID(GhostWidget *w) const;
 

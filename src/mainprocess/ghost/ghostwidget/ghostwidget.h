@@ -22,6 +22,7 @@ class GhostWidget : public QWidget
 public:
     GhostWidget(unsigned int _layerCount = 1, QWidget *parent = nullptr);
     ~GhostWidget();
+    QSize sizeHint() const override;
 
     void SetSurface(QVector<QString> images);
     void SetHotspots(QVector<Hotspot*> hs);
@@ -33,6 +34,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent*) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     QPoint dragPosition;
@@ -45,10 +47,5 @@ private:
     unsigned int layerCount;
 
     QVector<HotspotWidget*> hotspots;
-
-
-    // QWidget interface
-public:
-    QSize sizeHint() const override;
 };
 #endif // GHOSTWIDGET_H

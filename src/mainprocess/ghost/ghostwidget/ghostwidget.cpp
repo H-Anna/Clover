@@ -153,6 +153,12 @@ void GhostWidget::paintEvent(QPaintEvent *)
     }
 }
 
+void GhostWidget::keyPressEvent(QKeyEvent *event)
+{
+    qDebug() << event->text();
+    event->accept();
+}
+
 QSize GhostWidget::sizeHint() const
 {
     return baseRect.size();
