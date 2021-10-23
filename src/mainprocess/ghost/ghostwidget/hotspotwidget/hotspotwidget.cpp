@@ -7,7 +7,6 @@ HotspotWidget::HotspotWidget(QWidget *parent):
     setContextMenuPolicy(Qt::NoContextMenu);
     setMouseTracking(true);
     setAutoFillBackground(false);
-    setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
 
     QPalette p = palette();
     p.setColor(QPalette::Base, QColor(255,255,255,0));
@@ -20,11 +19,6 @@ void HotspotWidget::mouseMoveEvent(QMouseEvent *event)
 {
     /// TODO: why does this only fire when the mouse button is down??
     qDebug() << QString("Mouse entered");
-}
-
-QSize HotspotWidget::sizeHint() const
-{
-    return QSize(1000,1000);
 }
 
 void HotspotWidget::mousePressEvent(QMouseEvent *event)

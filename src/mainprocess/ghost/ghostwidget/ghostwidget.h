@@ -46,5 +46,9 @@ private:
 
     QVector<HotspotWidget*> hotspots;
 
+
+    // QWidget interface
+public:
+    QSize sizeHint() const override;
 };
 #endif // GHOSTWIDGET_H

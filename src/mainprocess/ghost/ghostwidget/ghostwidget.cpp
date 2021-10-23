@@ -7,6 +7,7 @@ GhostWidget::GhostWidget(unsigned int _layerCount, QWidget *parent):
     //setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
     setAutoFillBackground(false);
+    setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
     QAction *quitAction = new QAction(tr("E&xit"), this);
@@ -148,10 +149,13 @@ void GhostWidget::paintEvent(QPaintEvent *)
         if (pixmaps.at(i).operator QVariant() != QPixmap(0,0).operator QVariant()) {
 
             painter.drawPixmap(QPoint(0,0), pixmaps.at(i));
-            //painter.drawPixmap(startPoint, pixmaps.at(i), baseRect);
-            //painter.drawPixmap()
         }
     }
+}
+
+QSize GhostWidget::sizeHint() const
+{
+    return baseRect.size();
 }
 
 

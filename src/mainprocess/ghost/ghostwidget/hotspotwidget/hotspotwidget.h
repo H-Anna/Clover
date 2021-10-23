@@ -22,7 +22,6 @@ protected:
 
     // QWidget interface
 public:
-    QSize sizeHint() const override;
 };
 
 #endif // HOTSPOTWIDGET_H
