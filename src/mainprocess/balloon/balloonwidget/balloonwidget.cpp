@@ -7,10 +7,6 @@ BalloonWidget::BalloonWidget(QWidget *parent)
     setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
 
-    /// TODO: implement "change balloon" tag
-    //connect(this, SIGNAL(changeBalloonSignal(const QString&)), this, SLOT(changeBalloon(const QString&)));
-    //connect(this, SIGNAL(changeBalloonSignal(const QString&)), this, SLOT(update()));
-
     textArea = nullptr;
     textCursor = 0;
     textHolder = new QPlainTextEdit(this);

@@ -33,7 +33,7 @@ void TalkManager::PrintTalksList()
     qDebug() << "INFO - TalkManager";
 
     if (talksList.count() > 0) {
-        qDebug() << "Talks loaded:" << talksList.count();
+        qDebug() << QString("Talks loaded: %1").arg(talksList.count());
 
         for (auto &it: talksList) {
             qDebug().noquote() << it;
@@ -54,7 +54,7 @@ QString TalkManager::GetTalk(int idx)
     if (idx < talksList.length())
         return talksList.at(idx);
 
-    qDebug().nospace() << "WARNING - TalkManager - No talk at index " << idx << ", last in list returned.";
+    qDebug().noquote() << QString("WARNING - TalkManager - No talk at index %1, last in list returned.").arg(idx);
     return talksList.at(talksList.length()-1);
 }
 

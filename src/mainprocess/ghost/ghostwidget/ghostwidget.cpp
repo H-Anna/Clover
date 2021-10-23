@@ -14,6 +14,10 @@ GhostWidget::GhostWidget(unsigned int _layerCount, QWidget *parent):
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
 
+    auto screen = QGuiApplication::primaryScreen();
+    screen->availableGeometry();
+    startPoint = screen->availableGeometry().center();
+
     pixmaps.reserve(layerCount);
 
     //move(width()-100, height()-100);
@@ -38,7 +42,7 @@ void GhostWidget::SetSurface(QVector<QString> images)
 
     }
 
-    baseSize = pixmaps.at(0).size();
+    baseRect = pixmaps.at(0).rect();
     update();
 }
 
@@ -108,6 +112,7 @@ void GhostWidget::mousePressEvent(QMouseEvent *event)
 
 void GhostWidget::paintEvent(QPaintEvent *)
 {
+
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
@@ -118,10 +123,10 @@ void GhostWidget::paintEvent(QPaintEvent *)
         if (pixmaps.at(i).operator QVariant() != QPixmap(0,0).operator QVariant()) {
 
             painter.drawPixmap(QPoint(0,0), pixmaps.at(i));
+            //painter.drawPixmap(startPoint, pixmaps.at(i), baseRect);
+            //painter.drawPixmap()
         }
     }
-
-
 }
 
 

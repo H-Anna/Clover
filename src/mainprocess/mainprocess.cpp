@@ -1,6 +1,7 @@
 #include "mainprocess.h"
 
-MainProcess::MainProcess(unsigned int _layerCount, QVector<Surface *> defSurf, QVector<BalloonSurface *> defBall):
+MainProcess::MainProcess(VariableStore *_vs, unsigned int _layerCount, QVector<Surface *> defSurf, QVector<BalloonSurface *> defBall):
+    vs(_vs),
     ghost(new Ghost(defSurf, _layerCount)),
     balloon(new Balloon(defBall)),
     currentTC(nullptr),
@@ -60,7 +61,7 @@ void MainProcess::EvaluateTokens()
 
     auto token = currentTC->GetNextToken();
 
-    qDebug().noquote() << "INFO - MainProcess - Token:" << token.GetContents() << " Type:" << token.GetType();
+    qDebug().noquote() << QString("INFO - MainProcess - Token: \"%1\"  ||  Type: %2").arg(token.GetContents(), token.GetTypeAsString());
 
     switch (token.GetType()) {
         case Token::CommandTag:
@@ -94,8 +95,8 @@ void MainProcess::EvaluateTokens()
 
         default:
         {
-            qDebug() << "WARNING - MainProcess - Unexpected token type" << token.GetType();
-            qDebug().nospace() << "Token parameters: " << token.GetParams() << "  ||  Token contents: " << token.GetContents();
+            qDebug() << QString("WARNING - MainProcess - Unexpected token type %1").arg(token.GetTypeAsString());
+            qDebug().noquote() << "Token parameters: " << token.GetParams() << "  ||  Token contents: " << token.GetContents();
 
             emit finishedTokenEvaluationSignal();
             break;
@@ -130,10 +131,6 @@ void MainProcess::BuildTagLambdaMap()
     ///
     /// PLEASE DON'T CHANGE IT UNLESS YOU KNOW WHAT YOU'RE DOING.
 
-    typedef void (*tagLambdaPtr)(MainProcess&, const QStringList&);
-
-    tagLambdaMap = QMap<QString, tagLambdaPtr>();
-
     /// There are two ways you can go about this.
     ///
     /// - Function calls: simple to understand but may block thread and cause app to freeze. Use carefully.
@@ -149,6 +146,8 @@ void MainProcess::BuildTagLambdaMap()
     ///     4. Implement slot functionality.
     ///     5. Create a public "finished" signal in receiver.
     ///     6. Connect "finished" to this class's finishedTokenEvaluationSignal. You MUST connect them within THIS class.
+
+    tagLambdaMap = QMap<QString, tagLambdaPtr>();
 
     /// Function call examples
     tagLambdaMap.insert("wait", [](MainProcess& mp, const QStringList& params){
@@ -184,7 +183,7 @@ void MainProcess::BuildTagLambdaMap()
     tagLambdaMap.insert("b",[](MainProcess& mp, const QStringList& params){
 
         if (params.count() > 1) {
-            qDebug() << "WARNING - MainProcess - Balloon change tag has multiple parameters, UNHANDLED CASE. Skipping token.";
+            qDebug() << "WARNING - MainProcess - Balloon change tag has multiple parameters. Skipping token.";
         } else {
             emit mp.applyBalloonSignal(params);
         }
@@ -194,7 +193,7 @@ void MainProcess::BuildTagLambdaMap()
     tagLambdaMap.insert("s",[](MainProcess& mp, const QStringList& params){
 
         if (params.count() > 1) {
-            qDebug() << "WARNING - MainProcess - Surface change tag has multiple parameters, UNHANDLED CASE. Skipping token.";
+            qDebug() << "WARNING - MainProcess - Surface change tag has multiple parameters. Skipping token.";
         } else {
             emit mp.applySurfaceSignal(params);
         }
@@ -204,7 +203,7 @@ void MainProcess::BuildTagLambdaMap()
     tagLambdaMap.insert("i",[](MainProcess& mp, const QStringList& params){
 
         if (params.count() > 1) {
-            qDebug() << "WARNING - MainProcess - Animation change tag has multiple parameters, UNHANDLED CASE. Skipping token.";
+            qDebug() << "WARNING - MainProcess - Animation change tag has multiple parameters. Skipping token.";
         } else {
             emit mp.applyAnimationSignal(params, mp.ghost->GetCurrentSurface());
         }
@@ -214,17 +213,57 @@ void MainProcess::BuildTagLambdaMap()
     tagLambdaMap.insert("p",[](MainProcess& mp, const QStringList& params){
 
         if (params.count() > 1) {
-            qDebug() << "ERROR - MainProcess - Scope change tag has multiple parameters, UNHANDLED CASE. Skipping token.";
+            qDebug() << "ERROR - MainProcess - Scope change tag has multiple parameters. Skipping token.";
         } else {
 
             bool canConvert;
             unsigned int id = params.at(0).toInt(&canConvert);
 
             if (!canConvert) {
-                qDebug() << "ERROR - MainProcess - Scope change tag can't be converted to int, UNHANDLED CASE. Skipping token.";
+                qDebug() << "ERROR - MainProcess - Scope change tag can't be converted to int. Skipping token.";
             } else {
                 emit mp.changeScopeSignal(id);
             }
+        }
+
+        emit mp.finishedTokenEvaluationSignal(); });
+
+    tagLambdaMap.insert("get",[](MainProcess& mp, const QStringList& params){
+
+        if (params.count() != 1) {
+
+            qDebug() << "ERROR - MainProcess - Get variable tag only accepts 1 parameter. Skipping token.";
+            emit mp.finishedTokenEvaluationSignal();
+
+        } else {
+            auto val = mp.vs->GetVariable(params.at(0));
+
+            if (!val.isValid()) {
+                qDebug().noquote() << QString("WARNING - MainProcess - GET value of %1 is EMPTY").arg(params.at(0));
+            }
+
+            qDebug().noquote() << QString("INFO - MainProcess - GET value of %1 is %2").arg(params.at(0), val.toString());
+
+            emit mp.printTextSignal(val.toString());
+
+        }
+
+        });
+
+    tagLambdaMap.insert("set",[](MainProcess& mp, const QStringList& params){
+
+        if (params.count() != 2) {
+
+            qDebug() << "ERROR - MainProcess - Set variable tag only accepts 2 parameters. Skipping token.";
+
+        } else {
+
+            ///TODO replace this
+
+            mp.vs->SetVariable(params.at(0), params.at(1));
+            qDebug().noquote() << QString("INFO - MainProcess - SET value of %1 to %2")
+                                  .arg(params.at(0), mp.vs->GetVariable(params.at(0)).toString());
+
         }
 
         emit mp.finishedTokenEvaluationSignal(); });
@@ -240,10 +279,10 @@ void MainProcess::ExecuteCommand(const Token &token)
 
     if (tagLambdaMap.keys().contains(tag)) {
         auto params = token.GetParams();
-        tagLambdaMap[tag](*this, params);
+        tagLambdaMap.value(tag)(*this, params);
 
     } else {
-        qDebug() << "WARNING - MainProcess - CommandTag" << tag << "is not part of tagLambdaMap. Skipping token.";
+        qDebug().noquote() << QString("WARNING - MainProcess - CommandTag %1 is not part of tagLambdaMap. Skipping token.").arg(tag);
         emit finishedTokenEvaluationSignal();
     }
 }

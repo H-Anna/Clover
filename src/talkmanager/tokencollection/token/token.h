@@ -19,6 +19,7 @@ public:
 
     QString GetContents() const;
     TokenType GetType() const;
+    QString GetTypeAsString() const;
     QStringList GetParams() const;
 
 private:
