@@ -49,7 +49,7 @@ void Ghost::ChangeSurface(Surface *surface)
 
 Surface *Ghost::GetCurrentSurface()
 {
-    return currentSurface[inScope];
+    return currentSurface.value(inScope);
 }
 
 void Ghost::AnimateGhost(Animation* a, Frame* f)
@@ -85,7 +85,7 @@ void Ghost::ChangeScope(unsigned int id)
 
 void Ghost::AppendAnimation(Animation *a)
 {
-    if (currentAnimations.keys().contains(inScope)) {
+    if (currentAnimations.contains(inScope)) {
        auto list = currentAnimations.value(inScope);
 
        if (!list.contains(a)) {

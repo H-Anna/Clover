@@ -20,12 +20,15 @@ Animation::~Animation()
 
 QString Animation::PrintData()
 {
-    auto str = QString(QString::number(id) + "\t" + EnumConverter::GetFrequency(frequency) + "\n");
+    auto str = QString("%1\t%2\n%3 frames\n").arg(QString::number(id),
+                                                  QMetaEnum::fromType<Frequency>().valueToKey(frequency),
+                                                  QString::number(frames.length()));
+
     auto framecount = frames.length();
-    str.append(QString::number(framecount) + " frames\n");
+    str.append(QString("%1 frames\n").arg(framecount));
 
     for (auto &it: frames) {
-        str.append("\t\t" + it->PrintData() + "\n");
+        str.append(QString("\t\t%1\n").arg(it->PrintData()));
     }
 
     return str;
@@ -51,7 +54,7 @@ QVector<Frame *> Animation::GetFrames() const
     return frames;
 }
 
-Frequency Animation::GetFrequency() const
+Animation::Frequency Animation::GetFrequency() const
 {
     return frequency;
 }
@@ -61,7 +64,7 @@ unsigned int Animation::GetLayer() const
     return layer;
 }
 
-void Animation::AddFrame(const QString &_image, DrawMethod _drawMethod, unsigned int _ms)
+void Animation::AddFrame(const QString &_image, Frame::DrawMethod _drawMethod, unsigned int _ms)
 {
     unsigned int _id = frames.length();
     frames.append(new Frame(_id, _image, _drawMethod, _ms));
@@ -73,6 +76,10 @@ Frame *Animation::GetNextFrame()
         return nullptr;
 
     if (frameCursor >= frames.length()) {
+
+        /// TODO: whats the difference between Loop and Always? I can't remember.
+        /// Maybe I wanted to create Looping animations that play forever, and
+        /// make Always animations oneshots that play when you enter the surface?
 
         switch (frequency) {
         case Frequency::Loop:

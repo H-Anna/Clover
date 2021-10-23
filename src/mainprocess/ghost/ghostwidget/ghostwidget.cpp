@@ -46,28 +46,28 @@ void GhostWidget::SetSurface(QVector<QString> images)
     update();
 }
 
-void GhostWidget::SetAnimation(QString image, unsigned int layer, DrawMethod dm)
+void GhostWidget::SetAnimation(QString image, unsigned int layer, Frame::DrawMethod dm)
 {
 
     switch (dm) {
 
-    case DrawMethod::Base: {
+    case Frame::DrawMethod::Base: {
         // TODO
     }
-    case DrawMethod::Clip: {
+    case Frame::DrawMethod::Clip: {
         // TODO
     }
-    case DrawMethod::Overlay: {
+    case Frame::DrawMethod::Overlay: {
         pixmaps.append(QPixmap(image));
         break;
     }
-    case DrawMethod::Insert: {
+    case Frame::DrawMethod::Insert: {
         if (layer > pixmaps.length())
             layer = pixmaps.length();
         pixmaps.insert(layer, QPixmap(image));
         break;
     }
-    case DrawMethod::Replace: {
+    case Frame::DrawMethod::Replace: {
 
         int diff = layer - pixmaps.length();
         if (diff < 0) {

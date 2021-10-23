@@ -93,8 +93,7 @@ void Balloon::AppendHtml(const QString &text)
 void Balloon::PrintBalloonContents()
 {
     if (inScope->textHolder != nullptr)
-        qDebug() << "INFO - BalloonWidget - textHolder contains:";
-    qDebug() << inScope->textHolder->toPlainText();
+        qDebug() << "INFO - BalloonWidget - textHolder contains:" << inScope->textHolder->toPlainText();
 }
 
 void Balloon::ClearBalloon()

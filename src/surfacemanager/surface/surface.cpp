@@ -21,8 +21,11 @@ Surface::Surface(unsigned int _id, const QString &_name):
 
 Surface::~Surface()
 {
-    for (auto &it: animations.values())
-        delete it;
+    QMapIterator a(animations);
+    while (a.hasNext()) {
+        a.next();
+        delete a.value();
+    }
 }
 
 QString Surface::PrintData()
@@ -31,13 +34,17 @@ QString Surface::PrintData()
     for (auto &it: elements) {
         str.append(it + "\n");
     }
-    auto animcount = animations.keys().length();
+    auto animcount = animations.size();
     str.append(QString::number(animcount) + " animations\n");
+    str.append(QString("%1 animations\n").arg(animcount));
 
     if (animcount > 0) {
         str.append("\t\tId\tFrequency\n");
-        for (auto &it: animations.values()) {
-            str.append("\t\t" + it->PrintData() + "\n");
+
+        QMapIterator a(animations);
+        while (a.hasNext()) {
+            a.next();
+            str.append("\t\t" + a.value()->PrintData() + "\n");
         }
     }
 
@@ -69,7 +76,7 @@ void Surface::AddElement(const QString &img)
     elements.append(img);
 }
 
-Animation *Surface::AddAnimation(unsigned int _id, const QString& _name, Frequency _frequency, unsigned int _layer)
+Animation *Surface::AddAnimation(unsigned int _id, const QString& _name, Animation::Frequency _frequency, unsigned int _layer)
 {
     auto a = new Animation(_id, _name, _frequency, _layer);
     animations.insert(_id, a);
@@ -81,7 +88,7 @@ Animation *Surface::AddAnimation(unsigned int _id, const QString& _name, Frequen
     return a;
 }
 
-QVector<Animation *> Surface::GetAnimations(Frequency f) const
+QVector<Animation *> Surface::GetAnimations(Animation::Frequency f) const
 {
     QVector<Animation *> anims = QVector<Animation*>();
     for (auto &it: animations) {

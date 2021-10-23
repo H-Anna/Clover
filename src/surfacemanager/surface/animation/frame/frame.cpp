@@ -11,7 +11,10 @@ Frame::Frame(unsigned int _id, const QString &_image, DrawMethod _drawMethod, un
 
 QString Frame::PrintData()
 {
-    return QString(QString::number(id) + "\t" + image + "\t" + EnumConverter::GetDrawMethod(drawMethod) + "\t" + QString::number(ms)+" ms");
+    return QString("%1\t%2\t%3\t%4 ms").arg(QString::number(id),
+                                            image,
+                                            QMetaEnum::fromType<Frame::DrawMethod>().valueToKey(drawMethod),
+                                            QString::number(ms));
 }
 
 unsigned int Frame::GetId() const
@@ -24,7 +27,7 @@ QString Frame::GetImage() const
     return image;
 }
 
-DrawMethod Frame::GetDrawMethod() const
+Frame::DrawMethod Frame::GetDrawMethod() const
 {
     return drawMethod;
 }

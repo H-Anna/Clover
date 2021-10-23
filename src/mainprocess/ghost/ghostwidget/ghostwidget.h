@@ -1,7 +1,7 @@
 #ifndef GHOSTWIDGET_H
 #define GHOSTWIDGET_H
 
-#include <surface_enums.h>
+#include <frame.h>
 
 #include <QCoreApplication>
 #include <QGuiApplication>
@@ -27,7 +27,7 @@ public:
     QVector<QPixmap> pixmaps;
 
 public slots:
-    void SetAnimation(QString image, unsigned int layer, DrawMethod dm);
+    void SetAnimation(QString image, unsigned int layer, Frame::DrawMethod dm);
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;

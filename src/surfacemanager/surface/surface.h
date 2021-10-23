@@ -19,10 +19,10 @@ public:
 
     void AddElement(const QString& img);
 
-    Animation* AddAnimation(unsigned int _id, const QString &_name, Frequency _frequency, unsigned int _layer);
+    Animation* AddAnimation(unsigned int _id, const QString &_name, Animation::Frequency _frequency, unsigned int _layer);
     Animation* GetAnimation(unsigned int _id) const;
     Animation* GetAnimation(const QString& _name) const;
-    QVector<Animation*> GetAnimations(Frequency f) const;
+    QVector<Animation*> GetAnimations(Animation::Frequency f) const;
 
 private:
     unsigned int id;

@@ -5,9 +5,18 @@
 
 #include <frame.h>
 
-class Animation
+class Animation: public QObject
 {
+    Q_OBJECT
 public:
+    enum Frequency
+    {
+        Never,
+        Always,
+        Loop
+    };
+    Q_ENUM(Frequency)
+
     Animation(int _id, QString _name = "", Frequency _frequency = Frequency::Never, unsigned int _layer = 0);
     ~Animation();
 
@@ -20,10 +29,8 @@ public:
     QVector<Frame*> GetFrames() const;
     unsigned int GetLayer() const;
 
-    void AddFrame(const QString& _image, DrawMethod _drawMethod, unsigned int _ms);
+    void AddFrame(const QString& _image, Frame::DrawMethod _drawMethod, unsigned int _ms);
     Frame* GetNextFrame();
-
-
 
 private:
 

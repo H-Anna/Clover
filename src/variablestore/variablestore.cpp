@@ -23,6 +23,7 @@ QVariant VariableStore::GetVariable(const QString &key)
 
 void VariableStore::SetVariable(const QString &key, const QVariant &value)
 {
+    /// If the key exists, replace its value; otherwise append the key-value pair to the map
     variables[key] = value;
 }
 

@@ -47,8 +47,10 @@ MainProcess::~MainProcess()
 
     delete currentTC;
 
-    for (auto &it: tagLambdaMap.values()) {
-        delete &it;
+    QMapIterator t(tagLambdaMap);
+    while (t.hasNext()) {
+        t.next();
+        delete &t.value();
     }
 
     tagLambdaMap.clear();
@@ -61,9 +63,10 @@ void MainProcess::EvaluateTokens()
 
     auto token = currentTC->GetNextToken();
 
-    qDebug().noquote() << QString("INFO - MainProcess - Token: \"%1\"  ||  Type: %2").arg(token.GetContents(), token.GetTypeAsString());
+    qDebug().noquote() << QString("INFO - MainProcess - Token: \"%1\"  ||  Type: %2").arg(token->GetContents(),
+                                                                        QMetaEnum::fromType<Token::TokenType>().valueToKey(token->GetType()));
 
-    switch (token.GetType()) {
+    switch (token->GetType()) {
         case Token::CommandTag:
         {
             ExecuteCommand(token);
@@ -72,14 +75,14 @@ void MainProcess::EvaluateTokens()
 
         case Token::HtmlTag:
         {
-            balloon->AppendHtml(token.GetContents());
+            balloon->AppendHtml(token->GetContents());
             emit finishedTokenEvaluationSignal();
             break;
         }
 
         case Token::PlainText:
         {
-            emit printTextSignal(token.GetContents());
+            emit printTextSignal(token->GetContents());
             break;
         }
 
@@ -95,8 +98,9 @@ void MainProcess::EvaluateTokens()
 
         default:
         {
-            qDebug() << QString("WARNING - MainProcess - Unexpected token type %1").arg(token.GetTypeAsString());
-            qDebug().noquote() << "Token parameters: " << token.GetParams() << "  ||  Token contents: " << token.GetContents();
+            qDebug() << QString("WARNING - MainProcess - Unexpected token type %1").arg(
+                            QMetaEnum::fromType<Token::TokenType>().valueToKey(token->GetType()));
+            qDebug().noquote() << "Token parameters: " << token->GetParams() << "  ||  Token contents: " << token->GetContents();
 
             emit finishedTokenEvaluationSignal();
             break;
@@ -273,12 +277,12 @@ void MainProcess::BuildTagLambdaMap()
     /// makes it possible for a semantic error (forgetting to emit FTE) to happen.
 }
 
-void MainProcess::ExecuteCommand(const Token &token)
+void MainProcess::ExecuteCommand(const Token *token)
 {
-    auto tag = token.GetContents();
+    auto tag = token->GetContents();
 
-    if (tagLambdaMap.keys().contains(tag)) {
-        auto params = token.GetParams();
+    if (tagLambdaMap.contains(tag)) {
+        auto params = token->GetParams();
         tagLambdaMap.value(tag)(*this, params);
 
     } else {

@@ -1,11 +1,23 @@
 #ifndef FRAME_H
 #define FRAME_H
 
-#include <enumconverter.h>
+#include <QObject>
+#include <QMetaEnum>
 
-class Frame
+class Frame: public QObject
 {
+    Q_OBJECT
 public:
+    enum DrawMethod
+    {
+        Base,
+        Overlay,
+        Clip,
+        Replace,
+        Insert
+    };
+    Q_ENUM(DrawMethod)
+
     Frame(unsigned int _id, const QString& _image, DrawMethod _drawMethod, unsigned int _ms);
 
     QString PrintData();

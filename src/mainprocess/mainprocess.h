@@ -32,7 +32,7 @@ public slots:
 
 private:
     void BuildTagLambdaMap();
-    void ExecuteCommand(const Token& token);
+    void ExecuteCommand(const Token* token);
     void PrintUndefinedTag(const QString& tag, const QStringList& params);
 
     VariableStore* vs;

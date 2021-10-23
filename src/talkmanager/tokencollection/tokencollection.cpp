@@ -8,15 +8,15 @@ TokenCollection::TokenCollection():
 
 void TokenCollection::append(const QString &token, Token::TokenType type, const QStringList &params)
 {
-    auto t = Token(token, type, params);
+    auto t = new Token(token, type, params);
     tokenList.append(t);
 }
 
-Token TokenCollection::GetNextToken()
+const Token *TokenCollection::GetNextToken()
 {
     if (tokenCursor >= tokenList.length()) {
         tokenCursor = 0;
-        return Token();
+        return new Token();
     }
     return tokenList.at(tokenCursor++);
 }

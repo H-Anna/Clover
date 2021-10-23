@@ -2,7 +2,7 @@
 #include <filereader.h>
 #include <talkmanager.h>
 #include <surfacemanager.h>
-//#include <variablestore.h>
+//#include <inputreceiver.h>
 
 #include <QApplication>
 
@@ -78,6 +78,8 @@ int main(int argc, char *argv[])
     auto tc = tm->MakeTokens(tm->GetTalk(1000));
     mainproc->SaveTokenCollection(tc);
     mainproc->EvaluateTokens();
+
+    //InputReceiver ir;
 
     return a.exec();
 }
