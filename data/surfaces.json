@@ -87,7 +87,7 @@
 				{
 					"name": "head",
 					"area": [415,86,554,160],
-					"cursor": "openhand"
+					"cursor": "OpenHandCursor"
 				}
 			]
 		},

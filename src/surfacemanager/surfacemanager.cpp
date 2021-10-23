@@ -242,12 +242,37 @@ void SurfaceManager::MakeSurface(QJsonObject &obj)
     /// Make animations
 
     QJsonArray animArray = obj.value("animations").toArray();
-    if (animArray.isEmpty())
-        return;
+    if (!animArray.isEmpty()) {
 
-    for (int i = 0; i < animArray.count(); i++) {
-        auto obj = animArray.at(i).toObject();
-        MakeAnimation(obj, *s);
+        for (int i = 0; i < animArray.count(); i++) {
+            auto obj = animArray.at(i).toObject();
+            MakeAnimation(obj, *s);
+        }
+
+    }
+
+    QJsonArray hotspotArray = obj.value("hotspots").toArray();
+    if (!hotspotArray.isEmpty()) {
+
+        for (int i = 0; i < hotspotArray.count(); i++) {
+
+            auto obj = hotspotArray.at(i).toObject();
+
+            auto name = obj.value("name").toString();
+            auto area = obj.value("area").toArray();
+            auto c = obj.value("cursor").toString();
+
+            int cursor;
+            bool ok;
+            c.toInt(&ok);
+            if (ok) {
+                cursor = c.toInt();
+            } else {
+                cursor = QMetaEnum::fromType<Qt::CursorShape>().keyToValue(obj.value("cursor").toString().toStdString().c_str());
+            }
+
+            s->AddHotspot(name, area.at(0).toInt(), area.at(1).toInt(), area.at(2).toInt(), area.at(3).toInt(), Qt::CursorShape(cursor));
+        }
     }
 }
 

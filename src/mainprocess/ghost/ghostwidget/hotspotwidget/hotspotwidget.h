@@ -1,6 +1,8 @@
 #ifndef HOTSPOTWIDGET_H
 #define HOTSPOTWIDGET_H
 
+#include <hotspot.h>
+
 #include <QObject>
 #include <QWidget>
 #include <QMouseEvent>
@@ -17,6 +19,10 @@ signals:
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+
+    // QWidget interface
+public:
+    QSize sizeHint() const override;
 };
 
 #endif // HOTSPOTWIDGET_H

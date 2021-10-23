@@ -4,27 +4,28 @@ GhostWidget::GhostWidget(unsigned int _layerCount, QWidget *parent):
     QWidget(parent, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint),
     layerCount(_layerCount)
 {
-    setWindowFlag(Qt::SubWindow);
+    //setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
+    setAutoFillBackground(false);
 
+    setContextMenuPolicy(Qt::ActionsContextMenu);
     QAction *quitAction = new QAction(tr("E&xit"), this);
     quitAction->setShortcut(tr("Ctrl+Q"));
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
     addAction(quitAction);
-
-    setContextMenuPolicy(Qt::ActionsContextMenu);
 
     auto screen = QGuiApplication::primaryScreen();
     screen->availableGeometry();
     startPoint = screen->availableGeometry().center();
 
     pixmaps.reserve(layerCount);
-
-    //move(width()-100, height()-100);
 }
 
 GhostWidget::~GhostWidget()
 {
+    for (auto &it: hotspots) {
+        delete it;
+    }
 }
 
 void GhostWidget::SetSurface(QVector<QString> images)
@@ -43,6 +44,30 @@ void GhostWidget::SetSurface(QVector<QString> images)
     }
 
     baseRect = pixmaps.at(0).rect();
+
+    update();
+}
+
+void GhostWidget::SetHotspots(QVector<Hotspot *> hs)
+{
+    for (auto &it: hotspots) {
+        delete it;
+    }
+
+    hotspots.clear();
+
+    for (auto &it: hs) {
+        auto tmp = new HotspotWidget(this);
+
+        tmp->move(it->getTopLeft());
+        int width = it->getBottomRight().x() - it->getTopLeft().x();
+        int height = it->getBottomRight().y() - it->getTopLeft().y();
+        tmp->resize(width, height);
+        tmp->setCursor(QCursor(it->getCursor()));
+
+        hotspots.append(tmp);
+    }
+
     update();
 }
 

@@ -1,15 +1,5 @@
 #include "surface.h"
 
-//Surface::Surface(unsigned int _id, const QString &_image, const QString &_name):
-//    id(_id),
-//    image(_image),
-//    name(_name),
-//    animations(QMap<unsigned int, Animation*>()),
-//    namedAnimations(QMap<QString, Animation*>())
-//{
-
-//}
-
 Surface::Surface(unsigned int _id, const QString &_name):
     id(_id),
     name(_name),
@@ -25,6 +15,12 @@ Surface::~Surface()
     while (a.hasNext()) {
         a.next();
         delete a.value();
+    }
+
+    QMapIterator h(hotspots);
+    while (h.hasNext()) {
+        h.next();
+        delete h.value();
     }
 }
 
@@ -96,6 +92,25 @@ QVector<Animation *> Surface::GetAnimations(Animation::Frequency f) const
             anims.append(it);
     }
     return anims;
+}
+
+void Surface::AddHotspot(const QString &_name, int TLX, int TLY, int BRX, int BRY, Qt::CursorShape _cursor)
+{
+    hotspots.insert(_name, new Hotspot(_name, TLX, TLY, BRX, BRY, _cursor));
+}
+
+Hotspot *Surface::GetHotspot(const QString &name) const
+{
+    return hotspots.value(name);
+}
+
+QVector<Hotspot *> Surface::GetHotspots() const
+{
+    QVector<Hotspot *> hs = QVector<Hotspot *>();
+    for (auto &it: hotspots) {
+        hs.append(it);
+    }
+    return hs;
 }
 
 Animation *Surface::GetAnimation(unsigned int _id) const

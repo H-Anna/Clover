@@ -11,8 +11,9 @@ Ghost::Ghost(QVector<Surface*> _defaultSurfaces, unsigned int _layerCount):
 
 {
     ghosts.append(inScope);
-    inScope->SetSurface(defaultSurfaces.at(0)->GetElements());
-    currentSurface.insert(inScope, defaultSurfaces.at(0));
+//    inScope->SetSurface(defaultSurfaces.at(0)->GetElements());
+//    currentSurface.insert(inScope, defaultSurfaces.at(0));
+    ChangeSurface(defaultSurfaces.at(0));
     inScope->show();
 }
 
@@ -45,6 +46,7 @@ void Ghost::ChangeSurface(Surface *surface)
 {
     currentSurface[inScope] = surface;
     inScope->SetSurface(surface->GetElements());
+    inScope->SetHotspots(surface->GetHotspots());
 }
 
 Surface *Ghost::GetCurrentSurface()

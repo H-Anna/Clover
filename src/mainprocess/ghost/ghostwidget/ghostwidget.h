@@ -2,6 +2,8 @@
 #define GHOSTWIDGET_H
 
 #include <frame.h>
+#include <hotspotwidget.h>
+#include <hotspot.h>
 
 #include <QCoreApplication>
 #include <QGuiApplication>
@@ -22,9 +24,7 @@ public:
     ~GhostWidget();
 
     void SetSurface(QVector<QString> images);
-
-    QPixmap displayedImage;
-    QVector<QPixmap> pixmaps;
+    void SetHotspots(QVector<Hotspot*> hs);
 
 public slots:
     void SetAnimation(QString image, unsigned int layer, Frame::DrawMethod dm);
@@ -38,8 +38,13 @@ private:
     QPoint dragPosition;
     QRect baseRect;
 
+    QPixmap displayedImage;
+    QVector<QPixmap> pixmaps;
+
     QPoint startPoint;
     unsigned int layerCount;
+
+    QVector<HotspotWidget*> hotspots;
 
 };
 #endif // GHOSTWIDGET_H

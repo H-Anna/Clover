@@ -2,11 +2,11 @@
 #define SURFACE_H
 
 #include <animation.h>
+#include <hotspot.h>
 
 class Surface
 {
 public:
-    //Surface(unsigned int _id, const QString& _image, const QString& _name = "");
     Surface(unsigned int _id, const QString& _name = "");
     ~Surface();
 
@@ -24,6 +24,10 @@ public:
     Animation* GetAnimation(const QString& _name) const;
     QVector<Animation*> GetAnimations(Animation::Frequency f) const;
 
+    void AddHotspot(const QString &_name, int TLX, int TLY, int BRX, int BRY, Qt::CursorShape _cursor);
+    Hotspot* GetHotspot(const QString& name) const;
+    QVector<Hotspot*> GetHotspots() const;
+
 private:
     unsigned int id;
     QVector<QString> elements;
@@ -31,6 +35,8 @@ private:
 
     QMap<unsigned int, Animation*> animations;
     QMap<QString, Animation*> namedAnimations;
+
+    QMap<QString, Hotspot*> hotspots;
 };
 
 #endif // SURFACE_H
