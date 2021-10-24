@@ -14,7 +14,7 @@ TalkManager::~TalkManager()
 
 bool TalkManager::LoadTalks(QJsonObject *json)
 {
-    QJsonArray talksArray = json->value("talks").toArray();
+    QJsonArray talksArray = json->value("content").toArray();
 
     if (talksArray.isEmpty()) {
         qDebug() << "ERROR - TalkManager - Talks couldn't be loaded!";

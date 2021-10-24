@@ -157,7 +157,7 @@ void MainProcess::BuildTagLambdaMap()
     tagLambdaMap.insert("wait", [](MainProcess& mp, const QStringList& params){
         QTimer::singleShot(params.at(0).toInt(), &mp, &MainProcess::finishedTokenEvaluationSignal); });
 
-    /// You can omit "params" if you don't use it in your lambda to get rid of warnings.
+    /// You can omit "params" in the declaration if you don't use it in your lambda to get rid of warnings.
     tagLambdaMap.insert("clr", [](MainProcess& mp, const QStringList&){
         mp.balloon->ClearBalloon();
         emit mp.finishedTokenEvaluationSignal(); });
@@ -252,7 +252,7 @@ void MainProcess::BuildTagLambdaMap()
 
         }
 
-        });
+    });
 
     tagLambdaMap.insert("set",[](MainProcess& mp, const QStringList& params){
 
@@ -271,6 +271,51 @@ void MainProcess::BuildTagLambdaMap()
         }
 
         emit mp.finishedTokenEvaluationSignal(); });
+
+    tagLambdaMap.insert("play",[](MainProcess& mp, const QStringList& params){
+
+        if (params.count() >= 1) {
+
+            auto name = params.at(0);
+            int loops = 0;
+
+            if (params.count() == 2) {
+
+                bool ok;
+                params.at(1).toInt(&ok);
+
+                if (ok) {
+                    loops = params.at(1).toInt(&ok);
+                }
+            }
+
+            emit mp.playSoundSignal(name, loops);
+            emit mp.finishedTokenEvaluationSignal();
+
+        }
+        else {
+            qDebug() << "ERROR - MainProcess - Play tag accepts 1 or 2 parameters. Skipping token.";
+            emit mp.finishedTokenEvaluationSignal();
+        }
+
+    });
+
+    tagLambdaMap.insert("stop",[](MainProcess& mp, const QStringList&){
+
+//        if (params.count() == 1) {
+
+//            emit mp.stopSoundSignal(params.at(0));
+        emit mp.stopSoundSignal();
+            emit mp.finishedTokenEvaluationSignal();
+
+//        }
+//        else {
+//            qDebug() << "ERROR - MainProcess - Stop tag accepts only 1 parameter. Skipping token.";
+//            emit mp.finishedTokenEvaluationSignal();
+//        }
+
+    });
+
 
     /// TODO: does every single lambda function have to emit FTE? This makes it possible for other
     /// objects to block MainProcess until they're finished, but it's very redundant. Also

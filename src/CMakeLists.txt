@@ -4,6 +4,7 @@ add_subdirectory(surfacemanager)
 add_subdirectory(talkmanager)
 add_subdirectory(variablestore)
 add_subdirectory(inputreceiver)
+add_subdirectory(soundemitter)
 
 add_executable(Clover main.cpp)
 target_link_libraries(Clover
@@ -13,4 +14,5 @@ target_link_libraries(Clover
         TalkManager
         VariableStore
         InputReceiver
+        SoundEmitter
 )

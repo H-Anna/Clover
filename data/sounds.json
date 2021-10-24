@@ -1,0 +1,27 @@
+{
+	"type": "sound",
+	"content":
+	[
+		{
+			"name": "ukulele",
+			"type": "file",
+			"location": "ukelele.wav"
+		},
+		{
+			"name": "banjo",
+			"type": "file",
+			"location": "banjo.wav"
+		},
+		{
+			"name": "andro",
+			"type": "file",
+			"location": "Android Sock Hop.mp3"
+		},
+		{
+			"name": "webmp3",
+			"type": "url",
+			"location": "https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3"
+		}
+		
+	]
+}

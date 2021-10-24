@@ -17,17 +17,13 @@ SurfaceManager::~SurfaceManager()
     }
 }
 
-bool SurfaceManager::LoadBalloons(QJsonObject *json, const QString &imgPath)
+bool SurfaceManager::LoadBalloons(QJsonObject *json, const QString &path)
 {
     /// Read JSON object, load contents into surfaceList
 
-#ifdef _WIN32
-    imagePath = imgPath + "\\";
-#elif unix || __unix || __unix__
-    imagePath = imgPath + "\/";
-#endif
+    imagePath = path;
 
-    QJsonArray balloonArray = json->value("balloons").toArray();
+    QJsonArray balloonArray = json->value("content").toArray();
 
     if (balloonArray.isEmpty())
         return false;
@@ -48,18 +44,13 @@ void SurfaceManager::Initialize()
     emit changeBalloonSignal(balloonSurfaces.value(0));
 }
 
-bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &imgPath)
+bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &path)
 {
     /// Read JSON object, load contents into surfaceList
 
-#ifdef _WIN32
-    imagePath = imgPath + "\\";
-#elif unix || __unix || __unix__
-    imagePath = imgPath + "\/";
-#endif
-
+    imagePath = path;
     layerCount = json->value("layercount").toInt();
-    QJsonArray surfaceArray = json->value("surfaces").toArray();
+    QJsonArray surfaceArray = json->value("content").toArray();
 
     if (surfaceArray.isEmpty())
         return false;
@@ -228,7 +219,7 @@ void SurfaceManager::MakeSurface(QJsonObject &obj)
     unsigned int id = obj.value("id").toInt();
     auto elements = obj.value("elements").toArray();
 
-    QString name = obj.value("name").toString("");
+    QString name = obj.value("name").toString();
 
     auto s = new Surface(id, name);
     surfaces.insert(s->GetId(), s);

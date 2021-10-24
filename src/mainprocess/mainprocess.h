@@ -25,6 +25,8 @@ signals:
     void applyAnimationSignal(QStringList params, Surface* s);
     void applyBalloonSignal(QStringList params);
     void changeScopeSignal(unsigned int id);
+    void playSoundSignal(const QString& name, int loops = 0);
+    void stopSoundSignal();
 
     void endOfTokensSignal();
 public slots:

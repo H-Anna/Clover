@@ -1,0 +1,5 @@
+"Android Sock Hop" Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 4.0 License
+http://creativecommons.org/licenses/by/4.0/
+
+Sound samples ("banjo.wav", "ukelele.wav") by OpenPathMusic recorded for Richard Boulanger for use in the One Laptop per Child music library. See http://wiki.laptop.org/go/Sound_samples for details.

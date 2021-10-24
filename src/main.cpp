@@ -3,6 +3,7 @@
 #include <talkmanager.h>
 #include <surfacemanager.h>
 //#include <inputreceiver.h>
+#include <soundemitter.h>
 
 #include <QApplication>
 
@@ -11,15 +12,10 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     QDir dataDir(a.applicationDirPath());
-    QString path;
+    QString path = QDir::cleanPath(
+                QString("..") + QDir::separator() + ".." + QDir::separator() + ".." + QDir::separator() + "data");
 
-#ifdef _WIN32
-    path = R"(..\..\..\data)";
-#elif unix || __unix || __unix__
-    path = R"(../../../data)";
-#endif
-
-    dataDir.cd(path);
+    dataDir.setPath(path);
 
     /// Load files with FileReader as JSON objects
 
@@ -35,6 +31,9 @@ int main(int argc, char *argv[])
     TalkManager* tm = new TalkManager(R"(<! ?(\w+(?:-\w+)*)(?: ?\[(\w+(?:-\w+)*(?:, ?-?\w+(?:-\w+)*)*)\])* ?>)",
                                       R"(<[^!].*?>)");
     SurfaceManager* sm = new SurfaceManager();
+    SoundEmitter* se = new SoundEmitter();
+
+    QString aPath = dataDir.absolutePath() + QDir::separator();
 
     for (auto &json: jsonObjects) {
         QString type = json.value("type").toString();
@@ -43,10 +42,13 @@ int main(int argc, char *argv[])
             tm->LoadTalks(&json);
         }
         else if (type == "surface") {
-            sm->LoadSurfaces(&json, dataDir.absolutePath());
+            sm->LoadSurfaces(&json, aPath);
         }
         else if (type == "balloon") {
-            sm->LoadBalloons(&json, dataDir.absolutePath());
+            sm->LoadBalloons(&json, aPath);
+        }
+        else if (type == "sound") {
+            se->LoadSounds(&json, aPath);
         }
     }
 
@@ -73,6 +75,11 @@ int main(int argc, char *argv[])
     QObject::connect(sm, SIGNAL(changeBalloonSignal(BalloonSurface*)),
                      mainproc->GetBalloon(), SLOT(ChangeBalloon(BalloonSurface*)));
 
+    QObject::connect(mainproc, SIGNAL(playSoundSignal(const QString&, int)),
+                     se, SLOT(Play(const QString&, int)));
+
+    QObject::connect(mainproc, SIGNAL(stopSoundSignal()),
+                     se, SLOT(Stop()));
 
     //TODO random talk
     auto tc = tm->MakeTokens(tm->GetTalk(1000));
