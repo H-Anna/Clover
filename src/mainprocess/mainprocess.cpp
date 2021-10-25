@@ -18,8 +18,8 @@ MainProcess::MainProcess(VariableStore *_vs, unsigned int _layerCount, QVector<S
     connect(this, SIGNAL(finishedTokenEvaluationSignal()),
             this, SLOT(EvaluateTokens()));
 
-    connect(this, SIGNAL(printTextSignal(const QString&)),
-            balloon, SIGNAL(printTextSignal(const QString&)));
+    connect(this, SIGNAL(printTextSignal(QString)),
+            balloon, SIGNAL(printTextSignal(QString)));
 
     connect(balloon, SIGNAL(finishedTextPrintSignal()),
             this, SIGNAL(finishedTokenEvaluationSignal()));
@@ -54,6 +54,11 @@ MainProcess::~MainProcess()
     }
 
     tagLambdaMap.clear();
+}
+
+void MainProcess::SaveTokenCollection(TokenCollection tc)
+{
+    currentTC = new TokenCollection(tc);
 }
 
 void MainProcess::EvaluateTokens()
@@ -107,11 +112,6 @@ void MainProcess::EvaluateTokens()
         }
 
     }
-}
-
-void MainProcess::SaveTokenCollection(TokenCollection &tc)
-{
-    currentTC = &tc;
 }
 
 Ghost *MainProcess::GetGhost() const
@@ -337,3 +337,10 @@ void MainProcess::ExecuteCommand(const Token *token)
 }
 
 
+void MainProcess::TokensReady(TokenCollection tc)
+{
+    SaveTokenCollection(tc);
+    balloon->Reset();
+    EvaluateTokens();
+
+}

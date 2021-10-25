@@ -2,6 +2,7 @@
 #define HOTSPOTWIDGET_H
 
 #include <hotspot.h>
+#include <variablestore.h>
 
 #include <QObject>
 #include <QWidget>

@@ -15,7 +15,7 @@ public:
     MainProcess(VariableStore *_vs, unsigned int _layerCount, QVector<Surface*> defSurf, QVector<BalloonSurface*> defBall);
     ~MainProcess();
 
-    void SaveTokenCollection(TokenCollection &tc);
+    void SaveTokenCollection(TokenCollection tc);
 
     Ghost* GetGhost() const;
     Balloon* GetBalloon() const;
@@ -25,11 +25,12 @@ signals:
     void applyAnimationSignal(QStringList params, Surface* s);
     void applyBalloonSignal(QStringList params);
     void changeScopeSignal(unsigned int id);
-    void playSoundSignal(const QString& name, int loops = 0);
+    void playSoundSignal(QString name, int loops = 0);
     void stopSoundSignal();
 
     void endOfTokensSignal();
 public slots:
+    void TokensReady(TokenCollection tc);
     void EvaluateTokens();
 
 private:
@@ -49,7 +50,7 @@ private:
     unsigned int tokenCursor;
 
 signals:
-    bool printTextSignal(const QString& text);
+    bool printTextSignal(QString text);
     void changeTextSpeedSignal(unsigned int newSpeed);
 
     void finishedTokenEvaluationSignal();

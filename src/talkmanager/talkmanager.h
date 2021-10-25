@@ -3,6 +3,7 @@
 
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QRandomGenerator>
 
 #include <tokencollection.h>
 
@@ -14,19 +15,22 @@ public:
     ~TalkManager();
 
     bool LoadTalks(QJsonObject* json);
-    void PrintTalksList();
-    QString GetTalk(int idx);
+    bool LoadAnchors(QJsonObject* json);
+
     TokenCollection MakeTokens(const QString& talk);
     QString PreprocessTalk(const QString& talk);
     void Parse(TokenCollection& tc, const QString& str, const QRegularExpression& regex);
 
-    QRegularExpression GetTagRegex();
+public slots:
+    void RandomTalk();
+    void IndexedTalk(int idx);
 
 signals:
-    void TokenReadySignal(const QString& token);
+    void tokensReadySignal(TokenCollection tc);
 
 private:
     QVector<QString> talksList;
+    QMap<QString, QString> anchorTalks;
     unsigned int tokenCursor;
     QRegularExpression tagRegex, htmlRegex;
 };

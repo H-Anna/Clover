@@ -289,7 +289,7 @@ void SurfaceManager::MakeAnimation(QJsonObject &obj, Surface& s)
 
         QJsonObject frame = framesArray.at(k).toObject();
         QString image = imagePath + frame.value("image").toString();
-        auto drawMethod = QMetaEnum::fromType<Frame::DrawMethod>().keyToValue(obj.value("drawmethod").toString().toStdString().c_str());
+        auto drawMethod = QMetaEnum::fromType<Frame::DrawMethod>().keyToValue(frame.value("drawmethod").toString().toStdString().c_str());
         unsigned int ms = frame.value("ms").toInt(0);
 
         a->AddFrame(image, Frame::DrawMethod(drawMethod), ms);

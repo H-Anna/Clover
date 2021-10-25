@@ -2,7 +2,6 @@
 #include <filereader.h>
 #include <talkmanager.h>
 #include <surfacemanager.h>
-//#include <inputreceiver.h>
 #include <soundemitter.h>
 
 #include <QApplication>
@@ -26,12 +25,20 @@ int main(int argc, char *argv[])
        qDebug() << "ERROR - FileReader: Something happened during file reading.";
     }
 
+    /// Load variables from ini file(s)
+    auto vs = new VariableStore(iniFile);
+
     /// Make Manager classes parse the loaded files
 
     TalkManager* tm = new TalkManager(R"(<! ?(\w+(?:-\w+)*)(?: ?\[(\w+(?:-\w+)*(?:, ?-?\w+(?:-\w+)*)*)\])* ?>)",
                                       R"(<[^!].*?>)");
     SurfaceManager* sm = new SurfaceManager();
     SoundEmitter* se = new SoundEmitter();
+
+    VariableStore::AddMember("VariableStore", vs);
+    VariableStore::AddMember("TalkManager", tm);
+    VariableStore::AddMember("SurfaceManager", sm);
+    VariableStore::AddMember("SoundEmitter", se);
 
     QString aPath = dataDir.absolutePath() + QDir::separator();
 
@@ -52,10 +59,12 @@ int main(int argc, char *argv[])
         }
     }
 
-    /// Load variables from ini file(s)
-    auto vs = VariableStore(iniFile);
+    MainProcess* mainproc = new MainProcess(vs, sm->GetLayerCount(), sm->GetDefaultSurfaces(), sm->GetDefaultBalloons());
 
-    MainProcess* mainproc = new MainProcess(&vs, sm->GetLayerCount(), sm->GetDefaultSurfaces(), sm->GetDefaultBalloons());
+    VariableStore::AddMember("MainProcess", mainproc);
+
+    QObject::connect(tm, SIGNAL(tokensReadySignal(TokenCollection)),
+                     mainproc, SLOT(TokensReady(TokenCollection)));
 
     QObject::connect(mainproc, SIGNAL(applySurfaceSignal(QStringList)),
             sm, SLOT(ApplySurface(QStringList)));
@@ -75,18 +84,13 @@ int main(int argc, char *argv[])
     QObject::connect(sm, SIGNAL(changeBalloonSignal(BalloonSurface*)),
                      mainproc->GetBalloon(), SLOT(ChangeBalloon(BalloonSurface*)));
 
-    QObject::connect(mainproc, SIGNAL(playSoundSignal(const QString&, int)),
-                     se, SLOT(Play(const QString&, int)));
+    QObject::connect(mainproc, SIGNAL(playSoundSignal(QString,int)),
+                     se, SLOT(Play(QString,int)));
 
     QObject::connect(mainproc, SIGNAL(stopSoundSignal()),
                      se, SLOT(Stop()));
 
-    //TODO random talk
-    auto tc = tm->MakeTokens(tm->GetTalk(1000));
-    mainproc->SaveTokenCollection(tc);
-    mainproc->EvaluateTokens();
-
-    //InputReceiver ir;
+    tm->IndexedTalk(5);
 
     return a.exec();
 }

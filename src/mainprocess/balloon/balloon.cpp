@@ -5,14 +5,14 @@ Balloon::Balloon(QVector<BalloonSurface*> _defaultBalloons):
     idInScope(0),
     defaultBalloons(_defaultBalloons)
 {
-    balloons.append(inScope);
+//    balloons.append(inScope);
 
-    ConnectScope();
+//    ConnectScope();
 
-    auto b = defaultBalloons.at(0);
+//    auto b = defaultBalloons.at(0);
 
-    inScope->show();
-    inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
+//    //inScope->show();
+//    inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
 }
 
 Balloon::~Balloon()
@@ -62,8 +62,8 @@ void Balloon::ChangeScope(unsigned int id)
 
 void Balloon::ConnectScope()
 {
-    connect(this, SIGNAL(printTextSignal(const QString&)),
-            inScope, SLOT(PrepareText(const QString&)));
+    connect(this, SIGNAL(printTextSignal(QString)),
+            inScope, SLOT(PrepareText(QString)));
 
     connect(inScope, SIGNAL(finishedTextPrintSignal()),
             this, SIGNAL(finishedTextPrintSignal()));
@@ -77,8 +77,8 @@ void Balloon::ConnectScope()
 
 void Balloon::DisconnectScope()
 {
-    disconnect(this, SIGNAL(printTextSignal(const QString&)),
-            inScope, SLOT(PrepareText(const QString&)));
+    disconnect(this, SIGNAL(printTextSignal(QString)),
+            inScope, SLOT(PrepareText(QString)));
 
     disconnect(inScope, SIGNAL(finishedTextPrintSignal()),
             this, SIGNAL(finishedTextPrintSignal()));
@@ -87,7 +87,10 @@ void Balloon::DisconnectScope()
 void Balloon::AppendHtml(const QString &text)
 {
     if (inScope->textHolder != nullptr)
+    {
+        inScope->show();
         inScope->textHolder->insertPlainText(text);
+    }
 }
 
 void Balloon::PrintBalloonContents()
@@ -105,6 +108,26 @@ void Balloon::ClearBalloon()
 void Balloon::ChangeTextSpeed(unsigned int newSpeed)
 {
     inScope->ChangeTextSpeed(newSpeed);
+}
+
+void Balloon::Reset()
+{
+    DisconnectScope();
+    inScope = nullptr;
+
+    for (auto &b: balloons) {
+        b->textHolder->clear();
+        delete b;
+    }
+
+    balloons.clear();
+
+    inScope = new BalloonWidget();
+    ConnectScope();
+
+    balloons.append(inScope);
+    auto b = defaultBalloons.at(0);
+    inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
 }
 
 BalloonWidget *Balloon::GetInScope() const

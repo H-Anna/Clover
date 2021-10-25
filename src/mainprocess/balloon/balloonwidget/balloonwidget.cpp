@@ -68,13 +68,15 @@ void BalloonWidget::SetupTextBrowser(QPoint topLeft, int width, int height)
     textArea->move(topLeft);
     textArea->resize(width, height);
 
-    connect(textArea, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(PrintAnchor(const QUrl &)));
+    connect(textArea, SIGNAL(anchorClicked(QUrl)),
+            this, SLOT(PrintAnchor(QUrl)));
 
     textArea->show();
 }
 
-void BalloonWidget::PrepareText(const QString &text)
+void BalloonWidget::PrepareText(QString text)
 {
+    show();
     if (balloonTimeout->isActive())
         balloonTimeout->stop();
 
@@ -135,10 +137,18 @@ void BalloonWidget::TextBrowserUpdate()
         qDebug() << "ERROR - BalloonWidget - textArea = nullptr, can't print (textBrowserUpdate).";
 }
 
-void BalloonWidget::PrintAnchor(const QUrl &link)
+void BalloonWidget::PrintAnchor(QUrl link)
 {
     qDebug() << link.toString();
     if (link.scheme() == "http" || link.scheme() == "https") {
         QDesktopServices::openUrl(link);
     }
+}
+
+QSize BalloonWidget::sizeHint() const
+{
+    //return baseRect.size();
+
+    /// TODO replace this dirty little trick
+    return QSize(1000,1000);
 }

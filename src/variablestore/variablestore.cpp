@@ -27,6 +27,24 @@ void VariableStore::SetVariable(const QString &key, const QVariant &value)
     variables[key] = value;
 }
 
+QObject *VariableStore::GetMember(const QString &key)
+{
+    if (!members.contains(key)) {
+        qDebug() << QString("ERROR - VariableStore - Member with key %1 doesn't exist, nullptr returned.").arg(key);
+    }
+
+    return members.value(key, nullptr);
+}
+
+void VariableStore::AddMember(const QString &key, QObject *member)
+{
+    if (members.contains(key)) {
+        qDebug() << QString("WARNING - VariableStore - Member with key %1 already exists.").arg(key);
+    } else {
+        members[key] = member;
+    }
+}
+
 void VariableStore::BuildLambdaMap()
 {
     globalFunctions = QMap<QString, globalFuncPtr>();

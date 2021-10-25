@@ -12,6 +12,12 @@ HotspotWidget::HotspotWidget(QWidget *parent):
     p.setColor(QPalette::Base, QColor(255,255,255,0));
     setPalette(p);
 
+    /// TODO: connect a TalkManager signal here
+
+    //QObject* tm = VariableStore::GetMember("TalkManager");
+//    connect(this, SIGNAL(),
+//            tm, SLOT());
+
     showMaximized();
 }
 

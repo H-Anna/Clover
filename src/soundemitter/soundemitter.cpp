@@ -43,7 +43,7 @@ bool SoundEmitter::LoadSounds(QJsonObject *json, const QString &path)
 
 /// Supported formats: wav and mp3. TODO: work on a solution to support ogg
 
-void SoundEmitter::Play(const QString &name, int loops)
+void SoundEmitter::Play(QString name, int loops)
 {
     if (media.contains(name)) {
 

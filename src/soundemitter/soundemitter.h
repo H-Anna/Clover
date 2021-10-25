@@ -18,7 +18,7 @@ public:
 
 public slots:
 
-    void Play(const QString& name, int loops = 0);
+    void Play(QString name, int loops = 0);
     void Stop();
 //    void Pause();
 //    void Resume();

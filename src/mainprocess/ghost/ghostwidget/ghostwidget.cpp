@@ -7,7 +7,7 @@ GhostWidget::GhostWidget(unsigned int _layerCount, QWidget *parent):
     //setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
     setAutoFillBackground(false);
-    setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred));
+    setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
     QAction *quitAction = new QAction(tr("E&xit"), this);
@@ -20,6 +20,11 @@ GhostWidget::GhostWidget(unsigned int _layerCount, QWidget *parent):
     startPoint = screen->availableGeometry().center();
 
     pixmaps.reserve(layerCount);
+
+    QObject* tm = VariableStore::GetMember("TalkManager");
+    connect(this, SIGNAL(randomTalkSignal()),
+            tm, SLOT(RandomTalk()));
+
 }
 
 GhostWidget::~GhostWidget()
@@ -136,6 +141,11 @@ void GhostWidget::mousePressEvent(QMouseEvent *event)
     }
 }
 
+void GhostWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+
+}
+
 void GhostWidget::paintEvent(QPaintEvent *)
 {
 
@@ -155,13 +165,22 @@ void GhostWidget::paintEvent(QPaintEvent *)
 
 void GhostWidget::keyPressEvent(QKeyEvent *event)
 {
-    qDebug() << event->text();
-    event->accept();
+    //qDebug() << event->text();
+    //event->accept();
+
+    if (event->text().toLower() == "t") {
+        emit randomTalkSignal();
+        event->accept();
+    }
+    grabKeyboard();
 }
 
 QSize GhostWidget::sizeHint() const
 {
-    return baseRect.size();
+    //return baseRect.size();
+
+    /// TODO replace this dirty little trick
+    return QSize(1000,1000);
 }
 
 

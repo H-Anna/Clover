@@ -33,6 +33,7 @@ public slots:
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent*) override;
     void keyPressEvent(QKeyEvent *event) override;
 
@@ -47,5 +48,9 @@ private:
     unsigned int layerCount;
 
     QVector<HotspotWidget*> hotspots;
+
+signals:
+    void randomTalkSignal();
+
 };
 #endif // GHOSTWIDGET_H

@@ -19,6 +19,7 @@ class BalloonWidget: public QWidget
 public:
     BalloonWidget(QWidget *parent = nullptr);
     ~BalloonWidget();
+    QSize sizeHint() const override;
 
     QPlainTextEdit* textHolder;
 
@@ -55,11 +56,11 @@ private:
     void SetupTextBrowser(QPoint topLeft, int width, int height);
 
 private slots:
-    void PrepareText(const QString& text);
+    void PrepareText(QString text);
     void PrintText();
 
     void TextBrowserUpdate();
-    void PrintAnchor(const QUrl& link);
+    void PrintAnchor(QUrl link);
 };
 
 #endif // BALLOONWIDGET_H
