@@ -24,6 +24,7 @@ public:
 public slots:
     void RandomTalk();
     void IndexedTalk(int idx);
+    void AnchorTalk(QString anchor);
 
 signals:
     void tokensReadySignal(TokenCollection tc);

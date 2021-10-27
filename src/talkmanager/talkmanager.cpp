@@ -187,3 +187,20 @@ void TalkManager::IndexedTalk(int idx)
     emit tokensReadySignal(tc);
 }
 
+void TalkManager::AnchorTalk(QString anchor)
+{
+    if (anchorTalks.isEmpty()) {
+        qDebug() << "ERROR - TalkManager - Empty anchor talk list.";
+        return;
+    }
+
+    if (!anchorTalks.contains(anchor)) {
+        qDebug().noquote() << QString("ERROR - TalkManager - No talk at anchor \"%1\".").arg(anchor);
+    }
+
+
+    auto tc = MakeTokens(anchorTalks.value(anchor));
+    emit tokensReadySignal(tc);
+
+}
+

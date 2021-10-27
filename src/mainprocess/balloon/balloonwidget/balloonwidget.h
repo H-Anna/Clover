@@ -9,7 +9,6 @@
 #include <QPixmap>
 #include <QPlainTextEdit>
 #include <QTimer>
-#include <QDesktopServices>
 
 #include <QDebug>
 
@@ -25,13 +24,13 @@ public:
 
 signals:
     void balloonLoadedSignal();
-    void prepareTextSignal(const QString& text);
     void finishedTextPrintSignal();
 
 public slots:
     void ChangeBalloon(const QString& path, QPoint TL, QPoint BR);
     void ChangeTextSpeed(unsigned int newSpeed);
     void PrepareTimeout();
+    void StopPrinting();
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -60,7 +59,6 @@ private slots:
     void PrintText();
 
     void TextBrowserUpdate();
-    void PrintAnchor(QUrl link);
 };
 
 #endif // BALLOONWIDGET_H

@@ -5,14 +5,6 @@ Balloon::Balloon(QVector<BalloonSurface*> _defaultBalloons):
     idInScope(0),
     defaultBalloons(_defaultBalloons)
 {
-//    balloons.append(inScope);
-
-//    ConnectScope();
-
-//    auto b = defaultBalloons.at(0);
-
-//    //inScope->show();
-//    inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
 }
 
 Balloon::~Balloon()
@@ -20,6 +12,14 @@ Balloon::~Balloon()
     while (!balloons.isEmpty()) {
         delete balloons.takeLast();
     }
+
+    balloons.clear();
+
+    while (!defaultBalloons.isEmpty()) {
+        delete defaultBalloons.takeLast();
+    }
+
+    defaultBalloons.clear();
 
     delete inScope;
 }
@@ -49,7 +49,7 @@ void Balloon::ChangeScope(unsigned int id)
         int _id = idInScope < defaultBalloons.length() ? idInScope : 0;
         auto b = defaultBalloons.at(_id);
         inScope->show();
-        inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
+        ChangeBalloon(b);
 
     } else {
         inScope = balloons.at(id);
@@ -65,6 +65,9 @@ void Balloon::ConnectScope()
     connect(this, SIGNAL(printTextSignal(QString)),
             inScope, SLOT(PrepareText(QString)));
 
+    connect(this, SIGNAL(stopPrintingSignal()),
+            inScope, SLOT(StopPrinting()));
+
     connect(inScope, SIGNAL(finishedTextPrintSignal()),
             this, SIGNAL(finishedTextPrintSignal()));
 
@@ -79,6 +82,9 @@ void Balloon::DisconnectScope()
 {
     disconnect(this, SIGNAL(printTextSignal(QString)),
             inScope, SLOT(PrepareText(QString)));
+
+    disconnect(this, SIGNAL(stopPrintingSignal()),
+            inScope, SLOT(StopPrinting()));
 
     disconnect(inScope, SIGNAL(finishedTextPrintSignal()),
             this, SIGNAL(finishedTextPrintSignal()));
@@ -115,9 +121,8 @@ void Balloon::Reset()
     DisconnectScope();
     inScope = nullptr;
 
-    for (auto &b: balloons) {
-        b->textHolder->clear();
-        delete b;
+    while (!balloons.isEmpty()) {
+        delete balloons.takeLast();
     }
 
     balloons.clear();
@@ -127,7 +132,7 @@ void Balloon::Reset()
 
     balloons.append(inScope);
     auto b = defaultBalloons.at(0);
-    inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
+    ChangeBalloon(b);
 }
 
 BalloonWidget *Balloon::GetInScope() const
@@ -138,7 +143,7 @@ BalloonWidget *Balloon::GetInScope() const
 unsigned int Balloon::GetID(BalloonWidget *w) const
 {
     if (balloons.contains(w))
-        balloons.indexOf(w);
+        return balloons.indexOf(w);
 
     return -1;
 }

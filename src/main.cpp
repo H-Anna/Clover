@@ -48,6 +48,9 @@ int main(int argc, char *argv[])
         if (type == "talk") {
             tm->LoadTalks(&json);
         }
+        else if (type == "anchor") {
+            tm->LoadAnchors(&json);
+        }
         else if (type == "surface") {
             sm->LoadSurfaces(&json, aPath);
         }
@@ -90,7 +93,7 @@ int main(int argc, char *argv[])
     QObject::connect(mainproc, SIGNAL(stopSoundSignal()),
                      se, SLOT(Stop()));
 
-    tm->IndexedTalk(5);
+    tm->IndexedTalk(100);
 
     return a.exec();
 }

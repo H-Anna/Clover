@@ -12,10 +12,16 @@ BalloonWidget::BalloonWidget(QWidget *parent)
     textHolder = new QPlainTextEdit(this);
     textHolder->hide();
 
-    connect(textHolder, SIGNAL(textChanged()), this, SLOT(TextBrowserUpdate()));
+    connect(textHolder, SIGNAL(textChanged()),
+            this, SLOT(TextBrowserUpdate()));
 
     textTimer = new QTimer(this);
-    connect(textTimer, &QTimer::timeout, this, &BalloonWidget::PrintText);
+    connect(textTimer, &QTimer::timeout,
+            this, &BalloonWidget::PrintText);
+
+    connect(this, &BalloonWidget::finishedTextPrintSignal,
+            textTimer, &QTimer::stop);
+
     textTimer->setInterval(textSpeed);
 
     balloonTimeout = new QTimer(this);
@@ -26,7 +32,12 @@ BalloonWidget::BalloonWidget(QWidget *parent)
 
 BalloonWidget::~BalloonWidget()
 {
+    balloonTimeout->stop();
+    delete balloonTimeout;
+
+    textTimer->stop();
     delete textTimer;
+
     delete textArea;
     delete textHolder;
 }
@@ -56,9 +67,6 @@ void BalloonWidget::paintEvent(QPaintEvent *)
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawPixmap(QPoint(0,0), displayedImage, target);
 
-//    if (textArea == nullptr)
-//        SetupTextBrowser();
-
 }
 
 void BalloonWidget::SetupTextBrowser(QPoint topLeft, int width, int height)
@@ -68,17 +76,13 @@ void BalloonWidget::SetupTextBrowser(QPoint topLeft, int width, int height)
     textArea->move(topLeft);
     textArea->resize(width, height);
 
-    connect(textArea, SIGNAL(anchorClicked(QUrl)),
-            this, SLOT(PrintAnchor(QUrl)));
-
     textArea->show();
 }
 
 void BalloonWidget::PrepareText(QString text)
 {
+    textTimer->stop();
     show();
-    if (balloonTimeout->isActive())
-        balloonTimeout->stop();
 
     printingText = text;
     textTimer->start();
@@ -92,7 +96,7 @@ void BalloonWidget::PrintText()
 
         if (textCursor >= printingText.length()) {
             textCursor = 0;
-            textTimer->stop();
+            //textTimer->stop();
             emit finishedTextPrintSignal();
         }
     } else {
@@ -127,6 +131,11 @@ void BalloonWidget::PrepareTimeout()
     balloonTimeout->start(10000);
 }
 
+void BalloonWidget::StopPrinting()
+{
+    textTimer->stop();
+}
+
 void BalloonWidget::TextBrowserUpdate()
 {
     if (textArea != nullptr) {
@@ -135,14 +144,6 @@ void BalloonWidget::TextBrowserUpdate()
     }
     else
         qDebug() << "ERROR - BalloonWidget - textArea = nullptr, can't print (textBrowserUpdate).";
-}
-
-void BalloonWidget::PrintAnchor(QUrl link)
-{
-    qDebug() << link.toString();
-    if (link.scheme() == "http" || link.scheme() == "https") {
-        QDesktopServices::openUrl(link);
-    }
 }
 
 QSize BalloonWidget::sizeHint() const

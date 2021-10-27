@@ -6,6 +6,8 @@
 #include <tokencollection.h>
 #include <variablestore.h>
 
+#include <QDesktopServices>
+
 class MainProcess: public QObject
 {
     typedef void (*tagLambdaPtr)(MainProcess&, const QStringList&);
@@ -32,6 +34,7 @@ signals:
 public slots:
     void TokensReady(TokenCollection tc);
     void EvaluateTokens();
+    void OpenUrl(QUrl url);
 
 private:
     void BuildTagLambdaMap();
@@ -51,6 +54,7 @@ private:
 
 signals:
     bool printTextSignal(QString text);
+    void stopPrintingSignal();
     void changeTextSpeedSignal(unsigned int newSpeed);
 
     void finishedTokenEvaluationSignal();

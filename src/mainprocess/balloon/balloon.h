@@ -25,6 +25,7 @@ public:
 
 signals:
     void printTextSignal(QString text);
+    void stopPrintingSignal();
     void finishedTextPrintSignal();
     void timeoutSignal();
 

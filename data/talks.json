@@ -17,7 +17,9 @@
 		"<!i[1]>Hello! My name is <!get[char1name]> and my little brother is called <!get[char2name]>. <!wait[1000]>Your name is <!get[username]>, right?",
 		"It is currently <!get[TIME]>.",
 		
-		"Hello.<!play[webmp3]><!wait[10000]><!stop>"
+		"Hello.<!play[webmp3]><!wait[10000]><!stop>",
+		
+		"Here is an anchor about <a href=&quottopic:red&quot>red</a> things."
 		
 	]
 }

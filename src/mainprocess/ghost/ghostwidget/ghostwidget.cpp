@@ -21,9 +21,8 @@ GhostWidget::GhostWidget(unsigned int _layerCount, QWidget *parent):
 
     pixmaps.reserve(layerCount);
 
-    QObject* tm = VariableStore::GetMember("TalkManager");
     connect(this, SIGNAL(randomTalkSignal()),
-            tm, SLOT(RandomTalk()));
+            VariableStore::GetMember("TalkManager"), SLOT(RandomTalk()));
 
 }
 

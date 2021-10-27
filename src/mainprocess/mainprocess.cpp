@@ -21,6 +21,9 @@ MainProcess::MainProcess(VariableStore *_vs, unsigned int _layerCount, QVector<S
     connect(this, SIGNAL(printTextSignal(QString)),
             balloon, SIGNAL(printTextSignal(QString)));
 
+    connect(this, SIGNAL(stopPrintingSignal()),
+            balloon, SIGNAL(stopPrintingSignal()));
+
     connect(balloon, SIGNAL(finishedTextPrintSignal()),
             this, SIGNAL(finishedTokenEvaluationSignal()));
 
@@ -112,6 +115,11 @@ void MainProcess::EvaluateTokens()
         }
 
     }
+}
+
+void MainProcess::OpenUrl(QUrl url)
+{
+    QDesktopServices::openUrl(url);
 }
 
 Ghost *MainProcess::GetGhost() const
@@ -339,6 +347,7 @@ void MainProcess::ExecuteCommand(const Token *token)
 
 void MainProcess::TokensReady(TokenCollection tc)
 {
+    emit stopPrintingSignal();
     SaveTokenCollection(tc);
     balloon->Reset();
     EvaluateTokens();
