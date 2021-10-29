@@ -32,6 +32,11 @@ BalloonWidget::BalloonWidget(QWidget *parent)
 
 BalloonWidget::~BalloonWidget()
 {
+    disconnect(textTimer, &QTimer::timeout,
+            this, &BalloonWidget::PrintText);
+
+    disconnect(balloonTimeout, &QTimer::timeout, this, &QWidget::hide);
+
     balloonTimeout->stop();
     delete balloonTimeout;
 
@@ -81,11 +86,12 @@ void BalloonWidget::SetupTextBrowser(QPoint topLeft, int width, int height)
 
 void BalloonWidget::PrepareText(QString text)
 {
-    textTimer->stop();
     show();
 
     printingText = text;
+    textCursor = 0;
     textTimer->start();
+    qDebug() << "INFO - BalloonWidget - Text prepared";
 }
 
 void BalloonWidget::PrintText()
@@ -95,8 +101,6 @@ void BalloonWidget::PrintText()
         textCursor++;
 
         if (textCursor >= printingText.length()) {
-            textCursor = 0;
-            //textTimer->stop();
             emit finishedTextPrintSignal();
         }
     } else {
@@ -128,12 +132,7 @@ void BalloonWidget::ChangeTextSpeed(unsigned int newSpeed)
 void BalloonWidget::PrepareTimeout()
 {
     /// Times out in 10 seconds.
-    balloonTimeout->start(10000);
-}
-
-void BalloonWidget::StopPrinting()
-{
-    textTimer->stop();
+    balloonTimeout->start(bTimeout);
 }
 
 void BalloonWidget::TextBrowserUpdate()
@@ -152,4 +151,9 @@ QSize BalloonWidget::sizeHint() const
 
     /// TODO replace this dirty little trick
     return QSize(1000,1000);
+}
+
+void BalloonWidget::ClearBalloon()
+{
+
 }

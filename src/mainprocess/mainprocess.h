@@ -10,9 +10,10 @@
 
 class MainProcess: public QObject
 {
+    Q_OBJECT
+
     typedef void (*tagLambdaPtr)(MainProcess&, const QStringList&);
 
-    Q_OBJECT;
 public:
     MainProcess(VariableStore *_vs, unsigned int _layerCount, QVector<Surface*> defSurf, QVector<BalloonSurface*> defBall);
     ~MainProcess();
@@ -26,7 +27,6 @@ signals:
     void applySurfaceSignal(QStringList params);
     void applyAnimationSignal(QStringList params, Surface* s);
     void applyBalloonSignal(QStringList params);
-    void changeScopeSignal(unsigned int id);
     void playSoundSignal(QString name, int loops = 0);
     void stopSoundSignal();
 
@@ -54,7 +54,6 @@ private:
 
 signals:
     bool printTextSignal(QString text);
-    void stopPrintingSignal();
     void changeTextSpeedSignal(unsigned int newSpeed);
 
     void finishedTokenEvaluationSignal();

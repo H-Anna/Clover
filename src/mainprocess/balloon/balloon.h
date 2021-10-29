@@ -8,7 +8,7 @@
 
 class Balloon: public QObject
 {
-    Q_OBJECT;
+    Q_OBJECT
 public:
     Balloon(QVector<BalloonSurface*> _defaultBalloons);
     ~Balloon();
@@ -25,7 +25,6 @@ public:
 
 signals:
     void printTextSignal(QString text);
-    void stopPrintingSignal();
     void finishedTextPrintSignal();
     void timeoutSignal();
 

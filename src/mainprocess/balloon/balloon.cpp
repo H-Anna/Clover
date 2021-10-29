@@ -5,6 +5,7 @@ Balloon::Balloon(QVector<BalloonSurface*> _defaultBalloons):
     idInScope(0),
     defaultBalloons(_defaultBalloons)
 {
+    balloons.append(inScope);
 }
 
 Balloon::~Balloon()
@@ -45,7 +46,6 @@ void Balloon::ChangeScope(unsigned int id)
         balloons.append(new BalloonWidget());
         inScope = balloons.last();
 
-        idInScope = id;
         int _id = idInScope < defaultBalloons.length() ? idInScope : 0;
         auto b = defaultBalloons.at(_id);
         inScope->show();
@@ -54,6 +54,8 @@ void Balloon::ChangeScope(unsigned int id)
     } else {
         inScope = balloons.at(id);
     }
+
+    idInScope = id;
 
     ConnectScope();
 
@@ -64,9 +66,6 @@ void Balloon::ConnectScope()
 {
     connect(this, SIGNAL(printTextSignal(QString)),
             inScope, SLOT(PrepareText(QString)));
-
-    connect(this, SIGNAL(stopPrintingSignal()),
-            inScope, SLOT(StopPrinting()));
 
     connect(inScope, SIGNAL(finishedTextPrintSignal()),
             this, SIGNAL(finishedTextPrintSignal()));
@@ -82,9 +81,6 @@ void Balloon::DisconnectScope()
 {
     disconnect(this, SIGNAL(printTextSignal(QString)),
             inScope, SLOT(PrepareText(QString)));
-
-    disconnect(this, SIGNAL(stopPrintingSignal()),
-            inScope, SLOT(StopPrinting()));
 
     disconnect(inScope, SIGNAL(finishedTextPrintSignal()),
             this, SIGNAL(finishedTextPrintSignal()));
@@ -122,7 +118,7 @@ void Balloon::Reset()
     inScope = nullptr;
 
     while (!balloons.isEmpty()) {
-        delete balloons.takeLast();
+        balloons.takeLast()->deleteLater();
     }
 
     balloons.clear();
@@ -133,6 +129,7 @@ void Balloon::Reset()
     balloons.append(inScope);
     auto b = defaultBalloons.at(0);
     ChangeBalloon(b);
+
 }
 
 BalloonWidget *Balloon::GetInScope() const

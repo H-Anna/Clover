@@ -23,11 +23,10 @@ HotspotWidget::HotspotWidget(QWidget *parent):
 
 void HotspotWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    /// TODO: why does this only fire when the mouse button is down??
-    qDebug() << QString("Mouse entered");
+    //qDebug() << QString("Mouse entered");
 }
 
 void HotspotWidget::mousePressEvent(QMouseEvent *event)
 {
-    qDebug() << QString("Pressed %1 mouse").arg(event->button());
+    //qDebug() << QString("Pressed %1 mouse").arg(event->button());
 }

@@ -14,11 +14,13 @@
 
 class BalloonWidget: public QWidget
 {
-    Q_OBJECT;
+    Q_OBJECT
 public:
     BalloonWidget(QWidget *parent = nullptr);
     ~BalloonWidget();
     QSize sizeHint() const override;
+
+    void ClearBalloon();
 
     QPlainTextEdit* textHolder;
 
@@ -30,7 +32,6 @@ public slots:
     void ChangeBalloon(const QString& path, QPoint TL, QPoint BR);
     void ChangeTextSpeed(unsigned int newSpeed);
     void PrepareTimeout();
-    void StopPrinting();
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -44,6 +45,7 @@ private:
     TextArea* textArea;
 
     const unsigned int defaultTextSpeed = 50;
+    const unsigned int bTimeout = 20000;
 
     unsigned int textCursor;
     unsigned int textSpeed;

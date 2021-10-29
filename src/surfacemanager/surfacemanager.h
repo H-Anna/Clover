@@ -10,7 +10,7 @@
 
 class SurfaceManager: public QObject
 {
-    Q_OBJECT;
+    Q_OBJECT
 public:
     SurfaceManager();
     ~SurfaceManager();

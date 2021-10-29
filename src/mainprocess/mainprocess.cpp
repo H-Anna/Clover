@@ -21,17 +21,8 @@ MainProcess::MainProcess(VariableStore *_vs, unsigned int _layerCount, QVector<S
     connect(this, SIGNAL(printTextSignal(QString)),
             balloon, SIGNAL(printTextSignal(QString)));
 
-    connect(this, SIGNAL(stopPrintingSignal()),
-            balloon, SIGNAL(stopPrintingSignal()));
-
     connect(balloon, SIGNAL(finishedTextPrintSignal()),
             this, SIGNAL(finishedTokenEvaluationSignal()));
-
-    connect(this, SIGNAL(changeScopeSignal(unsigned int)),
-            ghost, SLOT(ChangeScope(unsigned int)));
-
-    connect(this, SIGNAL(changeScopeSignal(unsigned int)),
-            balloon, SLOT(ChangeScope(unsigned int)));
 
     connect(this, SIGNAL(endOfTokensSignal()),
             balloon, SIGNAL(timeoutSignal()));
@@ -234,7 +225,8 @@ void MainProcess::BuildTagLambdaMap()
             if (!canConvert) {
                 qDebug() << "ERROR - MainProcess - Scope change tag can't be converted to int. Skipping token.";
             } else {
-                emit mp.changeScopeSignal(id);
+                mp.ghost->ChangeScope(id);
+                mp.balloon->ChangeScope(id);
             }
         }
 
@@ -347,7 +339,6 @@ void MainProcess::ExecuteCommand(const Token *token)
 
 void MainProcess::TokensReady(TokenCollection tc)
 {
-    emit stopPrintingSignal();
     SaveTokenCollection(tc);
     balloon->Reset();
     EvaluateTokens();

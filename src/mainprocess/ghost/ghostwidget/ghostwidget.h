@@ -17,7 +17,7 @@
 
 class GhostWidget : public QWidget
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     GhostWidget(unsigned int _layerCount = 1, QWidget *parent = nullptr);

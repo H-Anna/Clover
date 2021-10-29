@@ -8,7 +8,7 @@
 
 class Ghost: public QObject
 {
-    Q_OBJECT;
+    Q_OBJECT
 public:
     Ghost(QVector<Surface*> _defaultSurfaces, unsigned int _layerCount = 1);
     ~Ghost();
