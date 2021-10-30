@@ -14,7 +14,7 @@
 		
 		"<!s[0]>This is normal text and my pose at idx 1.<b>This is bold text.</b><!s[shy]> This is a pose with an alias.<!s[1,2,3]>This is a surface tag with multiple parameters.<!hide> I am going to hide until this text is finished printing.<!show> I've returned. I'm now going to waste space in this balloon.<!clr>I've cleared the balloon so there's some more space to write. I will now wait for 5 seconds.<!wait[5000]> The wait is over. I will give you an undefined tag.<!hello[debug]> Done.",
 		
-		"<!s[0]>Hello! <!wait[2000]><!i[0]><!i[1]><!i[2]>I'm a lion.",
+		"<!s[0]>Hello! <!wait[1000]><!i[0]><!i[1]><!i[2]>I'm a lion.",
 		
 		"<!s[0]>Hello! <!wait[2000]><!i[0]><!i[1]><!i[2]>I'm a lion.<!wait[2000]><!b[1]>This is my big balloon.<p>Pretty cool huh?<p>You can fit a lot of text in here.",
 		

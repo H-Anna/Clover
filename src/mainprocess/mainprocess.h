@@ -51,6 +51,8 @@ private:
 
     TokenCollection* currentTC;
 
+    QTimer* waitTimer;
+
 signals:
     bool printTextSignal(QString text);
     void changeTextSpeedSignal(unsigned int newSpeed);

@@ -10,6 +10,11 @@ MainProcess::MainProcess(VariableStore *_vs, unsigned int _layerCount, QVector<S
     ghostBalloonsMap.insert(ghost->GetID(ghost->GetInScope()),
                             QList<unsigned int>({ balloon->GetID(balloon->GetInScope()) }) );
 
+    waitTimer = new QTimer(this);
+    waitTimer->setSingleShot(true);
+    connect(waitTimer, &QTimer::timeout,
+            this, &MainProcess::finishedTokenEvaluationSignal);
+
     /// --------IMPORTANT SIGNALS--------
 
     /// Each time this signal fires, evaluate the next token
@@ -39,6 +44,7 @@ MainProcess::~MainProcess()
     delete balloon;
 
     delete currentTC;
+    delete waitTimer;
 
     QMapIterator t(tagLambdaMap);
     while (t.hasNext()) {
@@ -153,7 +159,9 @@ void MainProcess::BuildTagLambdaMap()
 
     /// Function call examples
     tagLambdaMap.insert("wait", [](MainProcess& mp, const QStringList& params){
-        QTimer::singleShot(params.at(0).toInt(), &mp, &MainProcess::finishedTokenEvaluationSignal); });
+        //QTimer::singleShot(params.at(0).toInt(), &mp, &MainProcess::finishedTokenEvaluationSignal);
+        mp.waitTimer->start(params.at(0).toInt());
+    });
 
     /// You can omit "params" in the declaration if you don't use it in your lambda to get rid of warnings.
     tagLambdaMap.insert("clr", [](MainProcess& mp, const QStringList&){
@@ -335,12 +343,10 @@ void MainProcess::ExecuteCommand(const Token *token)
     }
 }
 
-
 void MainProcess::TokensReady(TokenCollection tc)
 {
-    blockSignals(true);
+    waitTimer->stop();
     SaveTokenCollection(tc);
     balloon->Reset();
-    blockSignals(false);
     EvaluateTokens();
 }
