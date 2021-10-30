@@ -1,9 +1,13 @@
 #ifndef GHOSTWIDGET_H
 #define GHOSTWIDGET_H
 
-#include <surface_enums.h>
+#include <frame.h>
+#include <hotspotwidget.h>
+#include <hotspot.h>
 
 #include <QCoreApplication>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QWidget>
 #include <QAction>
 #include <QMouseEvent>
@@ -13,29 +17,40 @@
 
 class GhostWidget : public QWidget
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     GhostWidget(unsigned int _layerCount = 1, QWidget *parent = nullptr);
     ~GhostWidget();
+    QSize sizeHint() const override;
 
     void SetSurface(QVector<QString> images);
-
-    QPixmap displayedImage;
-    QVector<QPixmap> pixmaps;
+    void SetHotspots(QVector<Hotspot*> hs);
 
 public slots:
-    void SetAnimation(QString image, unsigned int layer, DrawMethod dm);
+    void SetAnimation(QString image, unsigned int layer, Frame::DrawMethod dm);
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent*) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     QPoint dragPosition;
-    QSize baseSize;
+    QRect baseRect;
+
+    QPixmap displayedImage;
+    QVector<QPixmap> pixmaps;
+
+    QPoint startPoint;
     unsigned int layerCount;
+
+    QVector<HotspotWidget*> hotspots;
+
+signals:
+    void randomTalkSignal();
 
 };
 #endif // GHOSTWIDGET_H

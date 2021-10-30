@@ -7,30 +7,43 @@ BalloonWidget::BalloonWidget(QWidget *parent)
     setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
 
-    /// TODO: implement "change balloon" tag
-    //connect(this, SIGNAL(changeBalloonSignal(const QString&)), this, SLOT(changeBalloon(const QString&)));
-    //connect(this, SIGNAL(changeBalloonSignal(const QString&)), this, SLOT(update()));
-
     textArea = nullptr;
     textCursor = 0;
     textHolder = new QPlainTextEdit(this);
     textHolder->hide();
 
-    connect(textHolder, SIGNAL(textChanged()), this, SLOT(TextBrowserUpdate()));
+    connect(textHolder, &QPlainTextEdit::textChanged,
+            this, &BalloonWidget::TextBrowserUpdate);
 
     textTimer = new QTimer(this);
-    connect(textTimer, &QTimer::timeout, this, &BalloonWidget::PrintText);
+    connect(textTimer, &QTimer::timeout,
+            this, &BalloonWidget::PrintText);
+
+    connect(this, &BalloonWidget::finishedTextPrintSignal,
+            textTimer, &QTimer::stop);
+
     textTimer->setInterval(textSpeed);
 
     balloonTimeout = new QTimer(this);
     balloonTimeout->setSingleShot(true);
-    connect(balloonTimeout, &QTimer::timeout, this, &QWidget::hide);
+    connect(balloonTimeout, &QTimer::timeout,
+            this, &QWidget::hide);
 
 }
 
 BalloonWidget::~BalloonWidget()
 {
+    disconnect(textTimer, &QTimer::timeout,
+            this, &BalloonWidget::PrintText);
+
+    disconnect(balloonTimeout, &QTimer::timeout, this, &QWidget::hide);
+
+    balloonTimeout->stop();
+    delete balloonTimeout;
+
+    textTimer->stop();
     delete textTimer;
+
     delete textArea;
     delete textHolder;
 }
@@ -60,9 +73,6 @@ void BalloonWidget::paintEvent(QPaintEvent *)
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawPixmap(QPoint(0,0), displayedImage, target);
 
-//    if (textArea == nullptr)
-//        SetupTextBrowser();
-
 }
 
 void BalloonWidget::SetupTextBrowser(QPoint topLeft, int width, int height)
@@ -72,18 +82,17 @@ void BalloonWidget::SetupTextBrowser(QPoint topLeft, int width, int height)
     textArea->move(topLeft);
     textArea->resize(width, height);
 
-    connect(textArea, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(PrintAnchor(const QUrl &)));
-
     textArea->show();
 }
 
-void BalloonWidget::PrepareText(const QString &text)
+void BalloonWidget::PrepareText(QString text)
 {
-    if (balloonTimeout->isActive())
-        balloonTimeout->stop();
+    show();
 
     printingText = text;
+    textCursor = 0;
     textTimer->start();
+    qDebug() << "INFO - BalloonWidget - Text prepared";
 }
 
 void BalloonWidget::PrintText()
@@ -93,8 +102,6 @@ void BalloonWidget::PrintText()
         textCursor++;
 
         if (textCursor >= printingText.length()) {
-            textCursor = 0;
-            textTimer->stop();
             emit finishedTextPrintSignal();
         }
     } else {
@@ -126,23 +133,30 @@ void BalloonWidget::ChangeTextSpeed(unsigned int newSpeed)
 void BalloonWidget::PrepareTimeout()
 {
     /// Times out in 10 seconds.
-    balloonTimeout->start(10000);
+    balloonTimeout->start(bTimeout);
 }
 
 void BalloonWidget::TextBrowserUpdate()
 {
     if (textArea != nullptr) {
+
         textArea->setHtml(textHolder->toPlainText());
         textArea->moveCursor(QTextCursor::End);
+
     }
     else
         qDebug() << "ERROR - BalloonWidget - textArea = nullptr, can't print (textBrowserUpdate).";
 }
 
-void BalloonWidget::PrintAnchor(const QUrl &link)
+QSize BalloonWidget::sizeHint() const
 {
-    qDebug() << link.toString();
-    if (link.scheme() == "http" || link.scheme() == "https") {
-        QDesktopServices::openUrl(link);
-    }
+    //return baseRect.size();
+
+    /// TODO replace this dirty little trick
+    return QSize(1000,1000);
+}
+
+void BalloonWidget::ClearBalloon()
+{
+
 }

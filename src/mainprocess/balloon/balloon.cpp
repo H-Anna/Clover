@@ -6,13 +6,6 @@ Balloon::Balloon(QVector<BalloonSurface*> _defaultBalloons):
     defaultBalloons(_defaultBalloons)
 {
     balloons.append(inScope);
-
-    ConnectScope();
-
-    auto b = defaultBalloons.at(0);
-
-    inScope->show();
-    inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
 }
 
 Balloon::~Balloon()
@@ -20,6 +13,14 @@ Balloon::~Balloon()
     while (!balloons.isEmpty()) {
         delete balloons.takeLast();
     }
+
+    balloons.clear();
+
+    while (!defaultBalloons.isEmpty()) {
+        delete defaultBalloons.takeLast();
+    }
+
+    defaultBalloons.clear();
 
     delete inScope;
 }
@@ -45,15 +46,16 @@ void Balloon::ChangeScope(unsigned int id)
         balloons.append(new BalloonWidget());
         inScope = balloons.last();
 
-        idInScope = id;
         int _id = idInScope < defaultBalloons.length() ? idInScope : 0;
         auto b = defaultBalloons.at(_id);
         inScope->show();
-        inScope->ChangeBalloon(b->GetImage(), b->GetTopLeft(), b->GetBottomRight());
+        ChangeBalloon(b);
 
     } else {
         inScope = balloons.at(id);
     }
+
+    idInScope = id;
 
     ConnectScope();
 
@@ -62,39 +64,41 @@ void Balloon::ChangeScope(unsigned int id)
 
 void Balloon::ConnectScope()
 {
-    connect(this, SIGNAL(printTextSignal(const QString&)),
-            inScope, SLOT(PrepareText(const QString&)));
+    connect(this, &Balloon::printTextSignal,
+            inScope, &BalloonWidget::PrepareText);
 
-    connect(inScope, SIGNAL(finishedTextPrintSignal()),
-            this, SIGNAL(finishedTextPrintSignal()));
+    connect(inScope, &BalloonWidget::finishedTextPrintSignal,
+            this, &Balloon::finishedTextPrintSignal);
 
     /// The following signals should not be disconnected when the scope is switched
 
-    connect(this, SIGNAL(timeoutSignal()),
-            inScope, SLOT(PrepareTimeout()));
+    connect(this, &Balloon::timeoutSignal,
+            inScope, &BalloonWidget::PrepareTimeout);
 
 }
 
 void Balloon::DisconnectScope()
 {
-    disconnect(this, SIGNAL(printTextSignal(const QString&)),
-            inScope, SLOT(PrepareText(const QString&)));
+    disconnect(this, &Balloon::printTextSignal,
+            inScope, &BalloonWidget::PrepareText);
 
-    disconnect(inScope, SIGNAL(finishedTextPrintSignal()),
-            this, SIGNAL(finishedTextPrintSignal()));
+    disconnect(inScope, &BalloonWidget::finishedTextPrintSignal,
+            this, &Balloon::finishedTextPrintSignal);
 }
 
 void Balloon::AppendHtml(const QString &text)
 {
     if (inScope->textHolder != nullptr)
+    {
+        inScope->show();
         inScope->textHolder->insertPlainText(text);
+    }
 }
 
 void Balloon::PrintBalloonContents()
 {
     if (inScope->textHolder != nullptr)
-        qDebug() << "INFO - BalloonWidget - textHolder contains:";
-    qDebug() << inScope->textHolder->toPlainText();
+        qDebug() << "INFO - BalloonWidget - textHolder contains:" << inScope->textHolder->toPlainText();
 }
 
 void Balloon::ClearBalloon()
@@ -108,6 +112,28 @@ void Balloon::ChangeTextSpeed(unsigned int newSpeed)
     inScope->ChangeTextSpeed(newSpeed);
 }
 
+void Balloon::Reset()
+{
+    DisconnectScope();
+    inScope = nullptr;
+
+    while (!balloons.isEmpty()) {
+        auto b = balloons.takeLast();
+        b->blockSignals(true);
+        b->deleteLater();
+    }
+
+    balloons.clear();
+
+    inScope = new BalloonWidget();
+    ConnectScope();
+
+    balloons.append(inScope);
+    auto b = defaultBalloons.at(0);
+    ChangeBalloon(b);
+
+}
+
 BalloonWidget *Balloon::GetInScope() const
 {
     return inScope;
@@ -116,7 +142,7 @@ BalloonWidget *Balloon::GetInScope() const
 unsigned int Balloon::GetID(BalloonWidget *w) const
 {
     if (balloons.contains(w))
-        balloons.indexOf(w);
+        return balloons.indexOf(w);
 
     return -1;
 }

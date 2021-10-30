@@ -10,12 +10,12 @@
 
 class SurfaceManager: public QObject
 {
-    Q_OBJECT;
+    Q_OBJECT
 public:
     SurfaceManager();
     ~SurfaceManager();
 
-    bool LoadSurfaces(QJsonObject* json, const QString& imgPath);
+    bool LoadSurfaces(QJsonObject* json, const QString& path);
     void PrintSurfaceList();
     Surface* GetSurface(unsigned int id);
     Surface* GetSurface(const QString& name);
@@ -24,7 +24,7 @@ public:
     QVector<Surface*> GetDefaultSurfaces() const;
     QVector<BalloonSurface*> GetDefaultBalloons() const;
 
-    bool LoadBalloons(QJsonObject *json, const QString &imgPath);
+    bool LoadBalloons(QJsonObject *json, const QString &path);
 
     void Initialize();
 

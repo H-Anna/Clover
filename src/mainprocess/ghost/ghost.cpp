@@ -11,8 +11,7 @@ Ghost::Ghost(QVector<Surface*> _defaultSurfaces, unsigned int _layerCount):
 
 {
     ghosts.append(inScope);
-    inScope->SetSurface(defaultSurfaces.at(0)->GetElements());
-    currentSurface.insert(inScope, defaultSurfaces.at(0));
+    ChangeSurface(defaultSurfaces.at(0));
     inScope->show();
 }
 
@@ -43,16 +42,18 @@ void Ghost::Show()
 
 void Ghost::ChangeSurface(Surface *surface)
 {
+    currentAnimations.clear();
     currentSurface[inScope] = surface;
     inScope->SetSurface(surface->GetElements());
+    inScope->SetHotspots(surface->GetHotspots());
 }
 
-Surface *Ghost::GetCurrentSurface()
+Surface *Ghost::GetCurrentSurface() const
 {
-    return currentSurface[inScope];
+    return currentSurface.value(inScope);
 }
 
-void Ghost::AnimateGhost(Animation* a, Frame* f)
+void Ghost::Animate(Animation* a, Frame* f)
 {
     AppendAnimation(a);
     inScope->SetAnimation(f->GetImage(), a->GetLayer(), f->GetDrawMethod());
@@ -85,7 +86,7 @@ void Ghost::ChangeScope(unsigned int id)
 
 void Ghost::AppendAnimation(Animation *a)
 {
-    if (currentAnimations.keys().contains(inScope)) {
+    if (currentAnimations.contains(inScope)) {
        auto list = currentAnimations.value(inScope);
 
        if (!list.contains(a)) {
@@ -111,4 +112,3 @@ unsigned int Ghost::GetID(GhostWidget *w) const
 
     return -1;
 }
-

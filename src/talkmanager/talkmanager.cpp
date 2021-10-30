@@ -1,8 +1,6 @@
 #include "talkmanager.h"
 
 TalkManager::TalkManager(const QString &regexStr, const QString &htmlRegexStr)
-    :
-    tokenCursor(0)
 {
     tagRegex.setPattern(regexStr);
     htmlRegex.setPattern(htmlRegexStr);
@@ -14,7 +12,7 @@ TalkManager::~TalkManager()
 
 bool TalkManager::LoadTalks(QJsonObject *json)
 {
-    QJsonArray talksArray = json->value("talks").toArray();
+    QJsonArray talksArray = json->value("content").toArray();
 
     if (talksArray.isEmpty()) {
         qDebug() << "ERROR - TalkManager - Talks couldn't be loaded!";
@@ -28,34 +26,20 @@ bool TalkManager::LoadTalks(QJsonObject *json)
     return true;
 }
 
-void TalkManager::PrintTalksList()
+bool TalkManager::LoadAnchors(QJsonObject *json)
 {
-    qDebug() << "INFO - TalkManager";
+    QJsonObject anchorsObj = json->value("content").toObject();
 
-    if (talksList.count() > 0) {
-        qDebug() << "Talks loaded:" << talksList.count();
-
-        for (auto &it: talksList) {
-            qDebug().noquote() << it;
-        }
-    } else {
-        qDebug() << "No talks loaded.";
+    if (anchorsObj.isEmpty()) {
+        qDebug() << "ERROR - TalkManager - Anchors couldn't be loaded!";
+        return false;
     }
 
-}
-
-QString TalkManager::GetTalk(int idx)
-{
-    if (talksList.length() == 0) {
-        qDebug() << "WARNING - TalkManager - Empty talks list, empty string returned.";
-        return "";
+    for (auto &key: anchorsObj.keys()) {
+        anchorTalks[key] = anchorsObj.value(key).toString();
     }
 
-    if (idx < talksList.length())
-        return talksList.at(idx);
-
-    qDebug().nospace() << "WARNING - TalkManager - No talk at index " << idx << ", last in list returned.";
-    return talksList.at(talksList.length()-1);
+    return true;
 }
 
 TokenCollection TalkManager::MakeTokens(const QString &talk)
@@ -167,12 +151,52 @@ void TalkManager::Parse(TokenCollection &tc, const QString &str, const QRegularE
             }
         }
     }
-
-    tokenCursor = 0;
 }
 
-QRegularExpression TalkManager::GetTagRegex()
+void TalkManager::RandomTalk()
 {
-    return tagRegex;
+    int idx = QRandomGenerator::global()->bounded(talksList.length());
+    IndexedTalk(idx);
+}
+
+void TalkManager::IndexedTalk(int idx)
+{
+    if (talksList.length() == 0) {
+        qDebug() << "ERROR - TalkManager - Empty talks list.";
+        return;
+    }
+
+    QString talk;
+
+    if (idx < talksList.length())
+    {
+        talk = talksList.at(idx);
+    }
+    else
+    {
+        qDebug().noquote() << QString("WARNING - TalkManager - No talk at index %1, last in list returned.").arg(idx);
+        talk = talksList.at(talksList.length()-1);
+    }
+
+    auto tc = MakeTokens(talk);
+
+    emit tokensReadySignal(tc);
+}
+
+void TalkManager::AnchorTalk(QString anchor)
+{
+    if (anchorTalks.isEmpty()) {
+        qDebug() << "ERROR - TalkManager - Empty anchor talk list.";
+        return;
+    }
+
+    if (!anchorTalks.contains(anchor)) {
+        qDebug().noquote() << QString("ERROR - TalkManager - No talk at anchor \"%1\".").arg(anchor);
+    }
+
+
+    auto tc = MakeTokens(anchorTalks.value(anchor));
+    emit tokensReadySignal(tc);
+
 }
 

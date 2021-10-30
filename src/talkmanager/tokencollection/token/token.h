@@ -3,9 +3,11 @@
 
 #include <QString>
 #include <QStringList>
+#include <QObject>
 
-class Token
+class Token: public QObject
 {
+    Q_OBJECT
 public:
     enum TokenType {
         HtmlTag,
@@ -13,6 +15,7 @@ public:
         PlainText,
         End
     };
+    Q_ENUM(TokenType)
 
     Token();
     Token(const QString& _contents, TokenType _type, QStringList _params = QStringList());

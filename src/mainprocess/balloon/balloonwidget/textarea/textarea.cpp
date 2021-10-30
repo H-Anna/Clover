@@ -17,5 +17,23 @@ TextArea::TextArea(QWidget *parent):
     p.setColor(QPalette::Text, Qt::black);
     setPalette(p);
 
+    connect(this, &QTextBrowser::anchorClicked,
+            this, &TextArea::EvaluateAnchor);
+
+    connect(this, SIGNAL(openUrlSignal(QUrl)),
+            VariableStore::GetMember("MainProcess"), SLOT(OpenUrl(QUrl)));
+
+    connect(this, SIGNAL(anchorTalkSignal(QString)),
+            VariableStore::GetMember("TalkManager"), SLOT(AnchorTalk(QString)));
+
     show();
+}
+
+void TextArea::EvaluateAnchor(QUrl url)
+{
+    if (url.scheme() == "http" || url.scheme() == "https") {
+        emit openUrlSignal(url);
+    } else if (url.scheme() == "topic") {
+        emit anchorTalkSignal(url.path());
+    }
 }

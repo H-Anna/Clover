@@ -8,14 +8,14 @@
 
 class Ghost: public QObject
 {
-    Q_OBJECT;
+    Q_OBJECT
 public:
     Ghost(QVector<Surface*> _defaultSurfaces, unsigned int _layerCount = 1);
     ~Ghost();
 
     void Hide();
     void Show();
-    Surface* GetCurrentSurface();
+    Surface* GetCurrentSurface() const;
     GhostWidget *GetInScope() const;
     unsigned int GetID(GhostWidget *w) const;
 
@@ -24,7 +24,7 @@ signals:
 
 public slots:
     void ChangeSurface(Surface *surface);
-    void AnimateGhost(Animation *a, Frame *f);
+    void Animate(Animation *a, Frame *f);
     void ChangeScope(unsigned int id);
 
 private:

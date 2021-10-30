@@ -10,22 +10,20 @@ SurfaceManager::~SurfaceManager()
     for (auto &it: surfaces) {
         delete it;
     }
-    for (auto &it: timers.values()) {
-        delete it;
+    QMapIterator t(timers);
+    while (t.hasNext()) {
+        t.next();
+        delete t.value();
     }
 }
 
-bool SurfaceManager::LoadBalloons(QJsonObject *json, const QString &imgPath)
+bool SurfaceManager::LoadBalloons(QJsonObject *json, const QString &path)
 {
     /// Read JSON object, load contents into surfaceList
 
-#ifdef _WIN32
-    imagePath = imgPath + "\\";
-#elif unix || __unix || __unix__
-    imagePath = imgPath + "\/";
-#endif
+    imagePath = path;
 
-    QJsonArray balloonArray = json->value("balloons").toArray();
+    QJsonArray balloonArray = json->value("content").toArray();
 
     if (balloonArray.isEmpty())
         return false;
@@ -42,22 +40,17 @@ void SurfaceManager::Initialize()
 {
     /// 0 is the default surface.
 
-    emit changeSurfaceSignal(surfaces.value(0));
-    emit changeBalloonSignal(balloonSurfaces.value(0));
+//    emit changeSurfaceSignal(surfaces.value(0));
+//    emit changeBalloonSignal(balloonSurfaces.value(0));
 }
 
-bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &imgPath)
+bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &path)
 {
     /// Read JSON object, load contents into surfaceList
 
-#ifdef _WIN32
-    imagePath = imgPath + "\\";
-#elif unix || __unix || __unix__
-    imagePath = imgPath + "\/";
-#endif
-
+    imagePath = path;
     layerCount = json->value("layercount").toInt();
-    QJsonArray surfaceArray = json->value("surfaces").toArray();
+    QJsonArray surfaceArray = json->value("content").toArray();
 
     if (surfaceArray.isEmpty())
         return false;
@@ -85,12 +78,20 @@ void SurfaceManager::Animate(Animation* a)
 
     emit animateGhostSignal(a, f);
 
-    if (f->GetMs() == 0)
+    if (f->GetMs() == 0) {
+
+        a->Reset();
+
+        if (timers.contains(a)) {
+            timers.value(a)->stop();
+        }
+
         return;
+    }
 
     QTimer* timer;
 
-    if (timers.keys().contains(a)) {
+    if (timers.contains(a)) {
         timer = timers.value(a);
     } else {
         timer = new QTimer(this);
@@ -105,7 +106,7 @@ void SurfaceManager::Animate(Animation* a)
 
 void SurfaceManager::ApplyAnimation(QStringList params, Surface *currentSurface) {
 
-    QString str = params[0];
+    QString str = params.at(0);
     bool canConvertToInt;
     str.toInt(&canConvertToInt);
 
@@ -119,7 +120,7 @@ void SurfaceManager::ApplyAnimation(QStringList params, Surface *currentSurface)
     }
 
     if (a == nullptr) {
-        qDebug().nospace() << "WARNING - SurfaceManager - No animation found with param " << str << ", skipping to next token.";
+        qDebug().noquote() << QString("WARNING - SurfaceManager - No animation found with param %1, skipping to next token.").arg(str);
         return;
     }
 
@@ -128,7 +129,16 @@ void SurfaceManager::ApplyAnimation(QStringList params, Surface *currentSurface)
 
 void SurfaceManager::ApplySurface(QStringList params) {
 
-    QString str = params[0];
+    QMapIterator t(timers);
+    while (t.hasNext()) {
+        t.next();
+        t.key()->Reset();
+        t.value()->stop();
+        delete t.value();
+    }
+    timers.clear();
+
+    QString str = params.at(0);
     bool canConvertToInt;
     str.toInt(&canConvertToInt);
 
@@ -140,7 +150,7 @@ void SurfaceManager::ApplySurface(QStringList params) {
     }
 
     if (s == nullptr) {
-        qDebug().nospace() << "WARNING - SurfaceManager - No surface found with param " << str << ", skipping to next token.";
+        qDebug().noquote() << QString("WARNING - SurfaceManager - No surface found with param %1, skipping to next token.").arg(str);
         return;
     }
 
@@ -150,7 +160,7 @@ void SurfaceManager::ApplySurface(QStringList params) {
 
     /// If it has animations that always play, play them.
 
-    auto always = s->GetAnimations(Frequency::Always);
+    auto always = s->GetAnimations(Animation::Always);
 
     if (always.length() > 0) {
 
@@ -162,7 +172,7 @@ void SurfaceManager::ApplySurface(QStringList params) {
 
 void SurfaceManager::ApplyBalloon(QStringList params) {
 
-    QString str = params[0];
+    QString str = params.at(0);
     bool canConvertToInt;
     str.toInt(&canConvertToInt);
 
@@ -176,7 +186,7 @@ void SurfaceManager::ApplyBalloon(QStringList params) {
     }
 
     if (b == nullptr) {
-        qDebug().nospace() << "WARNING - SurfaceManager - No balloon surface found with param " << str << ", skipping to next token.";
+        qDebug().noquote() << QString("WARNING - SurfaceManager - No balloon surface found with param %1, skipping to next token.").arg(str);
         return;
     }
 
@@ -190,12 +200,15 @@ void SurfaceManager::PrintSurfaceList()
     qDebug() << "INFO - SurfaceManager";
 
     if (surfaces.count() > 0) {
-        qDebug() << "Surfaces loaded:" << surfaces.count();
+        qDebug() << QString("Surfaces loaded: %1").arg(surfaces.count());
         qDebug() << "ID\tImage\tName";
 
-        for (auto &it: surfaces.keys()) {
-            qDebug().noquote() << surfaces.value(it)->PrintData();
+        QMapIterator s(surfaces);
+        while (s.hasNext()) {
+            s.next();
+            qDebug().noquote() << s.value()->PrintData();
         }
+
     } else {
         qDebug() << "No surfaces loaded.";
     }
@@ -223,7 +236,7 @@ void SurfaceManager::MakeSurface(QJsonObject &obj)
     unsigned int id = obj.value("id").toInt();
     auto elements = obj.value("elements").toArray();
 
-    QString name = obj.value("name").toString("");
+    QString name = obj.value("name").toString();
 
     auto s = new Surface(id, name);
     surfaces.insert(s->GetId(), s);
@@ -237,12 +250,37 @@ void SurfaceManager::MakeSurface(QJsonObject &obj)
     /// Make animations
 
     QJsonArray animArray = obj.value("animations").toArray();
-    if (animArray.isEmpty())
-        return;
+    if (!animArray.isEmpty()) {
 
-    for (int i = 0; i < animArray.count(); i++) {
-        auto obj = animArray.at(i).toObject();
-        MakeAnimation(obj, *s);
+        for (int i = 0; i < animArray.count(); i++) {
+            auto obj = animArray.at(i).toObject();
+            MakeAnimation(obj, *s);
+        }
+
+    }
+
+    QJsonArray hotspotArray = obj.value("hotspots").toArray();
+    if (!hotspotArray.isEmpty()) {
+
+        for (int i = 0; i < hotspotArray.count(); i++) {
+
+            auto obj = hotspotArray.at(i).toObject();
+
+            auto name = obj.value("name").toString();
+            auto area = obj.value("area").toArray();
+            auto c = obj.value("cursor").toString();
+
+            int cursor;
+            bool ok;
+            c.toInt(&ok);
+            if (ok) {
+                cursor = c.toInt();
+            } else {
+                cursor = QMetaEnum::fromType<Qt::CursorShape>().keyToValue(obj.value("cursor").toString().toStdString().c_str());
+            }
+
+            s->AddHotspot(name, area.at(0).toInt(), area.at(1).toInt(), area.at(2).toInt(), area.at(3).toInt(), Qt::CursorShape(cursor));
+        }
     }
 }
 
@@ -258,9 +296,9 @@ void SurfaceManager::MakeAnimation(QJsonObject &obj, Surface& s)
 
     unsigned int id = obj.value("id").toInt();
     unsigned int layer = obj.value("layer").toInt(0);
-    Frequency frequency = EnumConverter::GetFrequency(obj.value("frequency").toString().toLower());
+    auto frequency = QMetaEnum::fromType<Animation::Frequency>().keyToValue(obj.value("frequency").toString().toStdString().c_str());
     QString name = obj.value("name").toString("");
-    auto a = s.AddAnimation(id, name, frequency, layer);
+    auto a = s.AddAnimation(id, name, Animation::Frequency(frequency), layer);
 
     for (int k = 0; k < framesArray.count(); k++) {
 
@@ -268,10 +306,10 @@ void SurfaceManager::MakeAnimation(QJsonObject &obj, Surface& s)
 
         QJsonObject frame = framesArray.at(k).toObject();
         QString image = imagePath + frame.value("image").toString();
-        DrawMethod drawMethod = EnumConverter::GetDrawMethod(frame.value("drawmethod").toString().toLower());
+        auto drawMethod = QMetaEnum::fromType<Frame::DrawMethod>().keyToValue(frame.value("drawmethod").toString().toStdString().c_str());
         unsigned int ms = frame.value("ms").toInt(0);
 
-        a->AddFrame(image, drawMethod, ms);
+        a->AddFrame(image, Frame::DrawMethod(drawMethod), ms);
     }
 }
 

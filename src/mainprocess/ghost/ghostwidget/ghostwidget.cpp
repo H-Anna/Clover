@@ -4,23 +4,36 @@ GhostWidget::GhostWidget(unsigned int _layerCount, QWidget *parent):
     QWidget(parent, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint),
     layerCount(_layerCount)
 {
-    setWindowFlag(Qt::SubWindow);
+    //setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
-
-    QAction *quitAction = new QAction(tr("E&xit"), this);
-    quitAction->setShortcut(tr("Ctrl+Q"));
-    connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
-    addAction(quitAction);
+    setAutoFillBackground(false);
+    setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
+    QAction *quitAction = new QAction(tr("E&xit"), this);
+    quitAction->setShortcut(tr("Ctrl+Q"));
+
+    connect(quitAction, &QAction::triggered,
+            qApp, &QCoreApplication::quit);
+
+    addAction(quitAction);
+
+    auto screen = QGuiApplication::primaryScreen();
+    screen->availableGeometry();
+    startPoint = screen->availableGeometry().center();
 
     pixmaps.reserve(layerCount);
 
-    //move(width()-100, height()-100);
+    connect(this, SIGNAL(randomTalkSignal()),
+            VariableStore::GetMember("TalkManager"), SLOT(RandomTalk()));
+
 }
 
 GhostWidget::~GhostWidget()
 {
+    for (auto &it: hotspots) {
+        delete it;
+    }
 }
 
 void GhostWidget::SetSurface(QVector<QString> images)
@@ -38,32 +51,56 @@ void GhostWidget::SetSurface(QVector<QString> images)
 
     }
 
-    baseSize = pixmaps.at(0).size();
+    baseRect = pixmaps.at(0).rect();
+
     update();
 }
 
-void GhostWidget::SetAnimation(QString image, unsigned int layer, DrawMethod dm)
+void GhostWidget::SetHotspots(QVector<Hotspot *> hs)
+{
+    for (auto &it: hotspots) {
+        delete it;
+    }
+
+    hotspots.clear();
+
+    for (auto &it: hs) {
+        auto tmp = new HotspotWidget(this);
+
+        tmp->move(it->getTopLeft());
+        int width = it->getBottomRight().x() - it->getTopLeft().x();
+        int height = it->getBottomRight().y() - it->getTopLeft().y();
+        tmp->resize(width, height);
+        tmp->setCursor(QCursor(it->getCursor()));
+
+        hotspots.append(tmp);
+    }
+
+    update();
+}
+
+void GhostWidget::SetAnimation(QString image, unsigned int layer, Frame::DrawMethod dm)
 {
 
     switch (dm) {
 
-    case DrawMethod::Base: {
+    case Frame::DrawMethod::Base: {
         // TODO
     }
-    case DrawMethod::Clip: {
+    case Frame::DrawMethod::Clip: {
         // TODO
     }
-    case DrawMethod::Overlay: {
+    case Frame::DrawMethod::Overlay: {
         pixmaps.append(QPixmap(image));
         break;
     }
-    case DrawMethod::Insert: {
+    case Frame::DrawMethod::Insert: {
         if (layer > pixmaps.length())
             layer = pixmaps.length();
         pixmaps.insert(layer, QPixmap(image));
         break;
     }
-    case DrawMethod::Replace: {
+    case Frame::DrawMethod::Replace: {
 
         int diff = layer - pixmaps.length();
         if (diff < 0) {
@@ -106,8 +143,14 @@ void GhostWidget::mousePressEvent(QMouseEvent *event)
     }
 }
 
+void GhostWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+
+}
+
 void GhostWidget::paintEvent(QPaintEvent *)
 {
+
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
@@ -120,8 +163,23 @@ void GhostWidget::paintEvent(QPaintEvent *)
             painter.drawPixmap(QPoint(0,0), pixmaps.at(i));
         }
     }
+}
 
+void GhostWidget::keyPressEvent(QKeyEvent *event)
+{
+    if (event->text().toLower() == "t") {
+        emit randomTalkSignal();
+        event->accept();
+    }
+    grabKeyboard();
+}
 
+QSize GhostWidget::sizeHint() const
+{
+    //return baseRect.size();
+
+    /// TODO replace this dirty little trick
+    return QSize(1000,1000);
 }
 
 

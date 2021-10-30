@@ -13,12 +13,12 @@ public:
 
     void append(const QString& token, Token::TokenType type, const QStringList& params = QStringList());
 
-    Token GetNextToken();
+    const Token* GetNextToken();
     void Finalize();
 
 private:
     int tokenCursor;
-    QList<Token> tokenList;
+    QList<Token*> tokenList;
 };
 
 #endif // TOKENCOLLECTION_H

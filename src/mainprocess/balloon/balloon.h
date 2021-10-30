@@ -8,7 +8,7 @@
 
 class Balloon: public QObject
 {
-    Q_OBJECT;
+    Q_OBJECT
 public:
     Balloon(QVector<BalloonSurface*> _defaultBalloons);
     ~Balloon();
@@ -17,13 +17,14 @@ public:
     void PrintBalloonContents();
     void ClearBalloon();
     void ChangeTextSpeed(unsigned int newSpeed);
+    void Reset();
 
     BalloonWidget *GetInScope() const;
     unsigned int GetID(BalloonWidget* w) const;
 
 
 signals:
-    void printTextSignal(const QString& text);
+    void printTextSignal(QString text);
     void finishedTextPrintSignal();
     void timeoutSignal();
 

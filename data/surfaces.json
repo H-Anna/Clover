@@ -1,7 +1,7 @@
 {
 	"type": "surface",
 	"layercount": 15,
-	"surfaces":
+	"content":
 	[
 		{
 			"id": 0,
@@ -27,28 +27,28 @@
 				{
 					"id": 0,
 					"name": "tail",
-					"frequency": "loop",
+					"frequency": "Loop",
 					"layer": 0,
 					"frames":
 					[
 						{
 							"image": "tail_2.png",
-							"drawmethod": "replace",
+							"drawmethod": "Replace",
 							"ms": 200
 						},
 						{
 							"image": "tail_3.png",
-							"drawmethod": "replace",
+							"drawmethod": "Replace",
 							"ms": 200
 						},
 						{
 							"image": "tail_2.png",
-							"drawmethod": "replace",
+							"drawmethod": "Replace",
 							"ms": 200
 						},
 						{
 							"image": "tail_1.png",
-							"drawmethod": "replace",
+							"drawmethod": "Replace",
 							"ms": 200
 						}
 					]
@@ -56,30 +56,38 @@
 				{
 					"id": 1,
 					"name": "smile",
-					"frequency": "never",
+					"frequency": "Never",
 					"layer": 9,
 					"frames":
 					[
 						{
 							"image": "mouth_S.png",
-							"drawmethod": "replace",
-							"ms": 10
+							"drawmethod": "Replace",
+							"ms": 0
 						}
 					]
 				},
 				{
 					"id": 2,
 					"name": "perk",
-					"frequency": "never",
+					"frequency": "Never",
 					"layer": 7,
 					"frames":
 					[
 						{
 							"image": "ears_P.png",
-							"drawmethod": "replace",
-							"ms": 10
+							"drawmethod": "Replace",
+							"ms": 0
 						}
 					]
+				}
+			],
+			"hotspots":
+			[
+				{
+					"name": "head",
+					"area": [415,86,554,160],
+					"cursor": "OpenHandCursor"
 				}
 			]
 		},

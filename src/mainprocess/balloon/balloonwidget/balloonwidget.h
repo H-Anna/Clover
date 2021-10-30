@@ -9,25 +9,28 @@
 #include <QPixmap>
 #include <QPlainTextEdit>
 #include <QTimer>
-#include <QDesktopServices>
+#include <QElapsedTimer>
 
 #include <QDebug>
 
 class BalloonWidget: public QWidget
 {
-    Q_OBJECT;
+    Q_OBJECT
 public:
     BalloonWidget(QWidget *parent = nullptr);
     ~BalloonWidget();
+    QSize sizeHint() const override;
+
+    void ClearBalloon();
 
     QPlainTextEdit* textHolder;
 
 signals:
     void balloonLoadedSignal();
-    void prepareTextSignal(const QString& text);
     void finishedTextPrintSignal();
 
 public slots:
+    void PrepareText(QString text);
     void ChangeBalloon(const QString& path, QPoint TL, QPoint BR);
     void ChangeTextSpeed(unsigned int newSpeed);
     void PrepareTimeout();
@@ -44,6 +47,7 @@ private:
     TextArea* textArea;
 
     const unsigned int defaultTextSpeed = 50;
+    const unsigned int bTimeout = 20000;
 
     unsigned int textCursor;
     unsigned int textSpeed;
@@ -55,11 +59,9 @@ private:
     void SetupTextBrowser(QPoint topLeft, int width, int height);
 
 private slots:
-    void PrepareText(const QString& text);
     void PrintText();
 
     void TextBrowserUpdate();
-    void PrintAnchor(const QUrl& link);
 };
 
 #endif // BALLOONWIDGET_H
