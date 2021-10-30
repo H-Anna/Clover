@@ -50,7 +50,6 @@ private:
     QMap<unsigned int,QList<unsigned int>> ghostBalloonsMap;
 
     TokenCollection* currentTC;
-    unsigned int tokenCursor;
 
 signals:
     bool printTextSignal(QString text);

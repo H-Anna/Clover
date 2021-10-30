@@ -100,4 +100,9 @@ Frame *Animation::GetNextFrame()
     }
 }
 
+void Animation::Reset()
+{
+    frameCursor = 0;
+}
+
 

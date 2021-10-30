@@ -118,7 +118,9 @@ void Balloon::Reset()
     inScope = nullptr;
 
     while (!balloons.isEmpty()) {
-        balloons.takeLast()->deleteLater();
+        auto b = balloons.takeLast();
+        b->blockSignals(true);
+        b->deleteLater();
     }
 
     balloons.clear();

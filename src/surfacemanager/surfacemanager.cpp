@@ -40,8 +40,8 @@ void SurfaceManager::Initialize()
 {
     /// 0 is the default surface.
 
-    emit changeSurfaceSignal(surfaces.value(0));
-    emit changeBalloonSignal(balloonSurfaces.value(0));
+//    emit changeSurfaceSignal(surfaces.value(0));
+//    emit changeBalloonSignal(balloonSurfaces.value(0));
 }
 
 bool SurfaceManager::LoadSurfaces(QJsonObject *json, const QString &path)
@@ -78,8 +78,16 @@ void SurfaceManager::Animate(Animation* a)
 
     emit animateGhostSignal(a, f);
 
-    if (f->GetMs() == 0)
+    if (f->GetMs() == 0) {
+
+        a->Reset();
+
+        if (timers.contains(a)) {
+            timers.value(a)->stop();
+        }
+
         return;
+    }
 
     QTimer* timer;
 
@@ -120,6 +128,15 @@ void SurfaceManager::ApplyAnimation(QStringList params, Surface *currentSurface)
 }
 
 void SurfaceManager::ApplySurface(QStringList params) {
+
+    QMapIterator t(timers);
+    while (t.hasNext()) {
+        t.next();
+        t.key()->Reset();
+        t.value()->stop();
+        delete t.value();
+    }
+    timers.clear();
 
     QString str = params.at(0);
     bool canConvertToInt;

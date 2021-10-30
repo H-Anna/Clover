@@ -42,6 +42,7 @@ void Ghost::Show()
 
 void Ghost::ChangeSurface(Surface *surface)
 {
+    currentAnimations.clear();
     currentSurface[inScope] = surface;
     inScope->SetSurface(surface->GetElements());
     inScope->SetHotspots(surface->GetHotspots());

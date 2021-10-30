@@ -164,9 +164,6 @@ void GhostWidget::paintEvent(QPaintEvent *)
 
 void GhostWidget::keyPressEvent(QKeyEvent *event)
 {
-    //qDebug() << event->text();
-    //event->accept();
-
     if (event->text().toLower() == "t") {
         emit randomTalkSignal();
         event->accept();

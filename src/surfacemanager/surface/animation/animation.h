@@ -31,6 +31,7 @@ public:
 
     void AddFrame(const QString& _image, Frame::DrawMethod _drawMethod, unsigned int _ms);
     Frame* GetNextFrame();
+    void Reset();
 
 private:
 

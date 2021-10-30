@@ -4,8 +4,7 @@ MainProcess::MainProcess(VariableStore *_vs, unsigned int _layerCount, QVector<S
     vs(_vs),
     ghost(new Ghost(defSurf, _layerCount)),
     balloon(new Balloon(defBall)),
-    currentTC(nullptr),
-    tokenCursor(0)
+    currentTC(nullptr)
 {
 
     ghostBalloonsMap.insert(ghost->GetID(ghost->GetInScope()),
@@ -223,7 +222,7 @@ void MainProcess::BuildTagLambdaMap()
             unsigned int id = params.at(0).toInt(&canConvert);
 
             if (!canConvert) {
-                qDebug() << "ERROR - MainProcess - Scope change tag can't be converted to int. Skipping token.";
+                qDebug() << "ERROR - MainProcess - Scope change parameter can't be converted to int. Skipping token.";
             } else {
                 mp.ghost->ChangeScope(id);
                 mp.balloon->ChangeScope(id);
@@ -339,8 +338,9 @@ void MainProcess::ExecuteCommand(const Token *token)
 
 void MainProcess::TokensReady(TokenCollection tc)
 {
+    blockSignals(true);
     SaveTokenCollection(tc);
     balloon->Reset();
+    blockSignals(false);
     EvaluateTokens();
-
 }

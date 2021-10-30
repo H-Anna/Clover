@@ -32,7 +32,6 @@ signals:
 private:
     QVector<QString> talksList;
     QMap<QString, QString> anchorTalks;
-    unsigned int tokenCursor;
     QRegularExpression tagRegex, htmlRegex;
 };
 #endif // TALKMANAGER_H

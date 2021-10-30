@@ -63,7 +63,7 @@
 						{
 							"image": "mouth_S.png",
 							"drawmethod": "Replace",
-							"ms": 10
+							"ms": 0
 						}
 					]
 				},
@@ -77,7 +77,7 @@
 						{
 							"image": "ears_P.png",
 							"drawmethod": "Replace",
-							"ms": 10
+							"ms": 0
 						}
 					]
 				}

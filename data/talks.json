@@ -1,12 +1,7 @@
 {
 	"type": "talk",
 	"content":
-	[
-		"<!i[1]>Hello! I am a big lion.<!wait[1000]><!p[1]>I am a smol lion :3<!wait[1000]><!p[0]><!i[0]><!i[2]><p>We are two lions on your screen.",
-		
-		"It is currently <!get[TIME]>.",
-		
-		"Here is an anchor referring to <a href=&quottopic:red&quot>red</a> things."
-		
+	[		
+		"<!s[0]>Hello! <!wait[1000]><!i[0]><!i[1]><!i[2]>I'm a lion."
 	]
 }

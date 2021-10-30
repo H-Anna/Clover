@@ -1,8 +1,6 @@
 #include "talkmanager.h"
 
 TalkManager::TalkManager(const QString &regexStr, const QString &htmlRegexStr)
-    :
-    tokenCursor(0)
 {
     tagRegex.setPattern(regexStr);
     htmlRegex.setPattern(htmlRegexStr);
@@ -153,8 +151,6 @@ void TalkManager::Parse(TokenCollection &tc, const QString &str, const QRegularE
             }
         }
     }
-
-    tokenCursor = 0;
 }
 
 void TalkManager::RandomTalk()
