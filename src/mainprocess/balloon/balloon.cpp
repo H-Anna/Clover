@@ -64,26 +64,26 @@ void Balloon::ChangeScope(unsigned int id)
 
 void Balloon::ConnectScope()
 {
-    connect(this, SIGNAL(printTextSignal(QString)),
-            inScope, SLOT(PrepareText(QString)));
+    connect(this, &Balloon::printTextSignal,
+            inScope, &BalloonWidget::PrepareText);
 
-    connect(inScope, SIGNAL(finishedTextPrintSignal()),
-            this, SIGNAL(finishedTextPrintSignal()));
+    connect(inScope, &BalloonWidget::finishedTextPrintSignal,
+            this, &Balloon::finishedTextPrintSignal);
 
     /// The following signals should not be disconnected when the scope is switched
 
-    connect(this, SIGNAL(timeoutSignal()),
-            inScope, SLOT(PrepareTimeout()));
+    connect(this, &Balloon::timeoutSignal,
+            inScope, &BalloonWidget::PrepareTimeout);
 
 }
 
 void Balloon::DisconnectScope()
 {
-    disconnect(this, SIGNAL(printTextSignal(QString)),
-            inScope, SLOT(PrepareText(QString)));
+    disconnect(this, &Balloon::printTextSignal,
+            inScope, &BalloonWidget::PrepareText);
 
-    disconnect(inScope, SIGNAL(finishedTextPrintSignal()),
-            this, SIGNAL(finishedTextPrintSignal()));
+    disconnect(inScope, &BalloonWidget::finishedTextPrintSignal,
+            this, &Balloon::finishedTextPrintSignal);
 }
 
 void Balloon::AppendHtml(const QString &text)

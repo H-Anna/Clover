@@ -12,7 +12,10 @@ GhostWidget::GhostWidget(unsigned int _layerCount, QWidget *parent):
     setContextMenuPolicy(Qt::ActionsContextMenu);
     QAction *quitAction = new QAction(tr("E&xit"), this);
     quitAction->setShortcut(tr("Ctrl+Q"));
-    connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+
+    connect(quitAction, &QAction::triggered,
+            qApp, &QCoreApplication::quit);
+
     addAction(quitAction);
 
     auto screen = QGuiApplication::primaryScreen();

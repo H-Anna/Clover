@@ -17,8 +17,8 @@ TextArea::TextArea(QWidget *parent):
     p.setColor(QPalette::Text, Qt::black);
     setPalette(p);
 
-    connect(this, SIGNAL(anchorClicked(QUrl)),
-            this, SLOT(EvaluateAnchor(QUrl)));
+    connect(this, &QTextBrowser::anchorClicked,
+            this, &TextArea::EvaluateAnchor);
 
     connect(this, SIGNAL(openUrlSignal(QUrl)),
             VariableStore::GetMember("MainProcess"), SLOT(OpenUrl(QUrl)));

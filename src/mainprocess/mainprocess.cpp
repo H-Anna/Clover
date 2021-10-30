@@ -19,17 +19,17 @@ MainProcess::MainProcess(VariableStore *_vs, unsigned int _layerCount, QVector<S
 
     /// Each time this signal fires, evaluate the next token
 
-    connect(this, SIGNAL(finishedTokenEvaluationSignal()),
-            this, SLOT(EvaluateTokens()));
+    connect(this, &MainProcess::finishedTokenEvaluationSignal,
+            this, &MainProcess::EvaluateTokens);
 
-    connect(this, SIGNAL(printTextSignal(QString)),
-            balloon, SIGNAL(printTextSignal(QString)));
+    connect(this, &MainProcess::printTextSignal,
+            balloon, &Balloon::printTextSignal);
 
-    connect(balloon, SIGNAL(finishedTextPrintSignal()),
-            this, SIGNAL(finishedTokenEvaluationSignal()));
+    connect(balloon, &Balloon::finishedTextPrintSignal,
+            this, &MainProcess::finishedTokenEvaluationSignal);
 
-    connect(this, SIGNAL(endOfTokensSignal()),
-            balloon, SIGNAL(timeoutSignal()));
+    connect(this, &MainProcess::endOfTokensSignal,
+            balloon, &Balloon::timeoutSignal);
 
 
     /// ------------LAMBDA MAP------------

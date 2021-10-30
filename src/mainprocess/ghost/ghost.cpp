@@ -53,7 +53,7 @@ Surface *Ghost::GetCurrentSurface() const
     return currentSurface.value(inScope);
 }
 
-void Ghost::AnimateGhost(Animation* a, Frame* f)
+void Ghost::Animate(Animation* a, Frame* f)
 {
     AppendAnimation(a);
     inScope->SetAnimation(f->GetImage(), a->GetLayer(), f->GetDrawMethod());

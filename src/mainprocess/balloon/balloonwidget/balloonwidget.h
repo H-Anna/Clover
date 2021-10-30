@@ -9,6 +9,7 @@
 #include <QPixmap>
 #include <QPlainTextEdit>
 #include <QTimer>
+#include <QElapsedTimer>
 
 #include <QDebug>
 
@@ -29,6 +30,7 @@ signals:
     void finishedTextPrintSignal();
 
 public slots:
+    void PrepareText(QString text);
     void ChangeBalloon(const QString& path, QPoint TL, QPoint BR);
     void ChangeTextSpeed(unsigned int newSpeed);
     void PrepareTimeout();
@@ -57,7 +59,6 @@ private:
     void SetupTextBrowser(QPoint topLeft, int width, int height);
 
 private slots:
-    void PrepareText(QString text);
     void PrintText();
 
     void TextBrowserUpdate();

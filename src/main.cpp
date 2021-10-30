@@ -66,32 +66,32 @@ int main(int argc, char *argv[])
 
     VariableStore::AddMember("MainProcess", mainproc);
 
-    QObject::connect(tm, SIGNAL(tokensReadySignal(TokenCollection)),
-                     mainproc, SLOT(TokensReady(TokenCollection)));
+    QObject::connect(tm, &TalkManager::tokensReadySignal,
+                     mainproc, &MainProcess::TokensReady);
 
-    QObject::connect(mainproc, SIGNAL(applySurfaceSignal(QStringList)),
-            sm, SLOT(ApplySurface(QStringList)));
+    QObject::connect(mainproc, &MainProcess::applySurfaceSignal,
+                     sm, &SurfaceManager::ApplySurface);
 
-    QObject::connect(mainproc, SIGNAL(applyBalloonSignal(QStringList)),
-            sm, SLOT(ApplyBalloon(QStringList)));
+    QObject::connect(mainproc, &MainProcess::applyBalloonSignal,
+                     sm, &SurfaceManager::ApplyBalloon);
 
-    QObject::connect(mainproc, SIGNAL(applyAnimationSignal(QStringList,Surface*)),
-            sm, SLOT(ApplyAnimation(QStringList,Surface*)));
+    QObject::connect(mainproc, &MainProcess::applyAnimationSignal,
+                     sm, &SurfaceManager::ApplyAnimation);
 
-    QObject::connect(sm, SIGNAL(animateGhostSignal(Animation*,Frame*)),
-                     mainproc->GetGhost(), SLOT(AnimateGhost(Animation*,Frame*)));
+    QObject::connect(sm, &SurfaceManager::animateGhostSignal,
+                     mainproc->GetGhost(), &Ghost::Animate);
 
-    QObject::connect(sm, SIGNAL(changeSurfaceSignal(Surface*)),
-                     mainproc->GetGhost(), SLOT(ChangeSurface(Surface*)));
+    QObject::connect(sm, &SurfaceManager::changeSurfaceSignal,
+                     mainproc->GetGhost(), &Ghost::ChangeSurface);
 
-    QObject::connect(sm, SIGNAL(changeBalloonSignal(BalloonSurface*)),
-                     mainproc->GetBalloon(), SLOT(ChangeBalloon(BalloonSurface*)));
+    QObject::connect(sm, &SurfaceManager::changeBalloonSignal,
+                     mainproc->GetBalloon(), &Balloon::ChangeBalloon);
 
-    QObject::connect(mainproc, SIGNAL(playSoundSignal(QString,int)),
-                     se, SLOT(Play(QString,int)));
+    QObject::connect(mainproc, &MainProcess::playSoundSignal,
+                     se, &SoundEmitter::Play);
 
-    QObject::connect(mainproc, SIGNAL(stopSoundSignal()),
-                     se, SLOT(Stop()));
+    QObject::connect(mainproc, &MainProcess::stopSoundSignal,
+                     se, &SoundEmitter::Stop);
 
     tm->IndexedTalk(100);
 

@@ -24,7 +24,7 @@ signals:
 
 public slots:
     void ChangeSurface(Surface *surface);
-    void AnimateGhost(Animation *a, Frame *f);
+    void Animate(Animation *a, Frame *f);
     void ChangeScope(unsigned int id);
 
 private:

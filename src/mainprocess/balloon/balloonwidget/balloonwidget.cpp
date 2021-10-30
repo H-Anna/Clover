@@ -12,8 +12,8 @@ BalloonWidget::BalloonWidget(QWidget *parent)
     textHolder = new QPlainTextEdit(this);
     textHolder->hide();
 
-    connect(textHolder, SIGNAL(textChanged()),
-            this, SLOT(TextBrowserUpdate()));
+    connect(textHolder, &QPlainTextEdit::textChanged,
+            this, &BalloonWidget::TextBrowserUpdate);
 
     textTimer = new QTimer(this);
     connect(textTimer, &QTimer::timeout,
@@ -26,7 +26,8 @@ BalloonWidget::BalloonWidget(QWidget *parent)
 
     balloonTimeout = new QTimer(this);
     balloonTimeout->setSingleShot(true);
-    connect(balloonTimeout, &QTimer::timeout, this, &QWidget::hide);
+    connect(balloonTimeout, &QTimer::timeout,
+            this, &QWidget::hide);
 
 }
 
@@ -138,8 +139,10 @@ void BalloonWidget::PrepareTimeout()
 void BalloonWidget::TextBrowserUpdate()
 {
     if (textArea != nullptr) {
+
         textArea->setHtml(textHolder->toPlainText());
         textArea->moveCursor(QTextCursor::End);
+
     }
     else
         qDebug() << "ERROR - BalloonWidget - textArea = nullptr, can't print (textBrowserUpdate).";
