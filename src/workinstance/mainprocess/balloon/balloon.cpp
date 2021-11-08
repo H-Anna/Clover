@@ -1,7 +1,8 @@
 #include "balloon.h"
 
-Balloon::Balloon(QVector<BalloonSurface*> _defaultBalloons):
-    inScope(new BalloonWidget()),
+Balloon::Balloon(VariableStore* _varStore, QVector<BalloonSurface*> _defaultBalloons):
+    varStore(_varStore),
+    inScope(new BalloonWidget(_varStore)),
     idInScope(0),
     defaultBalloons(_defaultBalloons)
 {
@@ -16,13 +17,13 @@ Balloon::~Balloon()
 
     balloons.clear();
 
-    while (!defaultBalloons.isEmpty()) {
-        delete defaultBalloons.takeLast();
-    }
+//    while (!defaultBalloons.isEmpty()) {
+//        delete defaultBalloons.takeLast();
+//    }
 
     defaultBalloons.clear();
 
-    delete inScope;
+    //delete inScope;
 }
 
 void Balloon::ChangeBalloon(BalloonSurface *b)
@@ -43,7 +44,7 @@ void Balloon::ChangeScope(unsigned int id)
         /// Create new balloon
 
         id = balloons.length();
-        balloons.append(new BalloonWidget());
+        balloons.append(new BalloonWidget(varStore));
         inScope = balloons.last();
 
         int _id = idInScope < defaultBalloons.length() ? idInScope : 0;
@@ -125,7 +126,7 @@ void Balloon::Reset()
 
     balloons.clear();
 
-    inScope = new BalloonWidget();
+    inScope = new BalloonWidget(varStore);
     ConnectScope();
 
     balloons.append(inScope);

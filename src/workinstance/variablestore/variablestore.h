@@ -21,19 +21,21 @@ public:
     QVariant GetVariable(const QString& key);
     void SetVariable(const QString& key, const QVariant& value);
 
-    static QObject* GetMember(const QString& key);
-    static void AddMember(const QString& key, QObject* member);
+    QObject* GetMember(const QString& key);
+    void AddMember(const QString& key, QObject* member);
 
 private:
     QString iniFile;
     QMap<QString, QVariant> variables;
     QMap<QString, globalFuncPtr> globalFunctions;
 
-    static inline QMap<QString, QObject*> members;
+    QMap<QString, QObject*> members;
 
     void BuildLambdaMap();
     void LoadIni();
     void UnloadIni();
+
+    QObject* GetOwnMember(const QString& key);
 };
 
 #endif // VARIABLESTORE_H

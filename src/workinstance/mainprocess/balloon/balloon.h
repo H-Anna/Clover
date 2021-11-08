@@ -10,7 +10,7 @@ class Balloon: public QObject
 {
     Q_OBJECT
 public:
-    Balloon(QVector<BalloonSurface*> _defaultBalloons);
+    Balloon(VariableStore* _varStore, QVector<BalloonSurface*> _defaultBalloons);
     ~Balloon();
 
     void AppendHtml(const QString& text);
@@ -41,6 +41,7 @@ private:
     unsigned int idInScope;
 
     QVector<BalloonSurface*> defaultBalloons;
+    VariableStore* varStore;
 };
 
 #endif // BALLOON_H

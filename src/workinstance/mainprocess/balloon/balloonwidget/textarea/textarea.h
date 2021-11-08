@@ -11,7 +11,7 @@ class TextArea: public QTextBrowser
 {
     Q_OBJECT
 public:
-    TextArea(QWidget *parent);
+    TextArea(VariableStore* varStore, QWidget *parent);
 
 private slots:
     void EvaluateAnchor(QUrl url);

@@ -1,7 +1,8 @@
 #include "ghost.h"
 
-Ghost::Ghost(QVector<Surface*> _defaultSurfaces, unsigned int _layerCount):
-    inScope(new GhostWidget(_layerCount)),
+Ghost::Ghost(VariableStore* _varStore, QVector<Surface*> _defaultSurfaces, unsigned int _layerCount):
+    varStore(_varStore),
+    inScope(new GhostWidget(_varStore, _layerCount)),
     idInScope(0),
     ghosts(QVector<GhostWidget*>()),
     currentSurface(QMap<GhostWidget*, Surface*>()),
@@ -17,14 +18,19 @@ Ghost::Ghost(QVector<Surface*> _defaultSurfaces, unsigned int _layerCount):
 
 Ghost::~Ghost()
 {
-    for (auto &w: ghosts) {
-        delete currentSurface.value(w);
+//    QMapIterator cs(currentSurface);
+//    while (cs.hasNext()) {
+//        cs.next();
+//        delete cs.value();
+//    }
 
-        for (auto &it: currentAnimations.value(w)) {
-            delete it;
-        }
-        delete w;
-    }
+//    QMapIterator ca(currentAnimations);
+//    while (ca.hasNext()) {
+//        ca.next();
+//        while (ca.value().count() > 0) {
+//            delete ca.value().last();
+//        }
+//    }
 
     inScope = nullptr;
     delete inScope;
@@ -69,7 +75,7 @@ void Ghost::ChangeScope(unsigned int id)
         /// Create new ghost
 
         id = ghosts.length();
-        ghosts.append(new GhostWidget(layerCount));
+        ghosts.append(new GhostWidget(varStore, layerCount));
         inScope = ghosts.last();
 
         idInScope = id;

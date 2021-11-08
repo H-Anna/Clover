@@ -1,6 +1,6 @@
 #include "textarea.h"
 
-TextArea::TextArea(QWidget *parent):
+TextArea::TextArea(VariableStore *varStore, QWidget *parent):
     QTextBrowser(parent)
 {
     setReadOnly(true);
@@ -21,10 +21,10 @@ TextArea::TextArea(QWidget *parent):
             this, &TextArea::EvaluateAnchor);
 
     connect(this, SIGNAL(openUrlSignal(QUrl)),
-            VariableStore::GetMember("MainProcess"), SLOT(OpenUrl(QUrl)));
+            varStore->GetMember("MainProcess"), SLOT(OpenUrl(QUrl)));
 
     connect(this, SIGNAL(anchorTalkSignal(QString)),
-            VariableStore::GetMember("TalkManager"), SLOT(AnchorTalk(QString)));
+            varStore->GetMember("TalkManager"), SLOT(AnchorTalk(QString)));
 
     show();
 }

@@ -1,7 +1,9 @@
 #include "hotspotwidget.h"
 
-HotspotWidget::HotspotWidget(QWidget *parent):
-    QWidget(parent)
+HotspotWidget::HotspotWidget(VariableStore* varStore, QWidget *parent):
+    QWidget(parent),
+    affection(0),
+    clicks(0)
 {
     setAttribute(Qt::WA_TranslucentBackground);
     setContextMenuPolicy(Qt::NoContextMenu);
@@ -14,9 +16,8 @@ HotspotWidget::HotspotWidget(QWidget *parent):
 
     /// TODO: connect a TalkManager signal here
 
-    //QObject* tm = VariableStore::GetMember("TalkManager");
-//    connect(this, SIGNAL(),
-//            tm, SLOT());
+    connect(this, SIGNAL(hotspotTalkSignal(QString)),
+            varStore->GetMember("TalkManager"), SLOT(AnchorTalk(QString)));
 
     showMaximized();
 }
@@ -24,9 +25,21 @@ HotspotWidget::HotspotWidget(QWidget *parent):
 void HotspotWidget::mouseMoveEvent(QMouseEvent *event)
 {
     //qDebug() << QString("Mouse entered");
+    affection++;
+    if (affection > 500) {
+        emit hotspotTalkSignal("headpat");
+        affection = 0;
+    }
+
 }
 
 void HotspotWidget::mousePressEvent(QMouseEvent *event)
 {
     //qDebug() << QString("Pressed %1 mouse").arg(event->button());
+    clicks++;
+    if (clicks > 3) {
+        emit hotspotTalkSignal("headclick");
+        clicks = 0;
+    }
+
 }

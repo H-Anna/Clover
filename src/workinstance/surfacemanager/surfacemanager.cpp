@@ -7,9 +7,20 @@ SurfaceManager::SurfaceManager()
 
 SurfaceManager::~SurfaceManager()
 {
-    for (auto &it: surfaces) {
-        delete it;
+    QMapIterator s(surfaces);
+    while (s.hasNext()) {
+        s.next();
+        delete s.value();
     }
+    QMapIterator bs(balloonSurfaces);
+    while (bs.hasNext()) {
+        bs.next();
+        delete bs.value();
+    }
+    surfaces.clear();
+    namedSurfaces.clear();
+    balloonSurfaces.clear();
+
     QMapIterator t(timers);
     while (t.hasNext()) {
         t.next();

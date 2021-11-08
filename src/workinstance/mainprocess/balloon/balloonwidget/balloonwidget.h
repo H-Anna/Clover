@@ -17,7 +17,7 @@ class BalloonWidget: public QWidget
 {
     Q_OBJECT
 public:
-    BalloonWidget(QWidget *parent = nullptr);
+    BalloonWidget(VariableStore* _varStore, QWidget *parent = nullptr);
     ~BalloonWidget();
     QSize sizeHint() const override;
 
@@ -55,6 +55,8 @@ private:
     QString printingText;
 
     QTimer* balloonTimeout;
+
+    VariableStore* varStore;
 
     void SetupTextBrowser(QPoint topLeft, int width, int height);
 

@@ -20,7 +20,7 @@ class GhostWidget : public QWidget
     Q_OBJECT
 
 public:
-    GhostWidget(unsigned int _layerCount = 1, QWidget *parent = nullptr);
+    GhostWidget(VariableStore* _varStore, unsigned int _layerCount = 1, QWidget *parent = nullptr);
     ~GhostWidget();
     QSize sizeHint() const override;
 
@@ -48,6 +48,7 @@ private:
     unsigned int layerCount;
 
     QVector<HotspotWidget*> hotspots;
+    VariableStore* varStore;
 
 signals:
     void randomTalkSignal();

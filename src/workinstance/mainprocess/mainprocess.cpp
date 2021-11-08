@@ -2,8 +2,8 @@
 
 MainProcess::MainProcess(VariableStore *_vs, unsigned int _layerCount, QVector<Surface *> defSurf, QVector<BalloonSurface *> defBall):
     vs(_vs),
-    ghost(new Ghost(defSurf, _layerCount)),
-    balloon(new Balloon(defBall)),
+    ghost(new Ghost(vs, defSurf, _layerCount)),
+    balloon(new Balloon(vs, defBall)),
     currentTC(nullptr)
 {
 
@@ -39,20 +39,11 @@ MainProcess::MainProcess(VariableStore *_vs, unsigned int _layerCount, QVector<S
 
 MainProcess::~MainProcess()
 {
-
     delete ghost;
     delete balloon;
 
     delete currentTC;
     delete waitTimer;
-
-    QMapIterator t(tagLambdaMap);
-    while (t.hasNext()) {
-        t.next();
-        delete &t.value();
-    }
-
-    tagLambdaMap.clear();
 }
 
 void MainProcess::SaveTokenCollection(TokenCollection tc)

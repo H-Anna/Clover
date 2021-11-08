@@ -1,7 +1,8 @@
 #include "balloonwidget.h"
 
-BalloonWidget::BalloonWidget(QWidget *parent)
-    : QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint),
+BalloonWidget::BalloonWidget(VariableStore* _varStore, QWidget *parent):
+    varStore(_varStore),
+    QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint),
       textSpeed(defaultTextSpeed)
 {
     setWindowFlag(Qt::SubWindow);
@@ -77,7 +78,7 @@ void BalloonWidget::paintEvent(QPaintEvent *)
 
 void BalloonWidget::SetupTextBrowser(QPoint topLeft, int width, int height)
 {
-    textArea = new TextArea(this);
+    textArea = new TextArea(varStore, this);
 
     textArea->move(topLeft);
     textArea->resize(width, height);

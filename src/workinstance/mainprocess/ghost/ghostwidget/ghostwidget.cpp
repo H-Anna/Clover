@@ -1,6 +1,7 @@
 #include "ghostwidget.h"
 
-GhostWidget::GhostWidget(unsigned int _layerCount, QWidget *parent):
+GhostWidget::GhostWidget(VariableStore* _varStore, unsigned int _layerCount, QWidget *parent):
+    varStore(_varStore),
     QWidget(parent, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint),
     layerCount(_layerCount)
 {
@@ -25,7 +26,7 @@ GhostWidget::GhostWidget(unsigned int _layerCount, QWidget *parent):
     pixmaps.reserve(layerCount);
 
     connect(this, SIGNAL(randomTalkSignal()),
-            VariableStore::GetMember("TalkManager"), SLOT(RandomTalk()));
+            _varStore->GetMember("TalkManager"), SLOT(RandomTalk()));
 
 }
 
@@ -65,7 +66,7 @@ void GhostWidget::SetHotspots(QVector<Hotspot *> hs)
     hotspots.clear();
 
     for (auto &it: hs) {
-        auto tmp = new HotspotWidget(this);
+        auto tmp = new HotspotWidget(varStore, this);
 
         tmp->move(it->getTopLeft());
         int width = it->getBottomRight().x() - it->getTopLeft().x();
@@ -169,7 +170,7 @@ void GhostWidget::keyPressEvent(QKeyEvent *event)
 {
     if (event->text().toLower() == "t") {
         emit randomTalkSignal();
-        event->accept();
+        //event->accept();
     }
     grabKeyboard();
 }

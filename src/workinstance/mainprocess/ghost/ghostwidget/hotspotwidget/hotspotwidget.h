@@ -13,16 +13,20 @@ class HotspotWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit HotspotWidget(QWidget *parent = nullptr);
-
-signals:
+    explicit HotspotWidget(VariableStore* varStore, QWidget *parent = nullptr);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
 
-    // QWidget interface
-public:
+private:
+    int affection;
+    int clicks;
+
+
+
+signals:
+    void hotspotTalkSignal(QString key);
 };
 
 #endif // HOTSPOTWIDGET_H

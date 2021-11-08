@@ -10,7 +10,7 @@ class Ghost: public QObject
 {
     Q_OBJECT
 public:
-    Ghost(QVector<Surface*> _defaultSurfaces, unsigned int _layerCount = 1);
+    Ghost(VariableStore* _varStore, QVector<Surface*> _defaultSurfaces, unsigned int _layerCount = 1);
     ~Ghost();
 
     void Hide();
@@ -38,6 +38,7 @@ private:
     unsigned int layerCount;
 
     QVector<Surface*> defaultSurfaces;
+    VariableStore* varStore;
 };
 
 #endif // GHOST_H
