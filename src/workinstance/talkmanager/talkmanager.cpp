@@ -42,6 +42,24 @@ bool TalkManager::LoadAnchors(QJsonObject *json)
     return true;
 }
 
+/// TODO: key talks are a duplicate of anchors and are meant to mirror talks that would occur during SHIORI events in SSP. Keep or no?
+
+bool TalkManager::LoadKeyTalks(QJsonObject *json)
+{
+    QJsonObject keyTalksObj = json->value("content").toObject();
+
+    if (keyTalksObj.isEmpty()) {
+        qDebug() << "ERROR - TalkManager - Key talks couldn't be loaded!";
+        return false;
+    }
+
+    for (auto &key: keyTalksObj.keys()) {
+        keyTalks[key] = keyTalksObj.value(key).toString();
+    }
+
+    return true;
+}
+
 TokenCollection TalkManager::MakeTokens(const QString &talk)
 {
     auto tokens = new TokenCollection();
@@ -183,19 +201,35 @@ void TalkManager::IndexedTalk(int idx)
     emit tokensReadySignal(tc);
 }
 
-void TalkManager::AnchorTalk(QString anchor)
+void TalkManager::AnchorTalk(QString scheme, QString anchor)
 {
-    if (anchorTalks.isEmpty()) {
-        qDebug() << "ERROR - TalkManager - Empty anchor talk list.";
+    QString talk = "NULL";
+
+    if (scheme == "anchor") {
+
+        if (anchorTalks.isEmpty()) {
+            qDebug() << "ERROR - TalkManager - Empty anchor talk list.";
+            return;
+        }
+
+        talk = anchorTalks.value(anchor, "NULL");
+
+    }
+    else if (scheme == "key") {
+        if (keyTalks.isEmpty()) {
+            qDebug() << "ERROR - TalkManager - Empty key talk list.";
+            return;
+        }
+
+        talk = keyTalks.value(anchor, "NULL");
+    }
+
+    if (talk == "NULL") {
+        qDebug().noquote() << QString("ERROR - TalkManager - No talk found for \"%1:%2\".").arg(scheme, anchor);
         return;
     }
 
-    if (!anchorTalks.contains(anchor)) {
-        qDebug().noquote() << QString("ERROR - TalkManager - No talk at anchor \"%1\".").arg(anchor);
-    }
-
-
-    auto tc = MakeTokens(anchorTalks.value(anchor));
+    auto tc = MakeTokens(talk);
     emit tokensReadySignal(tc);
 
 }

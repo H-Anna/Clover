@@ -23,8 +23,11 @@ TextArea::TextArea(VariableStore *varStore, QWidget *parent):
     connect(this, SIGNAL(openUrlSignal(QUrl)),
             varStore->GetMember("MainProcess"), SLOT(OpenUrl(QUrl)));
 
-    connect(this, SIGNAL(anchorTalkSignal(QString)),
-            varStore->GetMember("TalkManager"), SLOT(AnchorTalk(QString)));
+    connect(this, SIGNAL(anchorTalkSignal(QString,QString)),
+            varStore->GetMember("TalkManager"), SLOT(AnchorTalk(QString,QString)));
+
+//    connect(this, SIGNAL(keyTalkSignal(QString)),
+//            varStore->GetMember("TalkManager"), SLOT(KeyTalk(QString)));
 
     show();
 }
@@ -33,7 +36,11 @@ void TextArea::EvaluateAnchor(QUrl url)
 {
     if (url.scheme() == "http" || url.scheme() == "https") {
         emit openUrlSignal(url);
-    } else if (url.scheme() == "topic") {
-        emit anchorTalkSignal(url.path());
     }
+    else if (url.scheme() == "anchor" || url.scheme() == "key") {
+        emit anchorTalkSignal(url.scheme(), url.path());
+    }
+//    else if (url.scheme() == "key") {
+//        emit keyTalkSignal(url.path());
+//    }
 }

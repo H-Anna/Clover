@@ -3,7 +3,8 @@
 BalloonWidget::BalloonWidget(VariableStore* _varStore, QWidget *parent):
     varStore(_varStore),
     QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint),
-      textSpeed(defaultTextSpeed)
+      textSpeed(defaultTextSpeed),
+      timeout(defaultBTimeout)
 {
     setWindowFlag(Qt::SubWindow);
     setAttribute(Qt::WA_TranslucentBackground);
@@ -133,8 +134,13 @@ void BalloonWidget::ChangeTextSpeed(unsigned int newSpeed)
 
 void BalloonWidget::PrepareTimeout()
 {
-    /// Times out in 10 seconds.
-    balloonTimeout->start(bTimeout);
+    if (timeout > 0)
+        balloonTimeout->start(timeout);
+}
+
+void BalloonWidget::SetTimeout(unsigned int newTimeout)
+{
+    timeout = newTimeout;
 }
 
 void BalloonWidget::TextBrowserUpdate()

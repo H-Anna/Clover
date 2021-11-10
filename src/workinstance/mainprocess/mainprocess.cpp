@@ -159,6 +159,24 @@ void MainProcess::BuildTagLambdaMap()
         mp.balloon->ClearBalloon();
         emit mp.finishedTokenEvaluationSignal(); });
 
+    tagLambdaMap.insert("timeout", [](MainProcess& mp, const QStringList& params){
+
+        if (params.count() > 1) {
+            qDebug() << "ERROR - MainProcess - Balloon timeout tag has multiple parameters. Skipping token.";
+        } else {
+
+            bool canConvert;
+            unsigned int time = params.at(0).toInt(&canConvert);
+
+            if (!canConvert) {
+                qDebug() << "ERROR - MainProcess - Balloon timeout parameter can't be converted to int. Skipping token.";
+            } else {
+                emit mp.balloon->setTimeoutSignal(time);
+            }
+        }
+
+        emit mp.finishedTokenEvaluationSignal(); });
+
     tagLambdaMap.insert("hide", [](MainProcess& mp, const QStringList&){
         mp.ghost->Hide();
         emit mp.finishedTokenEvaluationSignal(); });

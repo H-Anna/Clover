@@ -15,6 +15,7 @@ public:
 
 private:
     void ConnectThings();
+    void SetupActions();
 
     MainProcess* mainProc;
     VariableStore* varStore;

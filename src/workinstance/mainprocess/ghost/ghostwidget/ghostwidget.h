@@ -52,6 +52,7 @@ private:
 
 signals:
     void randomTalkSignal();
+    void anchorTalkSignal(QString scheme, QString path);
 
 };
 #endif // GHOSTWIDGET_H

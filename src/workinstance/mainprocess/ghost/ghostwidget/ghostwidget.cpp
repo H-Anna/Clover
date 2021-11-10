@@ -28,6 +28,9 @@ GhostWidget::GhostWidget(VariableStore* _varStore, unsigned int _layerCount, QWi
     connect(this, SIGNAL(randomTalkSignal()),
             _varStore->GetMember("TalkManager"), SLOT(RandomTalk()));
 
+    connect(this, SIGNAL(anchorTalkSignal(QString,QString)),
+            _varStore->GetMember("TalkManager"), SLOT(AnchorTalk(QString,QString)));
+
 }
 
 GhostWidget::~GhostWidget()
@@ -132,7 +135,7 @@ void GhostWidget::mouseMoveEvent(QMouseEvent *event)
 {
     if (event->buttons() & Qt::LeftButton) {
         move(event->globalPos() - dragPosition);
-        event->accept();
+        //event->accept();
     }
 }
 
@@ -140,13 +143,17 @@ void GhostWidget::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
         dragPosition = event->globalPos() - frameGeometry().topLeft();
-        event->accept();
+        //event->accept();
     }
 }
 
 void GhostWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-
+    if (event->button() == Qt::LeftButton) {
+        //dragPosition = event->globalPos() - frameGeometry().topLeft();
+        emit anchorTalkSignal("key", "MENU");
+        //event->accept();
+    }
 }
 
 void GhostWidget::paintEvent(QPaintEvent *)

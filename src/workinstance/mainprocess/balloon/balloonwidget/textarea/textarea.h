@@ -17,7 +17,8 @@ private slots:
     void EvaluateAnchor(QUrl url);
 
 signals:
-    void anchorTalkSignal(QString a);
+    void anchorTalkSignal(QString scheme, QString path);
+    //void keyTalkSignal(QString k);
     void openUrlSignal(QUrl url);
     void stopPrintingSignal();
 

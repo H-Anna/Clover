@@ -7,6 +7,7 @@ Balloon::Balloon(VariableStore* _varStore, QVector<BalloonSurface*> _defaultBall
     defaultBalloons(_defaultBalloons)
 {
     balloons.append(inScope);
+    ConnectScope();
 }
 
 Balloon::~Balloon()
@@ -75,6 +76,9 @@ void Balloon::ConnectScope()
 
     connect(this, &Balloon::timeoutSignal,
             inScope, &BalloonWidget::PrepareTimeout);
+
+    connect(this, &Balloon::setTimeoutSignal,
+            inScope, &BalloonWidget::SetTimeout);
 
 }
 

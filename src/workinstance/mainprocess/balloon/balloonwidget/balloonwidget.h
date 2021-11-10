@@ -34,6 +34,7 @@ public slots:
     void ChangeBalloon(const QString& path, QPoint TL, QPoint BR);
     void ChangeTextSpeed(unsigned int newSpeed);
     void PrepareTimeout();
+    void SetTimeout(unsigned int newTimeout);
 
 protected:
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -47,8 +48,9 @@ private:
     TextArea* textArea;
 
     const unsigned int defaultTextSpeed = 50;
-    const unsigned int bTimeout = 20000;
+    const unsigned int defaultBTimeout = 20000;
 
+    unsigned int timeout;
     unsigned int textCursor;
     unsigned int textSpeed;
     QTimer* textTimer;

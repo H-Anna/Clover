@@ -87,7 +87,20 @@
 				{
 					"name": "head",
 					"area": [415,86,554,160],
-					"cursor": "OpenHandCursor"
+					"cursor": "OpenHandCursor",
+					"variables":
+					[
+						{
+							"name": "headclick",
+							"type": "Click",
+							"threshold": 3
+						},
+						{
+							"name": "headpat",
+							"type": "Mouse",
+							"threshold": 500
+						}
+					]
 				}
 			]
 		},

@@ -26,7 +26,7 @@ private:
 
 
 signals:
-    void hotspotTalkSignal(QString key);
+    void hotspotTalkSignal(QString scheme, QString key);
 };
 
 #endif // HOTSPOTWIDGET_H

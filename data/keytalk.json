@@ -1,0 +1,8 @@
+{
+	"type": "keytalk",
+	"content":
+	{
+		"MENU": "<!p[0]><!s[0]><!timeout[0]>This is the menu.<!speed[0]><p><a href=&quotkey:QUITMENU&quot>Understandable, have a great day.</a>",
+		"QUITMENU": "<!p[0]><!s[0]>Bye."
+	}
+}

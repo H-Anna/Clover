@@ -43,6 +43,9 @@ WorkInstance::WorkInstance(QString appDirPath)
         else if (type == "anchor") {
             talkMan->LoadAnchors(&json);
         }
+        else if (type == "keytalk") {
+            talkMan->LoadKeyTalks(&json);
+        }
         else if (type == "surface") {
             surfaceMan->LoadSurfaces(&json, aPath);
         }
@@ -59,6 +62,7 @@ WorkInstance::WorkInstance(QString appDirPath)
     varStore->AddMember("MainProcess", mainProc);
 
     ConnectThings();
+    SetupActions();
 
     talkMan->IndexedTalk(100);
 }
@@ -100,4 +104,15 @@ void WorkInstance::ConnectThings()
 
     QObject::connect(mainProc, &MainProcess::stopSoundSignal,
                      soundEmit, &SoundEmitter::Stop);
+}
+
+void WorkInstance::SetupActions()
+{
+//    QAction *quitAction = new QAction(tr("E&xit"), this);
+//    quitAction->setShortcut(tr("Ctrl+Q"));
+
+//    QObject::connect(quitAction, &QAction::triggered,
+//            qApp, &QCoreApplication::quit);
+
+//    QObject::addAction(quitAction);
 }

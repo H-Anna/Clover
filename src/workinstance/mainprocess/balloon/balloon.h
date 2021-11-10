@@ -27,6 +27,7 @@ signals:
     void printTextSignal(QString text);
     void finishedTextPrintSignal();
     void timeoutSignal();
+    void setTimeoutSignal(unsigned int time);
 
 public slots:
     void ChangeBalloon(BalloonSurface* b);

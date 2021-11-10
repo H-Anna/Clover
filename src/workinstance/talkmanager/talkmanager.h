@@ -16,6 +16,7 @@ public:
 
     bool LoadTalks(QJsonObject* json);
     bool LoadAnchors(QJsonObject* json);
+    bool LoadKeyTalks(QJsonObject* json);
 
     TokenCollection MakeTokens(const QString& talk);
     QString PreprocessTalk(const QString& talk);
@@ -24,7 +25,7 @@ public:
 public slots:
     void RandomTalk();
     void IndexedTalk(int idx);
-    void AnchorTalk(QString anchor);
+    void AnchorTalk(QString scheme, QString anchor);
 
 signals:
     void tokensReadySignal(TokenCollection tc);
@@ -32,6 +33,7 @@ signals:
 private:
     QVector<QString> talksList;
     QMap<QString, QString> anchorTalks;
+    QMap<QString, QString> keyTalks;
     QRegularExpression tagRegex, htmlRegex;
 };
 #endif // TALKMANAGER_H

@@ -14,8 +14,12 @@
 		"<!p[0]><!s[0]><!i[1]>My name is <!get[char1name]> and my little brother is called <!get[char2name]>. <!wait[1000]>Your name is <!get[username]>, right?",
 		"<!p[0]>It is currently <!get[TIME]>.",
 		
-		"<!p[0]><!s[0]>Hello.<!play[webmp3]><!wait[10000]><!stop>",
+		"<!p[0]><!s[0]>I'm going to play some music for you. Make sure your volume isn't too loud. Ready?<!wait[3000]> Go!<!play[webmp3]><!wait[10000]><!stop>",
 		
-		"<!p[0]><!s[0]><!i[1]>Hello! I am a big lion.<!wait[1000]><!p[1]><!s[100]>I am a smol lion :3<!wait[1000]><!p[0]><!i[0]><!i[2]><p>We are two lions on your screen."
+		"<!p[0]><!s[0]><!i[1]>Hello! I am a big lion.<!wait[1000]><!p[1]><!s[100]>I am a smol lion :3<!wait[1000]><!p[0]><!i[0]><!i[2]><p>We are two lions on your screen.",
+		
+		"<!p[0]><!s[0]>Hi! Do you like mice?<p><a href=&quotanchor:likemice&quot>I love mice!</a><p><a href=&quotanchor:dislikemice&quot>Mice suck.</a>",
+		
+		"<!p[0]><!s[0]><!timeout[5000]>This balloon will time out in 5 seconds."
 	]
 }
