@@ -11,11 +11,6 @@ BalloonWidget::BalloonWidget(VariableStore* _varStore, QWidget *parent):
 
     textArea = nullptr;
     textCursor = 0;
-    textHolder = new QPlainTextEdit(this);
-    textHolder->hide();
-
-    connect(textHolder, &QPlainTextEdit::textChanged,
-            this, &BalloonWidget::TextBrowserUpdate);
 
     textTimer = new QTimer(this);
     connect(textTimer, &QTimer::timeout,
@@ -35,10 +30,10 @@ BalloonWidget::BalloonWidget(VariableStore* _varStore, QWidget *parent):
 
 BalloonWidget::~BalloonWidget()
 {
-    disconnect(textTimer, &QTimer::timeout,
-            this, &BalloonWidget::PrintText);
+//    disconnect(textTimer, &QTimer::timeout,
+//            this, &BalloonWidget::PrintText);
 
-    disconnect(balloonTimeout, &QTimer::timeout, this, &QWidget::hide);
+//    disconnect(balloonTimeout, &QTimer::timeout, this, &QWidget::hide);
 
     balloonTimeout->stop();
     delete balloonTimeout;
@@ -47,7 +42,6 @@ BalloonWidget::~BalloonWidget()
     delete textTimer;
 
     delete textArea;
-    delete textHolder;
 }
 
 void BalloonWidget::mouseMoveEvent(QMouseEvent *event)
@@ -99,17 +93,18 @@ void BalloonWidget::PrepareText(QString text)
 
 void BalloonWidget::PrintText()
 {
-    if (textHolder != nullptr) {
-        textHolder->insertPlainText(printingText.at(textCursor));
+    if (textArea != nullptr) {
+        textArea->textHolder->insertPlainText(printingText.at(textCursor));
         textCursor++;
 
         if (textCursor >= printingText.length()) {
             emit finishedTextPrintSignal();
         }
-    } else {
-        qDebug() << "ERROR - BalloonWidget - textHolder = nullptr, can't print (printText).";
     }
-
+    else
+    {
+        qDebug() << "ERROR - BalloonWidget - textArea = nullptr, can't print (PrintText).";
+    }
 }
 
 void BalloonWidget::ChangeBalloon(const QString &path, QPoint TL, QPoint BR)
@@ -118,7 +113,6 @@ void BalloonWidget::ChangeBalloon(const QString &path, QPoint TL, QPoint BR)
     int width = BR.x() - TL.x();
     int height = BR.y() - TL.y();
 
-    textHolder->clear();
     textArea->deleteLater();
 
     SetupTextBrowser(TL, width, height);
@@ -136,6 +130,10 @@ void BalloonWidget::PrepareTimeout()
 {
     if (timeout > 0)
         balloonTimeout->start(timeout);
+
+    ///TODO delete the below code
+
+    qDebug() << textArea->textHolder->toPlainText();
 }
 
 void BalloonWidget::SetTimeout(unsigned int newTimeout)
@@ -143,17 +141,17 @@ void BalloonWidget::SetTimeout(unsigned int newTimeout)
     timeout = newTimeout;
 }
 
-void BalloonWidget::TextBrowserUpdate()
-{
-    if (textArea != nullptr) {
+//void BalloonWidget::TextBrowserUpdate()
+//{
+//    if (textArea != nullptr) {
 
-        textArea->setHtml(textHolder->toPlainText());
-        textArea->moveCursor(QTextCursor::End);
+//        textArea->setHtml(textArea->textHolder->toPlainText());
+//        textArea->moveCursor(QTextCursor::End);
 
-    }
-    else
-        qDebug() << "ERROR - BalloonWidget - textArea = nullptr, can't print (textBrowserUpdate).";
-}
+//    }
+//    else
+//        qDebug() << "ERROR - BalloonWidget - textArea = nullptr, can't print (textBrowserUpdate).";
+//}
 
 QSize BalloonWidget::sizeHint() const
 {
@@ -163,7 +161,24 @@ QSize BalloonWidget::sizeHint() const
     return QSize(1000,1000);
 }
 
+void BalloonWidget::AppendHtml(const QString &text)
+{
+    if (textArea != nullptr)
+    {
+        show();
+        textArea->textHolder->insertPlainText(text);
+    }
+}
+
 void BalloonWidget::ClearBalloon()
 {
+    if (textArea != nullptr)
+        textArea->textHolder->clear();
+}
+
+void BalloonWidget::PrintContents()
+{
+    if (textArea != nullptr)
+        qDebug() << "INFO - BalloonWidget - textHolder contains:" << textArea->textHolder->toPlainText();
 
 }

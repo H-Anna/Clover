@@ -61,7 +61,6 @@ void Balloon::ChangeScope(unsigned int id)
 
     ConnectScope();
 
-
 }
 
 void Balloon::ConnectScope()
@@ -93,23 +92,17 @@ void Balloon::DisconnectScope()
 
 void Balloon::AppendHtml(const QString &text)
 {
-    if (inScope->textHolder != nullptr)
-    {
-        inScope->show();
-        inScope->textHolder->insertPlainText(text);
-    }
+    inScope->AppendHtml(text);
 }
 
 void Balloon::PrintBalloonContents()
 {
-    if (inScope->textHolder != nullptr)
-        qDebug() << "INFO - BalloonWidget - textHolder contains:" << inScope->textHolder->toPlainText();
+    inScope->PrintContents();
 }
 
 void Balloon::ClearBalloon()
 {
-    if (inScope->textHolder != nullptr)
-        inScope->textHolder->clear();
+    inScope->ClearBalloon();
 }
 
 void Balloon::ChangeTextSpeed(unsigned int newSpeed)

@@ -1,6 +1,6 @@
 #include "filereader.h"
 
-bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, QString *iniFile, const QString &absolutePath)
+bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, QString *iniFile, QString *stylesheet, const QString &absolutePath)
 {
     int validCount = 0;
 
@@ -18,6 +18,16 @@ bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, QString *iniFile, c
         if (it.fileName().endsWith(".ini")) {
 
             *iniFile = it.absoluteFilePath();
+        }
+
+        if (it.fileName().endsWith(".qss")) {
+
+            auto file = new QFile(it.absoluteFilePath());
+            file->open(QIODevice::ReadOnly);
+            *stylesheet = file->readAll();
+            file->close();
+            delete file;
+
         }
 
         if (it.fileName().endsWith(".json")) {
@@ -42,6 +52,8 @@ bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, QString *iniFile, c
                             "No 'type' defined. Skipping file.").arg(file->fileName());
                 continue;
             }
+
+            delete file;
 
             validObjects->append(json);
             validCount++;

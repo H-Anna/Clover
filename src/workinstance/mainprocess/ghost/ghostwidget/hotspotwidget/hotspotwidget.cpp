@@ -27,7 +27,7 @@ void HotspotWidget::mouseMoveEvent(QMouseEvent *event)
     //qDebug() << QString("Mouse entered");
     affection++;
     if (affection > 500) {
-        emit hotspotTalkSignal("topic", "headpat");
+        emit hotspotTalkSignal("anchor", "headpat");
         affection = 0;
     }
 
@@ -38,7 +38,7 @@ void HotspotWidget::mousePressEvent(QMouseEvent *event)
     //qDebug() << QString("Pressed %1 mouse").arg(event->button());
     clicks++;
     if (clicks > 3) {
-        emit hotspotTalkSignal("topic", "headclick");
+        emit hotspotTalkSignal("anchor", "headclick");
         clicks = 0;
     }
 

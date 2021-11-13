@@ -7,11 +7,16 @@
 #include <surfacemanager.h>
 #include <soundemitter.h>
 
+#include <QApplication>
+
 class WorkInstance
 {
 public:
-    WorkInstance(QString appDirPath);
+    //WorkInstance(QString appDirPath);
+    WorkInstance(QApplication* app);
     ~WorkInstance();
+
+    QString stylesheet;
 
 private:
     void ConnectThings();

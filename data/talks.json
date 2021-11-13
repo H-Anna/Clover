@@ -20,6 +20,9 @@
 		
 		"<!p[0]><!s[0]>Hi! Do you like mice?<p><a href=&quotanchor:likemice&quot>I love mice!</a><p><a href=&quotanchor:dislikemice&quot>Mice suck.</a>",
 		
-		"<!p[0]><!s[0]><!timeout[5000]>This balloon will time out in 5 seconds."
+		"<!p[0]><!s[0]><!timeout[5000]>This balloon will time out in 5 seconds.",
+		
+		"<!p[0]><!s[0]>I want to visit my <!pool[family]> <!pool[when-event]>."
+		
 	]
 }

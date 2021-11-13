@@ -7,7 +7,6 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPixmap>
-#include <QPlainTextEdit>
 #include <QTimer>
 #include <QElapsedTimer>
 
@@ -21,9 +20,11 @@ public:
     ~BalloonWidget();
     QSize sizeHint() const override;
 
+    void AppendHtml(const QString &text);
     void ClearBalloon();
+    void PrintContents();
 
-    QPlainTextEdit* textHolder;
+    //QPlainTextEdit* textHolder;
 
 signals:
     void balloonLoadedSignal();
@@ -65,7 +66,7 @@ private:
 private slots:
     void PrintText();
 
-    void TextBrowserUpdate();
+//    void TextBrowserUpdate();
 };
 
 #endif // BALLOONWIDGET_H

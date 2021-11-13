@@ -1,8 +1,9 @@
 #include "workinstance.h"
 
-WorkInstance::WorkInstance(QString appDirPath)
+WorkInstance::WorkInstance(QApplication* app)
 {
-    QDir dataDir(appDirPath);
+    //QDir dataDir(aappDirPath);
+    QDir dataDir(app->applicationDirPath());
     QString path = QDir::cleanPath(
                 QString("..") + QDir::separator() + ".." + QDir::separator() + ".." + QDir::separator() + "data");
 
@@ -13,8 +14,13 @@ WorkInstance::WorkInstance(QString appDirPath)
     QList<QJsonObject> jsonObjects;
     QString iniFile;
 
-    if (!FileReader::ReadFiles(&jsonObjects, &iniFile, dataDir.absolutePath())) {
+    if (!FileReader::ReadFiles(&jsonObjects, &iniFile, &stylesheet, dataDir.absolutePath())) {
        qDebug() << "ERROR - FileReader: Something happened during file reading.";
+       return;
+    }
+
+    if (!stylesheet.isEmpty()) {
+        app->setStyleSheet(stylesheet);
     }
 
     /// Load variables from ini file(s)
@@ -46,6 +52,9 @@ WorkInstance::WorkInstance(QString appDirPath)
         else if (type == "keytalk") {
             talkMan->LoadKeyTalks(&json);
         }
+        else if (type == "pool") {
+            talkMan->LoadStringPools(&json);
+        }
         else if (type == "surface") {
             surfaceMan->LoadSurfaces(&json, aPath);
         }
@@ -57,7 +66,8 @@ WorkInstance::WorkInstance(QString appDirPath)
         }
     }
 
-    mainProc = new MainProcess(varStore, surfaceMan->GetLayerCount(), surfaceMan->GetDefaultSurfaces(), surfaceMan->GetDefaultBalloons());
+    mainProc = new MainProcess(varStore, surfaceMan->GetLayerCount(),
+                               surfaceMan->GetDefaultSurfaces(), surfaceMan->GetDefaultBalloons());
 
     varStore->AddMember("MainProcess", mainProc);
 

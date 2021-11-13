@@ -4,6 +4,7 @@
 #include <QTextBrowser>
 #include <QWidget>
 #include <QMouseEvent>
+#include <QPlainTextEdit>
 
 #include <variablestore.h>
 
@@ -12,7 +13,13 @@ class TextArea: public QTextBrowser
     Q_OBJECT
 public:
     TextArea(VariableStore* varStore, QWidget *parent);
+    ~TextArea();
 
+    QPlainTextEdit* textHolder;
+
+private:
+
+    void TextBrowserUpdate();
 private slots:
     void EvaluateAnchor(QUrl url);
 

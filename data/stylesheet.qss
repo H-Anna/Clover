@@ -1,0 +1,11 @@
+QTextBrowser {
+	background-color: rgba(255, 255, 255, 0);
+	color: black;
+	font-style: bold;
+	font-size: 15px;
+	font-family: "Comic Sans MS";
+}
+
+QTextBrowser#myballoon {
+	color: #8B4513;
+}

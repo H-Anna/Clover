@@ -60,6 +60,31 @@ bool TalkManager::LoadKeyTalks(QJsonObject *json)
     return true;
 }
 
+bool TalkManager::LoadStringPools(QJsonObject *json)
+{
+    QJsonObject poolsObj = json->value("content").toObject();
+
+    if (poolsObj.isEmpty()) {
+        qDebug() << "ERROR - TalkManager - Key talks couldn't be loaded!";
+        return false;
+    }
+
+    for (auto &key: poolsObj.keys()) {
+
+        auto array = poolsObj.value(key).toArray();
+        auto list = QList<QString>();
+
+        for (int i = 0; i < array.count(); i++) {
+            list.append(array.at(i).toString());
+        }
+
+        pools[key] = list;
+
+    }
+
+    return true;
+}
+
 TokenCollection TalkManager::MakeTokens(const QString &talk)
 {
     auto tokens = new TokenCollection();
@@ -70,7 +95,10 @@ TokenCollection TalkManager::MakeTokens(const QString &talk)
 
     Parse(*tokens, _talk, tagRegex);
 
-    /// If you want to post-process tokens, call tokens->Finalize() here
+    /// If you want to post-process tokens INDIVIDUALLY, call tokens->Finalize() here
+    /// Otherwise you can implement other post-processing functions.
+
+    ReplacePools(*tokens);
 
     return *tokens;
 
@@ -149,7 +177,17 @@ void TalkManager::Parse(TokenCollection &tc, const QString &str, const QRegularE
         }
 
         ///Mark tag type correctly.
-        tc.append(tag, regex == htmlRegex ? Token::HtmlTag : Token::CommandTag, params);
+
+        auto type = Token::CommandTag;
+
+        if (regex == htmlRegex) {
+            type = Token::HtmlTag;
+
+        } else if (tag == "pool") {
+            type = Token::PoolTag;
+        }
+
+        tc.append(tag, type, params);
 
         cursorPos = match.capturedEnd();
     }
@@ -169,6 +207,41 @@ void TalkManager::Parse(TokenCollection &tc, const QString &str, const QRegularE
             }
         }
     }
+}
+
+void TalkManager::ReplacePools(TokenCollection &tc)
+{
+    while (tc.HasPool()) {
+
+        //Ready token collection
+        auto tmp = new TokenCollection();
+        //Get pool
+        auto pool = tc.GetNextPool();
+        //Get parameter
+        auto param = pool->GetParams().at(0);
+        //Get index of pool in token list
+        auto idx = tc.indexOf(pool);
+
+        //Get random talk from pool
+        auto talk = FromPool(param);
+
+        //Parse talk
+        Parse(*tmp, talk, tagRegex);
+        //Replace pool tag with contents
+        tc.replaceAt(idx, tmp);
+    }
+}
+
+QString TalkManager::FromPool(QString key)
+{
+    auto list = pools.value(key, QList<QString>());
+
+    if (list.isEmpty()) {
+        return "NULL";
+    }
+
+    unsigned int idx = QRandomGenerator::global()->bounded(list.length());
+    return list.at(idx);
 }
 
 void TalkManager::RandomTalk()

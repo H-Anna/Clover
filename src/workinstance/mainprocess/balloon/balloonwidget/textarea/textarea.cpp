@@ -12,10 +12,12 @@ TextArea::TextArea(VariableStore *varStore, QWidget *parent):
     setTextInteractionFlags(Qt::LinksAccessibleByMouse);
     setMouseTracking(false);
 
-    QPalette p = palette();
-    p.setColor(QPalette::Base, QColor(255,255,255,0));
-    p.setColor(QPalette::Text, Qt::black);
-    setPalette(p);
+    QObject::setObjectName("myballoon");
+
+    textHolder = new QPlainTextEdit(this);
+    textHolder->hide();
+    connect(textHolder, &QPlainTextEdit::textChanged,
+            this, &TextArea::TextBrowserUpdate);
 
     connect(this, &QTextBrowser::anchorClicked,
             this, &TextArea::EvaluateAnchor);
@@ -32,6 +34,11 @@ TextArea::TextArea(VariableStore *varStore, QWidget *parent):
     show();
 }
 
+TextArea::~TextArea()
+{
+    delete textHolder;
+}
+
 void TextArea::EvaluateAnchor(QUrl url)
 {
     if (url.scheme() == "http" || url.scheme() == "https") {
@@ -43,4 +50,10 @@ void TextArea::EvaluateAnchor(QUrl url)
 //    else if (url.scheme() == "key") {
 //        emit keyTalkSignal(url.path());
 //    }
+}
+
+void TextArea::TextBrowserUpdate()
+{
+    setHtml(textHolder->toPlainText());
+    moveCursor(QTextCursor::End);
 }

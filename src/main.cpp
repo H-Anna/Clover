@@ -1,12 +1,10 @@
 #include <workinstance.h>
 
-#include <QApplication>
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    WorkInstance wi(a.applicationDirPath());
+    WorkInstance wi(&a);
 
     return a.exec();
 }

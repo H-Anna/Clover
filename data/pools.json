@@ -1,0 +1,35 @@
+{
+	"type": "pool",
+	"content":
+	{
+		"family":
+		[
+			"brother",
+			"sister",
+			"cousin",
+			"mother",
+			"father",
+			"parents",
+			"family",
+			"grandparents"
+		],
+		"when-event":
+		[
+			"during <!pool[event]>",
+			"before <!pool[event]>",
+			"after <!pool[event]>"
+		],
+		"event":
+		[
+			"Christmas",
+			"Halloween",
+			"Easter",
+			"New Year's Eve",
+			"Independence Day",
+			"International Lion Day",
+			"my birthday",
+			"<!get[char2name]>'s birthday",
+			"<!get[username]>'s birthday"
+		]
+	}
+}

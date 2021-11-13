@@ -22,7 +22,6 @@ public:
     BalloonWidget *GetInScope() const;
     unsigned int GetID(BalloonWidget* w) const;
 
-
 signals:
     void printTextSignal(QString text);
     void finishedTextPrintSignal();

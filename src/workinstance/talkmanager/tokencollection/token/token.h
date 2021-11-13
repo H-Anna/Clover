@@ -13,6 +13,7 @@ public:
         HtmlTag,
         CommandTag,
         PlainText,
+        PoolTag,
         End
     };
     Q_ENUM(TokenType)
