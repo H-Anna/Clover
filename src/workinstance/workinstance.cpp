@@ -88,8 +88,12 @@ WorkInstance::~WorkInstance()
 
 void WorkInstance::ConnectThings()
 {
+    /// TalkManager
+
     QObject::connect(talkMan, &TalkManager::tokensReadySignal,
                      mainProc, &MainProcess::TokensReady);
+
+    /// MainProcess
 
     QObject::connect(mainProc, &MainProcess::applySurfaceSignal,
                      surfaceMan, &SurfaceManager::ApplySurface);
@@ -100,6 +104,14 @@ void WorkInstance::ConnectThings()
     QObject::connect(mainProc, &MainProcess::applyAnimationSignal,
                      surfaceMan, &SurfaceManager::ApplyAnimation);
 
+    QObject::connect(mainProc, &MainProcess::playSoundSignal,
+                     soundEmit, &SoundEmitter::Play);
+
+    QObject::connect(mainProc, &MainProcess::stopSoundSignal,
+                     soundEmit, &SoundEmitter::Stop);
+
+    /// SurfaceManager
+
     QObject::connect(surfaceMan, &SurfaceManager::animateGhostSignal,
                      mainProc->GetGhost(), &Ghost::Animate);
 
@@ -109,11 +121,10 @@ void WorkInstance::ConnectThings()
     QObject::connect(surfaceMan, &SurfaceManager::changeBalloonSignal,
                      mainProc->GetBalloon(), &Balloon::ChangeBalloon);
 
-    QObject::connect(mainProc, &MainProcess::playSoundSignal,
-                     soundEmit, &SoundEmitter::Play);
+    /// VariableStore
 
-    QObject::connect(mainProc, &MainProcess::stopSoundSignal,
-                     soundEmit, &SoundEmitter::Stop);
+    QObject::connect(varStore, &VariableStore::anchorTalkSignal,
+                     talkMan, &TalkManager::AnchorTalk);
 }
 
 void WorkInstance::SetupActions()

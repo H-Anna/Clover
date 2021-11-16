@@ -254,7 +254,7 @@ void SurfaceManager::MakeSurface(QJsonObject &obj)
     if (s->HasName())
         namedSurfaces.insert(s->GetName(), s);
 
-    for (auto it: elements) {
+    for (const auto& it: elements) {
         s->AddElement(imagePath + it.toString());
     }
 
@@ -271,27 +271,44 @@ void SurfaceManager::MakeSurface(QJsonObject &obj)
     }
 
     QJsonArray hotspotArray = obj.value("hotspots").toArray();
-    if (!hotspotArray.isEmpty()) {
 
-        for (int i = 0; i < hotspotArray.count(); i++) {
+    for (const auto& jsonvalue: hotspotArray)
+    {
+        auto obj = jsonvalue.toObject();
 
-            auto obj = hotspotArray.at(i).toObject();
+        auto name = obj.value("name").toString();
+        auto area = obj.value("area").toArray();
+        auto c = obj.value("cursor").toString();
 
-            auto name = obj.value("name").toString();
-            auto area = obj.value("area").toArray();
-            auto c = obj.value("cursor").toString();
-
-            int cursor;
-            bool ok;
-            c.toInt(&ok);
-            if (ok) {
-                cursor = c.toInt();
-            } else {
-                cursor = QMetaEnum::fromType<Qt::CursorShape>().keyToValue(obj.value("cursor").toString().toStdString().c_str());
-            }
-
-            s->AddHotspot(name, area.at(0).toInt(), area.at(1).toInt(), area.at(2).toInt(), area.at(3).toInt(), Qt::CursorShape(cursor));
+        int cursor;
+        bool ok;
+        c.toInt(&ok);
+        if (ok) {
+            cursor = c.toInt();
+        } else {
+            cursor = QMetaEnum::fromType<Qt::CursorShape>().keyToValue(c.toStdString().c_str());
         }
+
+        s->AddHotspot(name, area.at(0).toInt(), area.at(1).toInt(), area.at(2).toInt(), area.at(3).toInt(), Qt::CursorShape(cursor));
+        auto h = s->GetHotspot(name);
+
+        auto vars = obj.value("variables").toArray();
+        for (const auto& v: vars)
+        {
+            auto _v = v.toObject();
+            auto name = _v.value("name").toString();
+            auto t = _v.value("type").toString();
+            bool ok;
+            int type;
+            t.toInt(&ok);
+            if (ok) {
+                type = t.toInt();
+            } else {
+                type = QMetaEnum::fromType<HotspotVariable::Interaction>().keyToValue(t.toStdString().c_str());
+            }
+            h->AddVariable(name, HotspotVariable::Interaction(type));
+        }
+
     }
 }
 

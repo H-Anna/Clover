@@ -92,13 +92,11 @@
 					[
 						{
 							"name": "headclick",
-							"type": "Click",
-							"threshold": 3
+							"type": "MouseClick"
 						},
 						{
 							"name": "headpat",
-							"type": "Mouse",
-							"threshold": 500
+							"type": "MouseWheel"
 						}
 					]
 				}

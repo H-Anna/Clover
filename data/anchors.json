@@ -3,7 +3,7 @@
 	"content":
 	{
 		"red": "Red things include apples, roses and ribbons.",
-		"headpat": "<!p[0]>Aw shucks. I love pats.",
+		"headpat": "<!p[0]><!s[0]><!i[0]><!i[1]>Aw shucks. I love pats.",
 		"headclick": "<!p[0]><!s[0]><!i[0]>Indeed, this is my head.",
 		"likemice": "<!p[0]><!s[0]><!i[1]>That's the spirit.",
 		"dislikemice": "<!p[0]><!s[0]>That's alright. No one can like everybody."

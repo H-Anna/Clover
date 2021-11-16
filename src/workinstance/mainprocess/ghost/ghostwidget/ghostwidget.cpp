@@ -69,7 +69,7 @@ void GhostWidget::SetHotspots(QVector<Hotspot *> hs)
     hotspots.clear();
 
     for (auto &it: hs) {
-        auto tmp = new HotspotWidget(varStore, this);
+        auto tmp = new HotspotWidget(varStore, it->GetVariables(), this);
 
         tmp->move(it->getTopLeft());
         int width = it->getBottomRight().x() - it->getTopLeft().x();

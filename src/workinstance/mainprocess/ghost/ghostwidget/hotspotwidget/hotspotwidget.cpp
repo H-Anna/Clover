@@ -1,9 +1,8 @@
 #include "hotspotwidget.h"
 
-HotspotWidget::HotspotWidget(VariableStore* varStore, QWidget *parent):
-    QWidget(parent),
-    affection(0),
-    clicks(0)
+HotspotWidget::HotspotWidget(VariableStore* varStore, QList<HotspotVariable *> _variables, QWidget *parent):
+    variables(_variables),
+    QWidget(parent)
 {
     setAttribute(Qt::WA_TranslucentBackground);
     setContextMenuPolicy(Qt::NoContextMenu);
@@ -16,30 +15,47 @@ HotspotWidget::HotspotWidget(VariableStore* varStore, QWidget *parent):
 
     /// TODO: connect a TalkManager signal here
 
-    connect(this, SIGNAL(hotspotTalkSignal(QString,QString)),
-            varStore->GetMember("TalkManager"), SLOT(AnchorTalk(QString,QString)));
+//    connect(this, SIGNAL(hotspotTalkSignal(QString,QString)),
+//            varStore->GetMember("TalkManager"), SLOT(AnchorTalk(QString,QString)));
+
+    connect(this, SIGNAL(incrementSignal(QString)),
+            varStore, SLOT(increment(QString)));
+
 
     showMaximized();
 }
 
 void HotspotWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    //qDebug() << QString("Mouse entered");
-    affection++;
-    if (affection > 500) {
-        emit hotspotTalkSignal("anchor", "headpat");
-        affection = 0;
+    for (const auto &v: qAsConst(variables))
+    {
+        if (v->GetInteraction() == HotspotVariable::Interaction::MouseMove)
+        {
+            emit incrementSignal(v->GetName());
+        }
     }
+}
 
+void HotspotWidget::wheelEvent(QWheelEvent *event)
+{
+    for (const auto &v: qAsConst(variables))
+    {
+        if (v->GetInteraction() == HotspotVariable::Interaction::MouseWheel)
+        {
+            emit incrementSignal(v->GetName());
+        }
+    }
 }
 
 void HotspotWidget::mousePressEvent(QMouseEvent *event)
 {
-    //qDebug() << QString("Pressed %1 mouse").arg(event->button());
-    clicks++;
-    if (clicks > 3) {
-        emit hotspotTalkSignal("anchor", "headclick");
-        clicks = 0;
+    for (const auto &v: qAsConst(variables))
+    {
+        if (v->GetInteraction() == HotspotVariable::Interaction::MouseClick)
+        {
+            emit incrementSignal(v->GetName());
+        }
     }
+
 
 }

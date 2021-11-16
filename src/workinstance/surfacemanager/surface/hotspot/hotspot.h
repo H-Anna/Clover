@@ -1,8 +1,11 @@
 #ifndef HOTSPOT_H
 #define HOTSPOT_H
 
+#include <hotspotvariable.h>
+
 #include <QString>
 #include <QPoint>
+#include <QList>
 
 class Hotspot
 {
@@ -14,11 +17,17 @@ public:
     QPoint getBottomRight() const;
     Qt::CursorShape getCursor() const;
 
+
+    void AddVariable(const QString _name, HotspotVariable::Interaction _interaction);
+
+    QList<HotspotVariable *> GetVariables() const;
+
 private:
     QString name;
     QPoint topLeft;
     QPoint bottomRight;
     Qt::CursorShape cursor;
+    QList<HotspotVariable*> variables;
 };
 
 #endif // HOTSPOT_H

@@ -28,3 +28,13 @@ Qt::CursorShape Hotspot::getCursor() const
 {
     return cursor;
 }
+
+void Hotspot::AddVariable(const QString _name, HotspotVariable::Interaction _interaction)
+{
+    variables.append(new HotspotVariable(_name, _interaction));
+}
+
+QList<HotspotVariable *> Hotspot::GetVariables() const
+{
+    return variables;
+}

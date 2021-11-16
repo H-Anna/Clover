@@ -12,7 +12,7 @@ VariableStore::~VariableStore()
     UnloadIni();
 }
 
-QVariant VariableStore::GetVariable(const QString &key)
+QVariant VariableStore::GetVariable(const QString &key) const
 {
     if (globalFunctions.contains(key)) {
         return globalFunctions.value(key)();
@@ -27,7 +27,7 @@ void VariableStore::SetVariable(const QString &key, const QVariant &value)
     variables[key] = value;
 }
 
-QObject *VariableStore::GetMember(const QString &key)
+QObject *VariableStore::GetMember(const QString &key) const
 {
     if (!members.contains(key)) {
         qDebug() << QString("ERROR - VariableStore - Member with key %1 doesn't exist, nullptr returned.").arg(key);
@@ -43,6 +43,35 @@ void VariableStore::AddMember(const QString &key, QObject *member)
     } else {
         members[key] = member;
     }
+}
+
+void VariableStore::ObserveVariable(const QString &key)
+{
+    if (!variables.contains(key)) {
+        return;
+    }
+
+    bool ok;
+    int v = variables.value(key).toInt(&ok);
+    if (ok && v == 100) {
+        emit anchorTalkSignal("anchor", key);
+    }
+}
+
+void VariableStore::increment(QString key)
+{
+    if (!variables.contains(key)) {
+        return;
+    }
+
+    bool ok;
+    int v = variables.value(key).toInt(&ok);
+    if (ok) {
+        v++;
+        variables[key] = v;
+    }
+
+    ObserveVariable(key);
 }
 
 void VariableStore::BuildLambdaMap()
