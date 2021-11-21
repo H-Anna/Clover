@@ -1,5 +1,25 @@
 #include "filereader.h"
 
+bool FileReader::HasDataFolder(QString *folderPath)
+{
+    QDir dir(*folderPath);
+    dir.setNameFilters(QStringList("data"));
+
+    for (int i = 0; i < 4; i++)
+    {
+        auto list = dir.entryInfoList(QDir::Dirs, QDir::Name);
+
+        if (list.length() >= 1) {
+            *folderPath = QDir::cleanPath(list.at(0).absoluteFilePath());
+            return true;
+        }
+
+        dir.cdUp();
+    }
+
+    return false;
+}
+
 bool FileReader::ReadFiles(QList<QJsonObject> *validObjects, QString *iniFile, QString *stylesheet, const QString &absolutePath)
 {
     int validCount = 0;

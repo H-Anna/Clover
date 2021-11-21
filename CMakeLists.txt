@@ -16,11 +16,13 @@ include_directories(${CMAKE_SOURCE_DIR}/src/common)
 
 add_subdirectory(src)
 
+install(TARGETS Clover DESTINATION bin)
+
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_VERSION_MAJOR "0")
 set(CPACK_PACKAGE_VERSION_MINOR "1")
 set(CPACK_PACKAGE_VERSION_PATCH "0")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "Clover${CPACK_PACKAGE_VERSION}")
 set(CPACK_SOURCE_GENERATOR "TGZ")
-set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
+#set(CPACK_NSIS_EXECUTABLES_DIRECTORY "src")
 include(CPack)

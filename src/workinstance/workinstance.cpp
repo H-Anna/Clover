@@ -2,12 +2,15 @@
 
 WorkInstance::WorkInstance(QApplication* app)
 {
-    //QDir dataDir(aappDirPath);
-    QDir dataDir(app->applicationDirPath());
-    QString path = QDir::cleanPath(
-                QString("..") + QDir::separator() + ".." + QDir::separator() + ".." + QDir::separator() + "data");
 
-    dataDir.setPath(path);
+    QString path = app->applicationDirPath();
+
+    if (!FileReader::HasDataFolder(&path)) {
+       qDebug() << "ERROR - FileReader: Data folder can't be found.";
+       return;
+    }
+
+    QDir dataDir(path);
 
     /// Load files with FileReader as JSON objects
 
