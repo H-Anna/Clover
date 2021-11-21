@@ -10,11 +10,11 @@ class Frame: public QObject
 public:
     enum DrawMethod
     {
-        Base,
-        Overlay,
-        Clip,
-        Replace,
-        Insert
+        Base = 0,
+        Overlay = 1,
+        Clip = 2,
+        Replace = 3,
+        Insert = 4
     };
     Q_ENUM(DrawMethod)
 

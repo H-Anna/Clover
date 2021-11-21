@@ -11,9 +11,9 @@ class Animation: public QObject
 public:
     enum Frequency
     {
-        Never,
-        Always,
-        Loop
+        Never = 0,
+        Always = 1,
+        Loop = 2
     };
     Q_ENUM(Frequency)
 

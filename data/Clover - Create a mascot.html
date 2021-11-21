@@ -1,0 +1,298 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clover - Create a mascot</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__left">
+    <div class="stackedit__toc">
+      
+<ul>
+<li><a href="#clover-v0.1.0---a-guide-to-creating-a-mascot">Clover v0.1.0 - A guide to creating a mascot</a>
+<ul>
+<li><a href="#the-data-folder">The data folder</a></li>
+<li><a href="#surfaces.json">surfaces.json</a></li>
+<li><a href="#balloons.json">balloons.json</a></li>
+<li><a href="#talks.json">talks.json</a></li>
+<li><a href="#keytalk.json-and-anchors.json">keytalk.json and anchors.json</a></li>
+<li><a href="#pools.json">pools.json</a></li>
+<li><a href="#sounds.json">sounds.json</a></li>
+<li><a href="#variables.ini">variables.ini</a></li>
+<li><a href="#stylesheet.qss">stylesheet.qss</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+  </div>
+  <div class="stackedit__right">
+    <div class="stackedit__html">
+      <h1 id="clover-v0.1.0---a-guide-to-creating-a-mascot">Clover v0.1.0 - A guide to creating a mascot</h1>
+<p>This is a haphazardly-made guide to creating your own Clover mascot. I’ve done my best to make it understandable, although sometimes I may use SSP terminology instead of plain language without noticing (eg. using ‘mascot’ and ‘ghost’ interchangeably). Feel free to contact me if there’s something you don’t understand.</p>
+<h2 id="the-data-folder">The data folder</h2>
+<p>The “data” folder contains all of the files the mascot uses. The JSON files specify how the mascot will work. Their contents are read and stored on app startup and remain in memory until the app quits. If you’re not familiar with this format, <a href="https://www.w3schools.com/js/js_json_intro.asp">follow this link to learn about it.</a> This means that distributing your mascot is as easy as creating a zip archive of its data folder.</p>
+<blockquote>
+<p>Please read the below subsections carefully, as they contain important information when it comes to<br>
+structuring and writing Clover’s JSON files. In the future, I’d like to write GUI applications to save time<br>
+for developers and make it simpler to create ghosts for those who don’t know how to write code.</p>
+</blockquote>
+<p>The files are generally structured like this:</p>
+<pre><code>{
+	"type": "anchor",
+	"content":
+	[
+    	//...
+	]
+}
+</code></pre>
+<p>The value of <code>type</code> will determine how the file is read. <code>content</code> contains data relevant to how the mascot functions. Some files may have <code>{braces}</code> instead of <code>[brackets]</code> after <code>content</code> - braces denote objects, brackets denote arrays. Current types in use: <code>surface, balloon, talk, keytalk, anchor, pool, sound</code>.</p>
+<blockquote>
+<p>Detailed description of each file’s structure follows. While reading, please refer to the<br>
+data folder for examples. Mandatory fields are marked with <strong>!</strong>. Along with JSON files,<br>
+the files <code>variables.ini</code> and <code>stylesheet.qss</code> will also be described.</p>
+</blockquote>
+<h2 id="surfaces.json">surfaces.json</h2>
+<p>This file describes the graphics objects the mascot will use, called <strong>surfaces.</strong> A surface is a single image or multiple images layered dinamically on top of one another at runtime. When the mascot “enters” a surface, a major change in graphics is supposed to occur, such as the character’s pose changing. For semantic purposes, image files are recommended to be the same size each.<br>
+In this file, a <code>layercount</code> is also specified, although this isn’t mandatory and currently does nothing.<br>
+Contents are specified as an <strong>array of objects.</strong></p>
+<ul>
+<li><strong>!</strong> <code>id</code>: The ID of the surface, an integer &gt;= 0. Each ID should be unique.</li>
+<li><strong>!</strong> <code>elements</code>: An <strong>array</strong> of strings that are relative paths to image files. Entering the surface will cause these graphics to be displayed. These graphics will be treated as separate layers. You may also specify an empty layer with an empty string. The graphics are displayed “bottom-up,” which means that the first element of the array will be the bottom layer and the last will be the top. Clover has been tested with .png files only, but should work with .jpg, .jpeg and possibly .bmp files as well.</li>
+<li><code>animations</code>: <strong>Array of objects,</strong> see below.</li>
+<li><code>hotspots</code>: <strong>Array of objects,</strong> see below.</li>
+</ul>
+<p><strong>Animations</strong> (also called intervals) may be specified - commonly these are still images that change on a timer, or a small change in the graphic that can be called manually. Each surface can only use its own animations, and multiple animations may be active at once. When a new surface is entered, all animations are cleared. Animations are optional to specify, but each of their fields are mandatory.</p>
+<ul>
+<li><strong>!</strong> <code>id</code>: The ID of the animation, an integer &gt;= 0. Each ID should be unique <em>within a surface,</em> but they can repeat across surfaces. For example, surface 10 may not have two animations whose IDs are both 0, but surface 10 and surface 11 may each have one animation with ID 0.</li>
+<li><code>name</code>: Animations can be named (string value) for easy access, but this is not required.</li>
+<li><strong>!</strong> <code>frequency</code>: String value that defines how the animation is played. Case sensitive. Possible values:
+<ul>
+<li><code>"Never"</code>: This animation has to be called manually.</li>
+<li><code>"Always"</code>: This animation starts when the mascot enters the surface and loops (when it reaches the last frame, it will continue to play from the first frame).</li>
+<li><code>"Loop"</code>: This animation has to be called manually and loops.</li>
+</ul>
+</li>
+<li><strong>!</strong> <code>layer</code>: Which layer to perform the animation on.</li>
+<li><strong>!</strong> <code>frames</code>: <strong>Array of objects,</strong> see below. Order is important.</li>
+</ul>
+<p><strong>Frames</strong> are the individual graphics that make up an animation.</p>
+<ul>
+<li><strong>!</strong> <code>image</code>: The relative path to the image file to be displayed. String.</li>
+<li><strong>!</strong> <code>drawmethod</code>: Determines how the frame is displayed. Case sensitive. Possible values:
+<ul>
+<li><code>"Overlay"</code>: Overlay the image on top of all displayed graphics.</li>
+<li><code>"Insert"</code>: Insert image on specified layer. Pushes all above layers up one index. In the future this may cause issues.</li>
+<li><code>"Replace"</code>: Replace image on specified layer.</li>
+<li><code>"Base"</code> and <code>"Clip"</code> can be specified, but do nothing and may cause bugs.</li>
+</ul>
+</li>
+<li><strong>!</strong> <code>ms</code>: How many milliseconds to display the next frame. Specifying 0 causes the animation to stop. It is also recommended when your animation is a single frame long and is not supposed to expire, such as the lion’s perked ears.</li>
+</ul>
+<p><strong>Hotspots</strong> are areas the user can mouse over which send specific signals when certain actions are taken, such as the hotspot being clicked. These are also optional.</p>
+<ul>
+<li><strong>!</strong> <code>name</code>: The name of the hotspot. String.</li>
+<li><strong>!</strong> <code>area</code>: An array of 4 integer values that define the bounding rectangle of the hotspot. These are the top left X, top left Y, bottom right X and bottom right Y coordinates, respectively. These are calculated on the bottom layer graphic of a surface.</li>
+<li><strong>!</strong> <code>cursor</code>: String value of <a href="https://doc.qt.io/qt-5/qt.html#CursorShape-enum">Qt::CursorShape.</a> Specify without the <code>Qt::</code> part. Case sensitive.</li>
+<li><code>variables</code>: <strong>Array of objects.</strong> You can create a variable whose value increases when certain actions are performed on the hotspot.
+<ul>
+<li><strong>!</strong> <code>name</code>: String, the name of the variable. This should also be specified in <a href="#variables.ini">variables.ini.</a></li>
+<li><strong>!</strong> <code>type</code>: Determines the type of interaction that causes the variable to increase. String. Case sensitive. Possible values: <code>DoubleClick</code>, <code>MouseClick</code> and <code>MouseWheel</code>.</li>
+</ul>
+</li>
+</ul>
+<h2 id="balloons.json">balloons.json</h2>
+<p>This file describes the graphics objects the mascot’s speech <strong>balloons</strong> will use. Whenever the mascot displays text, this text is displayed in a box-shaped area over an image.<br>
+Contents are specified as an <strong>array of objects.</strong></p>
+<ul>
+<li><strong>!</strong> <code>id</code>: The ID of the balloon, an integer &gt;= 0.</li>
+<li><strong>!</strong> <code>image</code>: The relative path to the image. String.</li>
+<li><strong>!</strong> <code>textarea</code>: An array of 4 integers that define the bounding rectangle of the text display area. These are the top left X, top left Y, bottom right X and bottom right Y coordinates, respectively. These coordinates are in relation to the image.</li>
+</ul>
+<h2 id="talks.json">talks.json</h2>
+<p>This file lists strings called <strong>talks.</strong> Talks contain plain text, HTML tags and <strong>Clover tags,</strong> and the combinations of these define the actions of a mascot. Upon pressing the T key, Clover picks a talk from this file and parses it. Plaintext is displayed, HTML tags are used to style plaintext, and Clover tags perform various functions, such as clearing text from the balloon, changing text printing speed etc.</p>
+<blockquote>
+<p>Clover is compatible with <a href="https://doc.qt.io/qt-5/richtext-html-subset.html">Qt’s HTML 4 subset,</a> which means not all HTML tags may work.<br>
+Clover is also compatible with CSS stylesheet specification - more on that in the <a href="#stylesheet.qss">Text stylesheet</a> section.</p>
+</blockquote>
+<p>Contents are specified as an <strong>array of string values.</strong><br>
+JSON’s string values are delimited by <code>"quotation marks"</code>. When using quotation marks, <strong>you must replace each <code>"</code> character with <code>&amp;quot</code> to avoid errors.</strong> Clover will replace <code>&amp;quot</code> with <code>"</code> when displaying text. Other special characters are not affected.</p>
+
+<table>
+<thead>
+<tr>
+<th>Correct</th>
+<th>Incorrect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"&lt;a href=&amp;quothttps://google.com&amp;quot&gt;Link&lt;/a&gt;"</code></td>
+<td><code>"&lt;a href="https://google.com"&gt;Link&lt;/a&gt;"</code></td>
+</tr>
+<tr>
+<td><code>"I said &amp;quotI'll be fine&amp;quot and left."</code></td>
+<td><code>"I said "I'll be fine" and left."</code></td>
+</tr>
+</tbody>
+</table><p>Clover tags are formatted as <code>&lt;!tag[param]&gt;</code>. <code>tag</code> defines a function, while <code>param</code> is a parameter the function takes, though not all tags require one.</p>
+<blockquote>
+<p>Make sure you don’t mix up HTML tags and Clover tags.</p>
+</blockquote>
+<p>Below is a list of Clover tags and their functions. <code>INT</code> denotes an integer value, <code>STRING</code> denotes a string value, and <code>VAR</code> means the value may either be a string or an integer.</p>
+
+<table>
+<thead>
+<tr>
+<th>Tag</th>
+<th>Parameter</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>clr</code></td>
+<td>-</td>
+<td>Clears the balloon in focus.</td>
+</tr>
+<tr>
+<td><code>hide</code></td>
+<td>-</td>
+<td>Hides the character in focus.</td>
+</tr>
+<tr>
+<td><code>show</code></td>
+<td>-</td>
+<td>Shows the character in focus.</td>
+</tr>
+<tr>
+<td><code>wait</code></td>
+<td><code>INT</code></td>
+<td>Pauses talk execution for <code>INT</code> milliseconds.</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td><code>INT</code></td>
+<td>Sets the balloon timeout to <code>INT</code> milliseconds. Upon timeout, the balloon expires and disappears. The default value is <code>20000</code>. This value resets when the balloon expires.</td>
+</tr>
+<tr>
+<td><code>speed</code></td>
+<td><code>INT</code></td>
+<td>Sets text printing “speed” to <code>INT</code> milliseconds. This is actually a delay, which means that higher values will cause text to print slower. The default value is <code>50</code>. This value resets when the balloon expires.</td>
+</tr>
+<tr>
+<td><code>p</code></td>
+<td><code>INT</code></td>
+<td>Changes scope. <code>INT</code> is the ID of the mascot character. By default, the first character is <code>0</code>. This is used to switch between characters that talk to each other.</td>
+</tr>
+<tr>
+<td><code>b</code></td>
+<td><code>INT</code></td>
+<td>Changes the balloon in scope. <code>INT</code> is the ID of the balloon surface specified in <a href="#balloons.json">balloons.json.</a> This clears the balloon.</td>
+</tr>
+<tr>
+<td><code>s</code></td>
+<td><code>INT</code></td>
+<td>Changes the surface for the mascot in scope. <code>INT</code> is the ID of the surface specified in <a href="#surfaces.json">surfaces.json.</a></td>
+</tr>
+<tr>
+<td><code>i</code></td>
+<td><code>INT</code> or <code>STRING</code></td>
+<td>Applies the animation for the mascot in scope. <code>INT</code> is the ID of the animation specified for the surface in <a href="#surfaces.json">surfaces.json.</a> You may also use the name of the animation as the parameter, if it has been specified.</td>
+</tr>
+<tr>
+<td><code>get</code></td>
+<td><code>STRING</code></td>
+<td>Displays the value of the variable named <code>STRING</code>. See variables.ini for named variables. Additionally, you may write <code>&lt;!get[TIME]&gt;</code> to print the current time.</td>
+</tr>
+<tr>
+<td><code>set</code></td>
+<td><code>STRING, VAR</code></td>
+<td>Sets the value of the variable named <code>STRING</code> to <code>VAR</code>.</td>
+</tr>
+<tr>
+<td><code>play</code></td>
+<td><code>STRING</code>, <code>INT</code></td>
+<td>Plays a sound file named <code>STRING</code> defined in <a href="#sounds.json">sounds.json.</a> You may optionally provide <code>INT</code> to tell Clover to loop the sound file <code>INT</code> times.</td>
+</tr>
+<tr>
+<td><code>stop</code></td>
+<td>-</td>
+<td>Stops currently playing sound.</td>
+</tr>
+<tr>
+<td><code>pool</code></td>
+<td><code>STRING</code></td>
+<td>Pulls a string from a pool names <code>STRING</code>. See <a href="#pools.json">pools.json</a> for more information.</td>
+</tr>
+</tbody>
+</table><p>In addition to Clover tags, the HTML tag <code>&lt;a&gt;</code> can be used with special <strong>schemes.</strong> In code, a URL specified with this HTML tag will be converted into Qt’s QUrl object, allowing for certain parts of the URL to be queried. <a href="https://doc.qt.io/qt-5/qurl.html#setAuthority">Here is an example of a QUrl URL string’s structure.</a> A common scheme is <code>https</code>, which refers to a file on the internet. With Clover, you may specify <code>anchor</code> or <code>key</code> as schemes to create links that, when clicked, cause Clover to parse a talk defined in <a href="#keytalk.json-and-anchors.json">anchors.json or keytalk.json,</a> respectively.</p>
+
+<table>
+<thead>
+<tr>
+<th>Scheme</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>anchor</code></td>
+<td><code>&lt;a href=&amp;quotanchor:likemice&amp;quot&gt;I love mice!&lt;/a&gt;</code></td>
+</tr>
+<tr>
+<td><code>key</code></td>
+<td><code>&lt;a href=&amp;quotkey:MENU&amp;quot&gt;Menu&lt;/a&gt;</code></td>
+</tr>
+</tbody>
+</table><h2 id="keytalk.json-and-anchors.json">keytalk.json and anchors.json</h2>
+<p>At this time, these files are similar in function. You may specify a key, or <strong>anchor</strong>, which is a unique string that can be used to refer to a talk. Each anchor has only one talk associated with it.<br>
+Contents are specified as an <strong>object containing key-value pairs, and the values must be strings.</strong> Otherwise, these files have no set structure. You may nest and recurse anchors.</p>
+<h2 id="pools.json">pools.json</h2>
+<p>In this file, you may specify collections of string called <strong>pools.</strong> Using <code>&lt;!pool[poolname]&gt;</code> will specify a pool in the talk. Before parsing, Clover will replace this piece of the talk with a string picked randomly from the pool named <code>poolname</code>. This will cause the talk to display differently each time (though repetitions are allowed).<br>
+Contents are specified as an <strong>object containing key-array pairs, whose arrays contain string values.</strong> Otherwise, this file has no set structure.</p>
+<blockquote>
+<p>You may nest pools, but recursing is not recommended, as it may hang Clover.</p>
+</blockquote>
+<h2 id="sounds.json">sounds.json</h2>
+<p>In this file, you can specify sound files that Clover can play using the <code>&lt;!play[soundname]&gt;</code> tag. MP3 files are confirmed to be supported.</p>
+<blockquote>
+<p>This can’t be used to play sound files from major platforms such as YouTube or Spotify, as it requires direct access to a sound file, such as a URL that ends with <code>.mp3</code>.</p>
+</blockquote>
+<p>Contents are specified as an <strong>array of objects.</strong></p>
+<ul>
+<li><strong>!</strong> <code>name</code>: String that refers to the sound file.</li>
+<li><strong>!</strong> <code>type</code>: String. Specify <code>file</code> if it is a file on your computer, or <code>url</code> if it is a file on the internet.</li>
+<li><strong>!</strong> <code>location</code>: String. Relative path to the file, or a URL.</li>
+</ul>
+<h2 id="variables.ini">variables.ini</h2>
+<p>This is a collection of variables Clover handles. When starting, Clover will read and store its contents. When quitting, Clover will overwrite this file with its stored variables’ values.</p>
+<h2 id="stylesheet.qss">stylesheet.qss</h2>
+<p>CSS stylesheets can be applied to Qt Widgets. This file specifically contains a stylesheet that applies a default style to the mascot’s balloons’ text box. HTML tags written in talks take precedence over the style specifications contained here. <a href="https://www.w3schools.com/css/css_intro.asp">You may read about CSS more in detail here.</a> As with HTML tags in talks, this stylesheet is restricted to <a href="https://doc.qt.io/qt-5/richtext-html-subset.html">Qt’s HTML subset.</a><br>
+The file must look like this:</p>
+<pre><code>QTextBrowser {
+	//CSS code goes here
+}
+</code></pre>
+<p>In this specific file you can also see the following:</p>
+<pre><code>QTextBrowser#myballoon {
+	color: #8B4513;
+}
+</code></pre>
+<p>You can specify multiple stylesheets. The <code>QTextBrowser</code> stylesheet will be applied to every balloon within this mascot. The <code>QTextBrowser#myballoon</code> stylesheet will only be applied to QTextBrowser objects (the type of text box Clover uses) named <code>myballoon</code>, as Qt allows for naming objects programmatically. The <code>QTextBrowser#myballoon</code> stylesheet takes precedence over the <code>QTextBrowser</code> stylesheet.</p>
+<blockquote>
+<p>In the future, this would mean specifying in <a href="#balloons.json">balloons.json</a> a stylesheet name for<br>
+the balloon being used, and Clover applying the appropriate stylesheet to its text box.<br>
+You may ignore it for now, as at this point, both <code>QTextBrowser</code> and<br>
+<code>QTextBrowser#myballoon</code> perform the same function.</p>
+</blockquote>
+
+    </div>
+  </div>
+</body>
+
+</html>

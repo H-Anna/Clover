@@ -15,3 +15,12 @@ find_package(Qt5 COMPONENTS Core Widgets Multimedia REQUIRED)
 include_directories(${CMAKE_SOURCE_DIR}/src/common)
 
 add_subdirectory(src)
+
+include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_VERSION_MAJOR "0")
+set(CPACK_PACKAGE_VERSION_MINOR "1")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "Clover${CPACK_PACKAGE_VERSION}")
+set(CPACK_SOURCE_GENERATOR "TGZ")
+set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
+include(CPack)

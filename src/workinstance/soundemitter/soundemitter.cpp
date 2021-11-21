@@ -32,7 +32,7 @@ bool SoundEmitter::LoadSounds(QJsonObject *json, const QString &path)
         //sounds[name] = new QSound(path + location);
 
         if (type == "file")
-            location = path + location;
+            location.prepend(path);
 
         media[name] = MediaData(name, type, location);
     }
