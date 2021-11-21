@@ -7,22 +7,24 @@
 		
 		"<!p[0]><a href=&quothttps://doc.qt.io/qt-5/richtext-html-subset.html&quot>Click this link</a> to find out which HTML tags are supported by the Qt web engine.",
 		
-		"<!p[0]><!s[0]>Hello! <!wait[2000]><!i[0]><!i[1]><!i[2]>I'm a lion.<!wait[2000]><!b[1]>This is my big balloon.<p>Pretty cool huh?<p>You can fit a lot of text in here.",
+		"<!p[0]><!s[0]>Hello! <!wait[2000]><!i[tail]><!i[perk-ears]><!i[smile]>I'm a lion.<!wait[2000]><!b[1]>This is my big balloon.<p>Pretty cool huh?<p>You can fit a lot of text in here.",
 		
-		"<!p[0]><!speed[10]>This text print very very quickly. <!speed[100]>But this is very slow.",
+		"<!p[0]><!speed[10]>This text print very very quickly. <!i[angry-ears]><!i[half-eyes]><!speed[100]>But this is very slow.",
 		
-		"<!p[0]><!s[0]><!i[1]>My name is <!get[char1name]> and my little brother is called <!get[char2name]>. <!wait[1000]>Your name is <!get[username]>, right?",
+		"<!p[0]><!s[0]><!i[12]>My name is <!get[char1name]> and my little brother is called <!get[char2name]>. <!wait[1000]>Your name is <!get[username]>, right?",
 		"<!p[0]>It is currently <!get[TIME]>.",
 		
 		"<!p[0]><!s[0]>I'm going to play some music for you. Make sure your volume isn't too loud. Ready?<!wait[3000]> Go!<!play[webmp3]><!wait[10000]><!stop>",
 		
-		"<!p[0]><!s[0]><!i[1]>Hello! I am a big lion.<!wait[1000]><!p[1]><!s[100]>I am a smol lion :3<!wait[1000]><!p[0]><!i[0]><!i[2]><p>We are two lions on your screen.",
+		"<!p[0]><!s[0]><!i[12]>Hello! I am a big lion.<!wait[1000]><!p[1]><!s[100]>I am a smol lion :3<!wait[1000]><!p[0]><!i[0]><!i[21]><p>We are two lions on your screen.",
 		
-		"<!p[0]><!s[0]>Hi! Do you like mice?<p><a href=&quotanchor:likemice&quot>I love mice!</a><p><a href=&quotanchor:dislikemice&quot>Mice suck.</a>",
+		"<!p[0]><!s[0]><!i[mouth]>Hi! Do you like mice?<p><a href=&quotanchor:likemice&quot>I love mice!</a><p><a href=&quotanchor:dislikemice&quot>Mice suck.</a>",
 		
 		"<!p[0]><!s[0]><!timeout[5000]>This balloon will time out in 5 seconds.",
 		
-		"<!p[0]><!s[0]>I want to visit my <!pool[family]> <!pool[when-event]>."
+		"<!p[0]><!s[0]><!i[half-eyes]><!i[mouth]>I want to visit my <!pool[family]> <!pool[when-event]>.",
+		
+		"<!pool[OnBoot]>"
 		
 	]
 }

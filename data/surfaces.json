@@ -54,7 +54,35 @@
 					]
 				},
 				{
-					"id": 1,
+					"id": 10,
+					"name": "no-mouth",
+					"frequency": "Never",
+					"layer": 9,
+					"frames":
+					[
+						{
+							"image": "",
+							"drawmethod": "Replace",
+							"ms": 0
+						}
+					]
+				},
+				{
+					"id": 11,
+					"name": "mouth",
+					"frequency": "Never",
+					"layer": 9,
+					"frames":
+					[
+						{
+							"image": "mouth_N.png",
+							"drawmethod": "Replace",
+							"ms": 0
+						}
+					]
+				},
+				{
+					"id": 12,
 					"name": "smile",
 					"frequency": "Never",
 					"layer": 9,
@@ -68,14 +96,140 @@
 					]
 				},
 				{
-					"id": 2,
-					"name": "perk",
+					"id": 13,
+					"name": "catmouth",
+					"frequency": "Never",
+					"layer": 9,
+					"frames":
+					[
+						{
+							"image": "mouth_3.png",
+							"drawmethod": "Replace",
+							"ms": 0
+						}
+					]
+				},
+				{
+					"id": 20,
+					"name": "normal-ears",
+					"frequency": "Never",
+					"layer": 7,
+					"frames":
+					[
+						{
+							"image": "ears_N.png",
+							"drawmethod": "Replace",
+							"ms": 0
+						}
+					]
+				},				
+				{
+					"id": 21,
+					"name": "perk-ears",
 					"frequency": "Never",
 					"layer": 7,
 					"frames":
 					[
 						{
 							"image": "ears_P.png",
+							"drawmethod": "Replace",
+							"ms": 0
+						}
+					]
+				},
+				{
+					"id": 22,
+					"name": "angry-ears",
+					"frequency": "Never",
+					"layer": 7,
+					"frames":
+					[
+						{
+							"image": "ears_A.png",
+							"drawmethod": "Replace",
+							"ms": 0
+						}
+					]
+				},
+				{
+					"id": 23,
+					"name": "sad-ears",
+					"frequency": "Never",
+					"layer": 7,
+					"frames":
+					[
+						{
+							"image": "ears_S.png",
+							"drawmethod": "Replace",
+							"ms": 0
+						}
+					]
+				},
+				{
+					"id": 30,
+					"name": "normal-eyes",
+					"frequency": "Never",
+					"layer": 11,
+					"frames":
+					[
+						{
+							"image": "eyes_N.png",
+							"drawmethod": "Replace",
+							"ms": 0
+						}
+					]
+				},
+				{
+					"id": 31,
+					"name": "half-eyes",
+					"frequency": "Never",
+					"layer": 11,
+					"frames":
+					[
+						{
+							"image": "eyes_H.png",
+							"drawmethod": "Replace",
+							"ms": 0
+						}
+					]
+				},
+				{
+					"id": 32,
+					"name": "closed-eyes",
+					"frequency": "Never",
+					"layer": 11,
+					"frames":
+					[
+						{
+							"image": "eyes_C.png",
+							"drawmethod": "Replace",
+							"ms": 0
+						}
+					]
+				},
+				{
+					"id": 33,
+					"name": "derp-eyes",
+					"frequency": "Never",
+					"layer": 11,
+					"frames":
+					[
+						{
+							"image": "eyes_Derp.png",
+							"drawmethod": "Replace",
+							"ms": 0
+						}
+					]
+				},
+				{
+					"id": 34,
+					"name": "dumb-eyes",
+					"frequency": "Never",
+					"layer": 11,
+					"frames":
+					[
+						{
+							"image": "eyes_Dumb.png",
 							"drawmethod": "Replace",
 							"ms": 0
 						}

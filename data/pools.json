@@ -30,6 +30,12 @@
 			"my birthday",
 			"<!get[char2name]>'s birthday",
 			"<!get[username]>'s birthday"
+		],
+		"OnBoot":
+		[
+			"<!p[0]><!s[0]><!i[31]><!i[23]><!i[13]>I could go for some fish right now.",
+			"<!p[0]><!s[0]><!i[12]>Hi! What's up?",
+			"<!p[0]><!s[0]><!i[34]><!i[22]><!i[12]>It's lion o'clock."
 		]
 	}
 }
