@@ -4,6 +4,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QRandomGenerator>
+#include <QRegularExpression>
 
 #include <tokencollection.h>
 

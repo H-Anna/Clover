@@ -51,9 +51,12 @@ void VariableStore::ObserveVariable(const QString &key)
         return;
     }
 
+    /// TODO: delet this
+
     bool ok;
     int v = variables.value(key).toInt(&ok);
     if (ok && v == 100) {
+        variables[key] = QVariant(v % 100);
         emit anchorTalkSignal("anchor", key);
     }
 }

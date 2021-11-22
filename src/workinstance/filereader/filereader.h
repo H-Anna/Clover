@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QDebug>
 
 class FileReader
 {

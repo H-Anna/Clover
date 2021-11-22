@@ -36,6 +36,13 @@
 			"<!p[0]><!s[0]><!i[31]><!i[23]><!i[13]>I could go for some fish right now.",
 			"<!p[0]><!s[0]><!i[12]>Hi! What's up?",
 			"<!p[0]><!s[0]><!i[34]><!i[22]><!i[12]>It's lion o'clock."
+		],
+		"HeadpatPool":
+		[
+			"<!p[0]><!s[0]><!i[tail]><!i[catmouth]><!i[closed-eyes]>Aw shucks. I love pats.",
+			"<!p[0]><!s[0]><!i[tail]><!i[smile]><!i[closed-eyes]><!i[perk-ears]>Yes. The Great King requires more pets.",
+			"<!p[0]><!s[0]><!i[catmouth]><!i[derp-eyes]><!i[angry-ears]>mrow",
+			"<!p[0]><!s[0]><!i[smile]><!i[closed-eyes]><!i[angry-ears]>Heyy.<!wait[500]> That feels pretty good.<!wait[1000]><!i[dumb-eyes]><!i[normal-ears]> Can I have you comb my mane too?"
 		]
 	}
 }

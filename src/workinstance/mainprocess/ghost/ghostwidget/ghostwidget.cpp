@@ -2,11 +2,13 @@
 
 GhostWidget::GhostWidget(VariableStore* _varStore, unsigned int _layerCount, QWidget *parent):
     varStore(_varStore),
-    QWidget(parent, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint),
+    QWidget(parent, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::BypassWindowManagerHint),
     layerCount(_layerCount)
 {
     //setWindowFlag(Qt::SubWindow);
+#ifdef QT_NO_DEBUG
     setAttribute(Qt::WA_TranslucentBackground);
+#endif
     setAutoFillBackground(false);
     setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 
@@ -171,6 +173,8 @@ void GhostWidget::paintEvent(QPaintEvent *)
             painter.drawPixmap(QPoint(0,0), pixmaps.at(i));
         }
     }
+
+    resize(pixmaps.at(0).size());
 }
 
 void GhostWidget::keyPressEvent(QKeyEvent *event)

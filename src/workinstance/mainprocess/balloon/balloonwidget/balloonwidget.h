@@ -27,7 +27,6 @@ public:
     //QPlainTextEdit* textHolder;
 
 signals:
-    void balloonLoadedSignal();
     void finishedTextPrintSignal();
 
 public slots:
@@ -50,6 +49,8 @@ private:
 
     const unsigned int defaultTextSpeed = 50;
     const unsigned int defaultBTimeout = 20000;
+    const unsigned int minimumHorizontalSize = 100;
+    const unsigned int minimumVerticalSize = 100;
 
     unsigned int timeout;
     unsigned int textCursor;

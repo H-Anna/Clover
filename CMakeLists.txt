@@ -25,18 +25,18 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/data/ DESTINATION data)
 
 if(UNIX)
 
-    if (${CPACK_BINARY_DEB})
-        message("Ubuntu, x64 only")
-        set(CPACK_DEBIAN_PACKAGE_MAINTAINER "H-Anna")
-        set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
-        set(CPACK_DEBIAN_PACKAGE_DEPENDS "qt5-default")
+    message("Ubuntu, x64 only")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "H-Anna")
+    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "qtbase5-dev")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "qtbase5-dev-tools")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "qtmultimedia5-dev")
 
-    elseif(${CPACK_BINARY_RPM})
-        message("CentOS, x64 only")
-        set(CPACK_RPM_PACKAGE_ARCHITECTURE "x86_64")
-        set(CPACK_RPM_PACKAGE_REQUIRES "qt5-qttools")
-
-    endif()
+    message("CentOS, x64 only")
+    set(CPACK_RPM_PACKAGE_ARCHITECTURE "x86_64")
+    set(CPACK_RPM_PACKAGE_REQUIRES "qt5-qttools")
+    set(CPACK_RPM_PACKAGE_REQUIRES "qt5-qtmultimedia")
+    set(CPACK_RPM_PACKAGE_LICENSE "GPLv3")
 
 # Installer for Windows
 
@@ -56,7 +56,7 @@ include(InstallRequiredSystemLibraries)
 
 set(CPACK_PACKAGE_VERSION_MAJOR "0")
 set(CPACK_PACKAGE_VERSION_MINOR "1")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_PACKAGE_VERSION_PATCH "1")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/license")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/USER-README.md")
 set(CPACK_PACKAGE_VENDOR "H-Anna")

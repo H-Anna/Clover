@@ -2,12 +2,15 @@
 
 BalloonWidget::BalloonWidget(VariableStore* _varStore, QWidget *parent):
     varStore(_varStore),
-    QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint),
-      textSpeed(defaultTextSpeed),
-      timeout(defaultBTimeout)
+    displayedImage(QPixmap()),
+    QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint | Qt::BypassWindowManagerHint),
+    textSpeed(defaultTextSpeed),
+    timeout(defaultBTimeout)
 {
-    setWindowFlag(Qt::SubWindow);
+#ifdef QT_NO_DEBUG
     setAttribute(Qt::WA_TranslucentBackground);
+#endif
+    //setWindowFlag(Qt::SubWindow);
 
     textArea = nullptr;
     textCursor = 0;
@@ -118,6 +121,7 @@ void BalloonWidget::ChangeBalloon(const QString &path, QPoint TL, QPoint BR)
     SetupTextBrowser(TL, width, height);
 
     update();
+    resize(displayedImage.size());
 }
 
 void BalloonWidget::ChangeTextSpeed(unsigned int newSpeed)
@@ -141,24 +145,10 @@ void BalloonWidget::SetTimeout(unsigned int newTimeout)
     timeout = newTimeout;
 }
 
-//void BalloonWidget::TextBrowserUpdate()
-//{
-//    if (textArea != nullptr) {
-
-//        textArea->setHtml(textArea->textHolder->toPlainText());
-//        textArea->moveCursor(QTextCursor::End);
-
-//    }
-//    else
-//        qDebug() << "ERROR - BalloonWidget - textArea = nullptr, can't print (textBrowserUpdate).";
-//}
-
 QSize BalloonWidget::sizeHint() const
 {
-    //return baseRect.size();
-
     /// TODO replace this dirty little trick
-    return QSize(1000,1000);
+    return QSize(100,100);
 }
 
 void BalloonWidget::AppendHtml(const QString &text)

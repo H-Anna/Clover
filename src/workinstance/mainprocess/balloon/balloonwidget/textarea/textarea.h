@@ -32,6 +32,10 @@ signals:
     // QWidget interface
 protected:
     //void mouseReleaseEvent(QMouseEvent *event) override { qDebug() << event->type(); };
+
+    // QWidget interface
+protected:
+    void mouseMoveEvent(QMouseEvent *event) override;
 };
 
 #endif // TEXTAREA_H

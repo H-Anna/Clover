@@ -4,6 +4,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QTimer>
+#include <QDebug>
 
 #include <surface.h>
 #include <balloonsurface.h>

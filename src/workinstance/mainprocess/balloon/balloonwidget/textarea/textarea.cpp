@@ -57,3 +57,8 @@ void TextArea::TextBrowserUpdate()
     setHtml(textHolder->toPlainText());
     moveCursor(QTextCursor::End);
 }
+
+void TextArea::mouseMoveEvent(QMouseEvent *event)
+{
+    event->ignore();
+}
